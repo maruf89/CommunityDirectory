@@ -7,6 +7,8 @@
 # Vendor (e.g. Composer)
 vendor/*
 !vendor/.gitkeep
+composer.lock
+composer.phar
 
 # Node Package Manager
 node_modules
