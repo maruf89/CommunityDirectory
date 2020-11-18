@@ -7,12 +7,12 @@
  */
 class Community_Directory_Tables {
 
-    static $table_places;
-
     public function __construct() {
         global $wpdb;
 
-        Community_Directory_Tables::$table_places = $wpdb->prefix . 'community_directory_places';
+        define( 'COMMUNITY_DIRECTORY_ENUM_PENDING', 'PENDING' );
+        define( 'COMMUNITY_DIRECTORY_ENUM_ACTIVE', 'ACTIVE' );
+        define( 'COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS', $wpdb->prefix . 'community_directory_places' );
     }
     
     /**
@@ -28,15 +28,16 @@ class Community_Directory_Tables {
 
         // $wpdb->hide_errors();
 
-      $table_name = Community_Directory_Tables::$table_places;
+      $table_name = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
       $charset_collate = $wpdb->get_charset_collate();
 
       if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
          $sql = "CREATE TABLE $table_name (
           id smallint(4) NOT NULL AUTO_INCREMENT,
+          `status` ENUM('PENDING','ACTIVE') NOT NULL DEFAULT 'PENDING',
           `display_name` varchar(20) NOT NULL,
           `slug` varchar(20) NOT NULL,
-          `active_inhabitants` int(4) NOT NULL,
+          `active_inhabitants` int(4) NOT NULL DEFAULT '0',
           PRIMARY KEY  (id)
           )    $charset_collate;";
 
@@ -60,7 +61,7 @@ class Community_Directory_Tables {
      * @return      array                   Modified table array to delete
      */
     public function drop_tables_on_delete_blog( $tables ) {
-        $tables[] = Community_Directory_Tables::$table_places;
+        $tables[] = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         return $tables;
     }
 

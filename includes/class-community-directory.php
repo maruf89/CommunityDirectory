@@ -124,6 +124,8 @@ final class Community_Directory_Plugin {
              */
             require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
         }
+  
+        require_once dirname(dirname( __FILE__ )) . '/admin/settings/functions.php';
 
         /**
          * The class responsible for activation functionality
