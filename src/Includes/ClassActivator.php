@@ -7,7 +7,10 @@
  * @since      1.0.0
  * @author     Marius Miliunas
  */
-class Community_Directory_Activator {
+
+namespace Maruf89\CommunityDirectory\Includes;
+
+class ClassActivator {
 
     /**
      * This method gets fired during plugin activation.

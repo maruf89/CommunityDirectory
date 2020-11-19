@@ -1,4 +1,9 @@
 <?php
+
+namespace Maruf89\CommunityDirectory\Admin;
+
+// use Stylus\Stylus;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -9,7 +14,7 @@
  * @subpackage community-directory/admin
  * @author     GeoDirectory Team <info@wpgeodirectory.com>
  */
-class Community_Directory_Admin {
+class ClassAdmin {
 
     /**
      * Register all of the hooks related to the admin area functionality
@@ -43,9 +48,15 @@ class Community_Directory_Admin {
      */
     public function enqueue_styles( $hook_suffix ) {
 
-        die($hook_suffix);
+        wp_enqueue_style( "community-directory_admin_css", COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
 
-        wp_enqueue_style( "community-directory_admin_css", USERSWP_PLUGIN_URL . 'admin/assets/css/community-directory-admin.css', array(), USERSWP_VERSION, 'all' );
+        
+
+        // $stylus = new Stylus();
+        // $stylus->setReadDir( COMMUNITY_DIRECTORY_PATH . 'admin/assets/css/styl' );
+        // $stylus->setWriteDir( COMMUNITY_DIRECTORY_PATH . 'admin/assets/css' );
+        // // $stylus->setImportDir('import'); //if you import a file without setting this, it will import from the read directory
+        // $stylus->parseFiles();
 
     }
 
@@ -59,7 +70,7 @@ class Community_Directory_Admin {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-        
+        wp_enqueue_script( "uwp_form_builder", COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/js/community-directory-admin' . $suffix . '.js', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
 
     }
 }

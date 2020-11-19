@@ -1,6 +1,13 @@
 <?php
 
-final class Community_Directory_Plugin {
+namespace Maruf89\CommunityDirectory\Includes;
+use Maruf89\CommunityDirectory\Includes\ClassPublic;
+use Maruf89\CommunityDirectory\Includes\ClassActivator;
+use Maruf89\CommunityDirectory\Includes\ClassTables;
+use Maruf89\CommunityDirectory\Admin\ClassAdmin;
+use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
+
+final class ClassCommunityDirectory {
 
     /**
      * The current version of the plugin.
@@ -14,6 +21,7 @@ final class Community_Directory_Plugin {
     protected $menus;
     protected $tables;
     protected $assets;
+    protected $admin;
 
   private static $instance = null;
 
@@ -29,9 +37,10 @@ final class Community_Directory_Plugin {
         $this->load_dependencies();
         $this->init_hooks();
 
-        $this->assets = new Community_Directory_Public();
-        $this->menus = new Community_Directory_Admin_Menus();
-        $this->tables = new Community_Directory_Tables();
+        $this->assets = new ClassPublic();
+        $this->menus = new ClassAdminMenus();
+        $this->tables = new ClassTables();
+        $this->admin = new ClassAdmin();
 
         // actions and filters
         $this->load_tables_actions_and_filters($this->tables);
@@ -73,9 +82,9 @@ final class Community_Directory_Plugin {
      * Hook into actions and filters.
      */
     private function init_hooks() {
-        register_activation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( 'Community_Directory_Activator', 'activate' ) );
-        register_deactivation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( 'Community_Directory_Activator', 'deactivate' ) );
-        add_action( 'admin_init', array('Community_Directory_Activator', 'automatic_upgrade') );
+        register_activation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'activate' ) );
+        register_deactivation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'deactivate' ) );
+        add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
         add_action( 'init', array($this, 'load_plugin_textdomain'));
         add_action( 'community_directory_language_file_add_string', array($this, 'register_string'), 10, 1);
     }
@@ -124,50 +133,6 @@ final class Community_Directory_Plugin {
              */
             require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
         }
-  
-        require_once dirname(dirname( __FILE__ )) . '/admin/settings/functions.php';
-
-        /**
-         * The class responsible for activation functionality
-         * of the plugin.
-         */
-        require_once dirname(dirname( __FILE__ )) . '/includes/class-activator.php';
-
-        /**
-         * The class responsible for defining all actions that occur in the admin area.
-         */
-        require_once dirname(dirname( __FILE__ )) . '/admin/class-admin.php';
-
-        /**
-         * The class responsible for defining all menus in the admin area.
-         */
-        require_once dirname(dirname( __FILE__ )) . '/admin/class-admin-menus.php';
-
-        /**
-         * The class responsible for defining all actions that occur in the public-facing
-         * side of the site.
-         */
-        require_once dirname(dirname( __FILE__ )) . '/includes/class-public.php';
-
-        /**
-         * The class responsible for table functions
-         */
-        require_once dirname(dirname( __FILE__ )) . '/includes/class-tables.php';
-
-        /**
-         * The class responsible for admin settings functions
-         */
-        include_once dirname(dirname( __FILE__ )) . '/admin/settings/abstract-class-settings-page.php';
-
-        /**
-         * contents helpers files and functions.
-         */
-        require_once( dirname(dirname( __FILE__ )) .'/includes/helpers.php' );
-
-        /**
-         * The class responsible for defining all admin area settings.
-         */
-        require_once dirname(dirname( __FILE__ )) . '/admin/settings/class-admin-settings.php';
 
     }
 

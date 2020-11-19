@@ -5,7 +5,10 @@
  * @package    community-directory
  * @subpackage community-directory/menus
  */
-class Community_Directory_Admin_Menus {
+
+namespace Maruf89\CommunityDirectory\Admin;
+
+class ClassAdminMenus {
     /**
      * Hook in tabs.
      */
@@ -61,7 +64,7 @@ class Community_Directory_Admin_Menus {
             __( 'Community Directory', 'community-directory' ),
             'manage_options',
             'community-directory',
-            array( 'Community_Directory_Admin_Settings', 'output' ),
+            array( __NAMESPACE__ . '\\Settings\\ClassAdminSettings', 'output' ),
             'dashicons-groups',
             70
         );

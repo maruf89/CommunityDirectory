@@ -5,7 +5,10 @@
  * @since      1.0.0
  * @author     GeoDirectory Team <info@wpgeodirectory.com>
  */
-class Community_Directory_Tables {
+
+namespace Maruf89\CommunityDirectory\Includes;
+
+class ClassTables {
 
     public function __construct() {
         global $wpdb;

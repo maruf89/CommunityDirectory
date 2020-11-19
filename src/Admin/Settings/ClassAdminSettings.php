@@ -5,11 +5,14 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    userswp
- * @subpackage userswp/admin/settings
+ * @package    community-directory
+ * @subpackage community-directory/admin/settings
  * @author     GeoDirectory Team <info@wpgeodirectory.com>
  */
-class Community_Directory_Admin_Settings {
+
+namespace Maruf89\CommunityDirectory\Admin\Settings;
+
+class ClassAdminSettings {
 
     /**
      * Setting pages.
@@ -43,7 +46,7 @@ class Community_Directory_Admin_Settings {
         if ( empty( self::$settings ) ) {
             $settings = array();
 
-            $settings[] = include( 'class-settings-location.php' );
+            $settings[] = new ClassSettingsLocation();
             // $settings[] = include( 'class-settings-emails.php' );
             // $settings[] = include( 'class-settings-import-export.php' );
             // $settings[] = include( 'class-settings-addons.php' );
@@ -61,8 +64,8 @@ class Community_Directory_Admin_Settings {
     public static function save() {
         global $current_tab;
 
-        if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'userswp-settings' ) ) {
-            die( __( 'Action failed. Please refresh the page and retry.', 'userswp' ) );
+        if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'community-directory-settings' ) ) {
+            die( __( 'Action failed. Please refresh the page and retry.', 'community-directory' ) );
         }
 
         // Trigger actions
@@ -70,7 +73,7 @@ class Community_Directory_Admin_Settings {
         do_action( 'community_directory_update_options_' . $current_tab );
         do_action( 'community_directory_update_options' );
 
-        self::add_message( __( 'Your settings have been saved.', 'userswp' ) );
+        self::add_message( __( 'Your settings have been saved.', 'community-directory' ) );
 
         // Clear flush rules
         wp_schedule_single_event( time(), 'community_directory_flush_rewrite_rules' );
@@ -151,13 +154,13 @@ class Community_Directory_Admin_Settings {
         // Get tabs for the settings page
         $tabs = apply_filters( 'community_directory_settings_tabs_array', array() );
 
-        include( COMMUNITY_DIRECTORY_PATH . '/admin/views/html-admin-settings.php' );
+        include( COMMUNITY_DIRECTORY_ADMIN_PATH . 'views/html-admin-settings.php' );
     }
 
     /**
      * Output admin fields.
      *
-     * Loops though the userswp options array and outputs each field.
+     * Loops though the community-directory options array and outputs each field.
      *
      * @param array $options Opens array to output
      */
@@ -190,6 +193,7 @@ class Community_Directory_Admin_Settings {
             if ( ! isset( $value['placeholder'] ) ) {
                 $value['placeholder'] = '';
             }
+            if ( ! isset( $value['status'] ) ) $value['status'] = '';
 
             // Custom attribute handling
             $custom_attributes = array();
@@ -343,8 +347,8 @@ class Community_Directory_Admin_Settings {
                             <div class="community-directory-upload-display community-directory-img-size-<?php echo $image_size; ?> thumbnail"><div class="centered"><?php echo $show_img; ?></div></div>
                             <div class="community-directory-upload-fields">
                                 <input type="hidden" id="<?php echo esc_attr( $value['id'] ); ?>" name="<?php echo esc_attr( $value['id'] ); ?>" value="<?php echo esc_attr( $option_value ); ?>" />
-                                <button type="button" class="community_directory_upload_image_button button"><?php _e( 'Upload Image', 'userswp' ); ?></button>
-                                <button type="button" class="community_directory_remove_image_button button <?php echo $remove_class;?>"><?php _e( 'Remove Image', 'userswp' ); ?></button>
+                                <button type="button" class="community_directory_upload_image_button button"><?php _e( 'Upload Image', 'community-directory' ); ?></button>
+                                <button type="button" class="community_directory_remove_image_button button <?php echo $remove_class;?>"><?php _e( 'Remove Image', 'community-directory' ); ?></button>
                             </div>
                         </div>
                     </td>
@@ -666,13 +670,13 @@ class Community_Directory_Admin_Settings {
                     ?><tr valign="top" class="single_select_page <?php if(isset($value['advanced']) && $value['advanced']){echo "community-directory-advanced-setting";}?>">
                     <th scope="row" class="titledesc"><?php echo esc_html( $value['title'] ) ?> <?php echo $tooltip_html; ?></th>
                     <td class="forminp">
-                        <?php echo str_replace( ' id=', " data-placeholder='" . esc_attr__( 'Select a page&hellip;', 'userswp' ) . "' style='" . $value['css'] . "' class='" . $value['class'] . "' id=", wp_dropdown_pages( $args ) ); ?> <?php echo $description; ?>
+                        <?php echo str_replace( ' id=', " data-placeholder='" . esc_attr__( 'Select a page&hellip;', 'community-directory' ) . "' style='" . $value['css'] . "' class='" . $value['class'] . "' id=", wp_dropdown_pages( $args ) ); ?> <?php echo $description; ?>
 
                         <?php if($args['selected'] > 0){ ?>
-                            <a href="<?php echo get_edit_post_link( $args['selected'] ); ?>" class="button community-directory-page-setting-edit"><?php _e('Edit Page','userswp');?></a>
+                            <a href="<?php echo get_edit_post_link( $args['selected'] ); ?>" class="button community-directory-page-setting-edit"><?php _e('Edit Page','community-directory');?></a>
 
                             <?php if(empty($value['is_template_page'])){ ?>
-                                <a href="<?php echo get_permalink($args['selected']);?>" class="button community-directory-page-setting-view"><?php _e('View Page','userswp');?></a>
+                                <a href="<?php echo get_permalink($args['selected']);?>" class="button community-directory-page-setting-view"><?php _e('View Page','community-directory');?></a>
                             <?php }
                         }
 
@@ -713,7 +717,7 @@ class Community_Directory_Admin_Settings {
 
         if(!empty($value['docs'])){
 
-            $docs_link = "<a class='community-directory-docs-link' href='".esc_url($value['docs'])."' target='_blank'>".__('Documentation','userswp')." <i class=\"fas fa-external-link-alt\" aria-hidden=\"true\" aria-hidden=\"true\"></i></a>";
+            $docs_link = "<a class='community-directory-docs-link' href='".esc_url($value['docs'])."' target='_blank'>".__('Documentation','community-directory')." <i class=\"fas fa-external-link-alt\" aria-hidden=\"true\" aria-hidden=\"true\"></i></a>";
 
             if(in_array( $value['type'], array( 'checkbox' ) )){
                 $description .= $docs_link;
@@ -747,7 +751,7 @@ class Community_Directory_Admin_Settings {
     /**
      * Save admin fields.
      *
-     * Loops though the userswp options array and outputs each field.
+     * Loops though the community-directory options array and outputs each field.
      *
      * @param array $options Options array to output
      * @param array $data Optional. Data to use for saving. Defaults to $_POST.

@@ -8,6 +8,8 @@
    Author URI: http://www.maruf-hops-maps.com
    License: GPL2
    */
+
+   namespace Maruf89\CommunityDirectory;
    
    if ( ! defined( 'COMMUNITY_DIRECTORY_NAME' ) ) {
     define( 'COMMUNITY_DIRECTORY_NAME', 'community-directory' );
@@ -24,6 +26,14 @@
     define( 'COMMUNITY_DIRECTORY_PATH', plugin_dir_path( __FILE__ ) );
   }
 
+  if ( ! defined( 'COMMUNITY_DIRECTORY_INCLUDES_PATH' ) ) {
+    define( 'COMMUNITY_DIRECTORY_INCLUDES_PATH', plugin_dir_path( __FILE__ ) . 'src/Includes/' );
+  }
+
+  if ( ! defined( 'COMMUNITY_DIRECTORY_ADMIN_PATH' ) ) {
+    define( 'COMMUNITY_DIRECTORY_ADMIN_PATH', plugin_dir_path( __FILE__ ) . 'src/Admin/' );
+  }
+
   if ( ! defined( 'COMMUNITY_DIRECTORY_PLUGIN_URL' ) ) {
     define( 'COMMUNITY_DIRECTORY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
   }
@@ -32,13 +42,17 @@
     define( 'COMMUNITY_DIRECTORY_PLUGIN_FILE', __FILE__ );
   }
 
-  if ( ! class_exists( 'CommunityDirectory' ) ) {
-    include_once dirname( __FILE__ ) . '/includes/class-community-directory.php';
-  }
+  // include the Composer autoload file
+  require 'vendor/autoload.php';
+  use Maruf89\CommunityDirectory\Includes\ClassCommunityDirectory;
+
+  // if ( ! class_exists( 'CommunityDirectory' ) ) {
+  //   include_once dirname( __FILE__ ) . '/includes/class-community-directory.php';
+  // }
 
   function run_community_directory() {
     global $communitydirectory;
-    $communitydirectory = new Community_Directory_Plugin();
+    $communitydirectory = new ClassCommunityDirectory();
   }
 
   run_community_directory();

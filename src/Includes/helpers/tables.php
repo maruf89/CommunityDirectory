@@ -9,12 +9,12 @@
  * @return      void
  */
 function community_directory_create_tables() {
-    $Tables = new Community_Directory_Tables();
+    $Tables = new ClassTables();
     $Tables->create_tables();
 }
 
 function community_directory_drop_tables_on_delete_blog( $tables ) {
-    $Tables = new Community_Directory_Tables();
+    $Tables = new ClassTables();
     return $Tables->drop_tables_on_delete_blog( $tables );
 }
 

@@ -1,9 +1,12 @@
 <?php
 
-function community_directory_get_locations( $status = COMMUNITY_DIRECTORY_ENUM_ACTIVE ) {
+function community_directory_get_locations( $status = '' ) {
     global $wpdb;
 
-    return $wpdb->get_results( "SELECT * FROM " . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . " WHERE status = '$status'" );
+    $where = '';
+    if ( !empty( $status ) ) $where = " WHERE status = '$status'";
+
+    return $wpdb->get_results( "SELECT * FROM " . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . $where );
 }
 
 function community_directory_status_to_enum( $status = 'active' ) {

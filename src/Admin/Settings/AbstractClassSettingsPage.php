@@ -8,16 +8,18 @@
  * @version     1.0.24
  */
 
+namespace Maruf89\CommunityDirectory\Admin\Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Community_Directory_Settings_Page', false ) ) :
+if ( ! class_exists( 'AbstractClassSettingsPage', false ) ) :
 
 /**
- * Community_Directory_Settings_Page.
+ * AbstractClassSettingsPage.
  */
-abstract class Community_Directory_Settings_Page {
+abstract class AbstractClassSettingsPage {
 
     /**
      * Setting page id.
@@ -139,7 +141,7 @@ abstract class Community_Directory_Settings_Page {
     public function output() {
         $settings = $this->get_settings();
 
-        Community_Directory_Admin_Settings::output_fields( $settings );
+        ClassAdminSettings::output_fields( $settings );
     }
 
     /**
@@ -149,7 +151,7 @@ abstract class Community_Directory_Settings_Page {
         global $current_section;
 
         $settings = $this->get_settings();
-        Community_Directory_Admin_Settings::save_fields( $settings );
+        ClassAdminSettings::save_fields( $settings );
 
         if ( $current_section ) {
             do_action( 'community_directory_update_options_' . $this->id . '_' . $current_section );

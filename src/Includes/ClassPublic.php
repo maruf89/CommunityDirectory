@@ -10,7 +10,9 @@
  * @subpackage community-directory/includes
  */
 
-class Community_Directory_Public {
+namespace Maruf89\CommunityDirectory\Includes;
+
+class ClassPublic {
 
     
     /**
@@ -19,9 +21,8 @@ class Community_Directory_Public {
      * @since    1.0.0
      */
     public function enqueue_styles() {
-        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/users-wp.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
-        wp_register_style( 'uwp-authorbox', COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/authorbox.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
-
+        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
+        // wp_register_style( 'uwp-authorbox', COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/authorbox.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
     }
 
     /**
