@@ -4,6 +4,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 use Maruf89\CommunityDirectory\Includes\ClassPublic;
 use Maruf89\CommunityDirectory\Includes\ClassActivator;
 use Maruf89\CommunityDirectory\Includes\ClassTables;
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
 use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
 
@@ -41,14 +42,16 @@ final class ClassCommunityDirectory {
         $this->menus = new ClassAdminMenus();
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
+        $this->location = new ClassLocation();
 
         // actions and filters
-        $this->load_tables_actions_and_filters($this->tables);
+        $this->load_tables_actions_and_filters( $this->tables );
+        $this->load_location_actions_and_filters( $this->location );
 
         //admin
-        $this->load_menus_actions_and_filters($this->menus);
+        $this->load_menus_actions_and_filters( $this->menus );
 
-        add_action('init', array($this, 'has_required_plugins'), 10, 1);
+        add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
     }
 
     public function has_required_plugins() {
@@ -106,6 +109,19 @@ final class ClassCommunityDirectory {
      */
     public function load_tables_actions_and_filters($instance) {
         add_filter( 'wpmu_drop_tables', array($instance, 'drop_tables_on_delete_blog'));
+    }
+
+    /**
+     * Actions for location
+     *
+     * @param $instance
+     */
+    public function load_location_actions_and_filters($instance) {
+        add_action( 'community_directory_create_locations', array( $instance, 'create_locations' ), 10, 1 );
+        add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
+
+        add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
+        add_action( 'community_directory_delete_location', array( $instance, 'delete_location' ), 10, 1 );
     }
 
     /**

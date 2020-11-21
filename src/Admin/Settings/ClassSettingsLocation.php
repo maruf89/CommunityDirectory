@@ -21,6 +21,9 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
     private $settings;
 
+    private $edit_display_name = 'display_name-';
+    private $edit_display_name_new = 'new_location-';
+
     /**
      * Constructor.
      */
@@ -35,6 +38,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         add_action( 'community_directory_sections_' . $this->id, array( $this, 'output_sections' ) );
         add_action( 'community_directory_admin_field_location_list', array( $this, 'output_location_list' ) );
         add_action( 'community_directory_admin_field_edit_location_list', array( $this, 'output_edit_location_list' ) );
+        add_action( 'community_directory_settings_save_edit_location_list', array( $this, 'save_edit_location' ) );
     }
 
     /**
@@ -64,16 +68,19 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                     array(
                         'title' => $title,
                         'type'  => 'title',
+                        'attr' => array( 'class="edit-locations-table form-table"' ),
                         'desc'  => __( 'Edit existing locations or add new ones', 'community-directory' ),
                         'desc_tip' => true,
                     ),
                     array(
                         'name' => __( 'Edit Locations', 'community-directory' ),
                         'desc'     => __( 'These are the locations currently active and selectable', 'community-directory' ),
+                        'id'    => 'edit_location',
                         'type'  => 'edit_location_list',
                         'desc'  => __( 'temp', 'community-directory' ),
                         'desc_tip' => true,
                     ),
+                    array( 'type' => 'sectionend', 'id' => 'edit_options' ),
                 );
                 break;
             default:
@@ -92,6 +99,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                         'status'   => community_directory_status_to_enum( $current_section ),
                         'desc_tip' => true,
                     ),
+                    array( 'type' => 'sectionend' ),
                 );
                 break;
         }
@@ -123,6 +131,8 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         global $current_section;
 
         $settings = $this->get_settings( $current_section );
+        
+        if ( $current_section === 'edit' ) do_action( 'community_directory_settings_save_edit_location_list' );
         ClassAdminSettings::save_fields( $settings );
     }
 
@@ -130,51 +140,73 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         $locations = community_directory_get_locations( $value['status'] );
 
         ?>
-            <table id="locationList">
-                <tr>
-                    <th><?= __( 'Location', 'community-directory' );?></th>
-                    <th><?= __( 'Slug', 'community-directory' );?></th>
-                    <th><?= __( 'Active Inhabitants', 'community-directory' );?></th>
-                </tr>
+            <tr>
+                <th><?= __( 'Location', 'community-directory' );?></th>
+                <th><?= __( 'Slug', 'community-directory' );?></th>
+                <th><?= __( 'Active Inhabitants', 'community-directory' );?></th>
+            </tr>
         <?php
 
         foreach ( $locations as $location ): ?>
 
-                <tr data-location-id="<?= $location->id ?>">
-                    <td><?= $location->display_name ?></td>
-                    <td><?= $location->slug ?></td>
-                    <td><?= $location->active_inhabitants ?></td>
-                </tr>
+            <tr data-location-id="<?= $location->id ?>">
+                <td><?= $location->display_name ?></td>
+                <td><?= $location->slug ?></td>
+                <td><?= $location->active_inhabitants ?></td>
+            </tr>
 
         <?php endforeach;
+    }
 
-        ?>
-            </table>
-        <?php
+    private function is_loc_active( $status, $ifTrue = true, $ifFalse = false ) {
+        return $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? $ifTrue : $ifFalse;
     }
 
     public function output_edit_location_list( $value ) {
         $locations = community_directory_get_locations();
 
         ?>
-            <div id="<?=$value['id']?>" class="table-editable">
-                <span class="table-add dashicons dashicons-plus"></span>
-                <table class="table">
                   <tr>
-                    <th><?= __( 'Location', 'community-directory' );?></th>
-                    <th><?= __( 'Slug', 'community-directory' );?></th>
-                    <th><?= __( 'Active Inhabitants', 'community-directory' );?></th>
-                    <th></th>
+                    <th><?= __( 'Location', 'community-directory' ) ?></th>
+                    <th><?= __( 'Slug', 'community-directory' ) ?></th>
+                    <th><?= __( 'Active', 'community-directory' ) ?></th>
+                    <th><?= __( 'Active Inhabitants', 'community-directory' ) ?></th>
+                    <th style="position:relative">
+                        <span class="table-add">
+                            <span><?= __( 'Insert Location', 'community-directory' ) ?>
+                            <span class="dashicons dashicons-plus"></span>
+                        </span>
+                    </th>
                   </tr>
 
                 <?php
 
                     foreach ( $locations as $location ): ?>
 
-                        <tr data-location-id="<?= $location->id ?>">
-                            <td contenteditable="true"><?= $location->display_name ?></td>
-                            <td contenteditable="true"><?= $location->slug ?></td>
-                            <td contenteditable="true"><?= $location->active_inhabitants ?></td>
+                        <tr class="location-row" data-location-id="<?= $location->id ?>">
+                            <td>
+                                <input  type="text"
+                                        name="display_name[<?= $location->id ?>]" 
+                                        class="edit-name edit-field" 
+                                        data-original-value="<?= $location->display_name ?>"
+                                        value="<?= $location->display_name ?>" /></td>
+                            <td class="slug-value"><?= $location->slug ?></td>
+                            <td>
+                                <select class="edit-status edit-field"
+                                        name="status[<?= $location->id ?>]"
+                                        data-original-value="<?= $location->status ?>"
+                                        value=<?= $location->status ?>>
+                                    <option value="<?= COMMUNITY_DIRECTORY_ENUM_ACTIVE ?>"
+                                            <?= $this->is_loc_active( $location->status, 'selected', '') ?>>
+                                                <?= __( 'Active', 'community-directory' ) ?>
+                                    </option>
+                                    <option value="<?= COMMUNITY_DIRECTORY_ENUM_PENDING ?>"
+                                            <?= $this->is_loc_active( $location->status, '', 'selected') ?>>
+                                        <?= __( 'Pending', 'community-directory' ) ?>
+                                    </option>
+                                </select>
+                            </td>
+                            <td><?= $location->active_inhabitants ?></td>
                             <td>
                               <span class="table-remove dashicons dashicons-remove"></span>
                             </td>
@@ -186,16 +218,82 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
                   
                   <!-- This is our clonable table line -->
-                  <tr class="hide">
-                    <td contenteditable="true">Untitled</td>
-                    <td contenteditable="true">undefined</td>
-                    <td contenteditable="true">0</td>
+                  <tr class="hide location-row">
+                    <td>
+                        <input  type="text"
+                                name="new_loc_display_name[]" 
+                                class="edit-name edit-field"
+                                placeholder="<?=__( 'New Place', 'community-directory' ) ?>"
+                                value="" /></td>
+                    <td>–––</td>
+                    <td>
+                        <select class="edit-status edit-field changed"
+                                name="new_loc_status[]">
+                            <option value="<?= COMMUNITY_DIRECTORY_ENUM_ACTIVE ?>"><?= __( 'Active', 'community-directory' ) ?></option>
+                            <option value="<?= COMMUNITY_DIRECTORY_ENUM_PENDING ?>" selected><?= __( 'Pending', 'community-directory' ) ?></option>
+                        </select>
+                    </td>
+                    <td>0</td>
                     <td>
                       <span class="table-remove dashicons dashicons-remove"></span>
                     </td>
                   </tr>
-                </table>
-            </div>
         <?php
+    }
+
+    public function save_edit_location() {
+        $array_ignore = array( '_wpnonce', '_wp_http_referer' );
+        $data = $_POST;
+
+        if ( empty( $data ) ) {
+            return false;
+        }
+
+        // Preapre Update Locations Data
+        $merged_update_arr = array();
+        if ( isset( $data['display_name'] ) )
+            foreach ( $data['display_name'] as $id => $display_name ) {
+                if ( !isset( $merged_update_arr[$id] ) ) $merged_update_arr[$id] = array();
+                $merged_update_arr[$id]['display_name'] = $display_name;
+            }
+
+        if ( isset( $data['status'] ) )
+            foreach ( $data['status'] as $id => $status ) {
+                if ( !isset( $merged_update_arr[$id] ) ) $merged_update_arr[$id] = array();
+                $merged_update_arr[$id]['status'] = $status;
+            }
+
+        // Prepare Create Locations Data
+        $merged_create_arr = array();
+        if ( isset ( $data['new_loc_display_name'] ) )
+            foreach ( $data['new_loc_display_name'] as $id => $display_name ){
+                $merged_create_arr[$id] = array(
+                    ['display_name'] => $display_name
+                );
+            }
+            
+        if ( isset ( $data['new_loc_status'] ) )
+            foreach ( $data['new_loc_status'] as $id => $display_name ){
+                // Cannot create new location without an existing display_name set
+                if ( !isset( $merged_create_arr[$id] ) ) continue;
+            }
+
+        // Will hold the messages for each kind of change
+        $updated_message_arr = array();
+
+        $updated_loc_count = count( $merged_update_arr );
+        if ( $updated_loc_count ) {
+            do_action( 'community_directory_update_locations', $merged_update_arr );
+            array_push( $updated_message_arr, sprintf( __( 'Updated %d location(s)', 'community-directory' ), $updated_loc_count ) );
+        }
+
+        $created_loc_count = count( $merged_create_arr );
+        if ( $created_loc_count ) {
+            do_action( 'community_directory_create_locations', $merged_create_arr );
+            array_push( $updated_message_arr, sprintf( __( 'Created %d location(s)', 'community-directory' ), $created_loc_count ) );
+        }
+
+        if ( count( $updated_message_arr ) )
+            ClassAdminSettings::add_message( implode( __( ' and ', 'community-directory' ), $updated_message_arr ) );
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-// use Stylus\Stylus;
+use Stylus\Stylus;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -48,15 +48,18 @@ class ClassAdmin {
      */
     public function enqueue_styles( $hook_suffix ) {
 
-        wp_enqueue_style( "community-directory_admin_css", COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+        if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+            $stylus = new Stylus();
+            $stylus->setReadDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css/styl' );
+            $stylus->setWriteDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css' );
+            // $stylus->setImportDir('import'); //if you import a file without setting this, it will import from the read directory
+            $stylus->assign( 'base-font-size', '14px' );
+            $stylus->parseFiles(true);
+        }
+
+        wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
 
         
-
-        // $stylus = new Stylus();
-        // $stylus->setReadDir( COMMUNITY_DIRECTORY_PATH . 'admin/assets/css/styl' );
-        // $stylus->setWriteDir( COMMUNITY_DIRECTORY_PATH . 'admin/assets/css' );
-        // // $stylus->setImportDir('import'); //if you import a file without setting this, it will import from the read directory
-        // $stylus->parseFiles();
 
     }
 
@@ -70,7 +73,19 @@ class ClassAdmin {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-        wp_enqueue_script( "uwp_form_builder", COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/js/community-directory-admin' . $suffix . '.js', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+        wp_enqueue_script(
+            'community_directory_admin_js',
+            COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/js/community-directory-admin' . $suffix . '.js', array(),
+            WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
+            'all'
+        );
+
+        wp_localize_script( 'community_directory_admin_js', 'ajaxObject', array(
+            'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'translations' => array(
+                'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' ) )
+            )
+        );
 
     }
 }

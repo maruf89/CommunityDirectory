@@ -1,37 +1,37 @@
-.hide {
-    display: none;
+/** {
+	*: Predefined vars;
 }
-
-.table-editable {
-  position: relative;
+/** * #wpbody-content, /** * base-font-size #wpbody-content, /** */ #wpbody-content {
+	font-size: 14px;
+	line-height: 1.5;
 }
-.table-editable .dashicons {
-  font-size: 20px;
+/** * .hide, /** * base-font-size .hide, /** */ .hide {
+	display: none;
 }
-
-.table-remove {
-  color: #700;
-  cursor: pointer;
+/** * .table-editable, /** * base-font-size .table-editable, /** */ .table-editable {
+	position: relative;
 }
-.table-remove:hover {
-  color: #f00;
+/** * .table-editable .dashicons, /** * base-font-size .table-editable .dashicons, /** */ .table-editable .dashicons {
+	font-size: 1.5em;
 }
-
-.table-up, .table-down {
-  color: #007;
-  cursor: pointer;
+/** * .table-remove, /** * base-font-size .table-remove, /** */ .table-remove {
+	color: #brown;
+	cursor: pointer;
 }
-.table-up:hover, .table-down:hover {
-  color: #00f;
+/** * .table-remove:hover, /** * base-font-size .table-remove:hover, /** */ .table-remove:hover {
+	color: #f00;
 }
-
-.table-add {
-  color: #070;
-  cursor: pointer;
-  position: absolute;
-  top: 8px;
-  right: 0;
+/** * .table-up, /** * base-font-size .table-up, /** */ .table-up, /** * .table-down, /** * base-font-size .table-down, /** */ .table-down {
+	color: #007;
+	cursor: pointer;
 }
-.table-add:hover {
-  color: #0b0;
+/** * .table-up:hover, /** * base-font-size .table-up:hover, /** */ .table-up:hover, /** * .table-down:hover, /** * base-font-size .table-down:hover, /** */ .table-down:hover {
+	color: #00f;
+}
+/** * .table-add, /** * base-font-size .table-add, /** */ .table-add {
+	color: #070;
+	cursor: pointer;
+}
+/** * .table-add:hover, /** * base-font-size .table-add:hover, /** */ .table-add:hover {
+	color: #0b0;
 }

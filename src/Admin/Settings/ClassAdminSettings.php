@@ -230,7 +230,10 @@ class ClassAdminSettings {
                         echo wpautop( wptexturize( wp_kses_post( $value['desc'] ) ) );
                     }
 
-                    echo '<table class="form-table">' . "\n\n";
+                    $attr = '';
+                    if ( isset( $value['attr'] ) && count( $value['attr'] ) > 0 ) $attr = implode( ' ', $value['attr'] );
+
+                    echo "<table $attr class='form-table'>" . "\n\n";
                     if ( ! empty( $value['id'] ) ) {
                         do_action( 'community_directory_settings_' . sanitize_title( $value['id'] ) );
                     }

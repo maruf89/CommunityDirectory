@@ -1,58 +1,72 @@
 (function ($) {
 
-  var $TABLE = $('#table');
-  var $BTN = $('#export-btn');
-  var $EXPORT = $('#export');
-
-  $('.table-add').click(function () {
-    var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line');
-    $TABLE.find('table').append($clone);
-  });
-
-  $('.table-remove').click(function () {
-    $(this).parents('tr').detach();
-  });
-
-  $('.table-up').click(function () {
-    var $row = $(this).parents('tr');
-    if ($row.index() === 1) return; // Don't go above the header
-    $row.prev().before($row.get(0));
-  });
-
-  $('.table-down').click(function () {
-    var $row = $(this).parents('tr');
-    $row.next().after($row.get(0));
-  });
-
-  // A few jQuery helpers for exporting only
-  jQuery.fn.pop = [].pop;
-  jQuery.fn.shift = [].shift;
-
-  $BTN.click(function () {
-    var $rows = $TABLE.find('tr:not(:hidden)');
-    var headers = [];
-    var data = [];
+  function editLocationTable($table) {
+    $form = $('#mainform');
+    newFieldId = 1;
     
-    // Get the headers (add special header logic here)
-    $($rows.shift()).find('th:not(:empty)').each(function () {
-      headers.push($(this).text().toLowerCase());
+    $('.table-add').click(function () {
+      var cloneId = newFieldId++;
+      var $clone = $table.find('tr.hide').clone(true).removeClass('hide table-line');
+      $clone.find('.edit-field').each(function (index, el) {
+        el.name = el.name.substr(0, el.name.length - 1) + cloneId + ']';
+
+        // Must add changed to new status field so it gets submitted
+        if ($(el).hasClass('edit-status')) $(el).addClass('changed');
+      });
+      $table.append($clone);
     });
-    
-    // Turn all existing rows into a loopable array
-    $rows.each(function () {
-      var $td = $(this).find('td');
-      var h = {};
-      
-      // Use the headers from earlier to name our hash keys
-      headers.forEach(function (header, i) {
-        h[header] = $td.eq(i).text();   
+  
+    // Deletes locations via ajax
+    $('.table-remove').click(function () {
+
+      if (!confirm(ajaxObject.translations.deleteLocation)) {
+        return;
+      }
+
+      var locId = $(this).closest('tr')[0].dataset.locationId;
+
+      var data = {
+        location_id: locId,
+        action: 'location_delete',
+      };
+
+      var $this = this;
+
+      $.post(ajaxurl, data, function(response, result) {
+        if (result == 'success') {
+          $($this).closest('tr').detach();
+          alert(response);
+        }
       });
       
-      data.push(h);
     });
+
+
+    $table.on('change', '.edit-name', {}, function (e) {
+      // Add changed class if new text doesn't match original value
+      var hasChanged = e.target.dataset.originalValue != e.target.value;
+      $(this).toggleClass('changed', hasChanged);
+    });
+
+    $table.on('change', '.edit-status', function (e) {
+      var hasChanged = e.target.dataset.originalValue != e.target.value;
+      $(this).toggleClass('changed', hasChanged);
+    });
+
+    function submit (e) {
+      e.originalEvent.preventDefault();
+
+      // Detach all unchanged fields
+      $table.find('.edit-field:not(.changed)').detach()
+
+      $form.off('submit', submit).trigger('submit');
+    }
     
-    // Output the result
-    $EXPORT.text(JSON.stringify(data));
-  });
+    $form.on('submit', submit);
+  }
+
+  var $table = $('.edit-locations-table');
+  if ($table.length) editLocationTable($table);
+  
 
 })(jQuery);

@@ -20,3 +20,13 @@ function community_directory_status_to_enum( $status = 'active' ) {
             break;
     }
 }
+
+// Converts to lower case and replaces all letters to roman safe characters
+function community_directory_location_name_to_slug( $location ) {
+    return strtolower( transliterate_string( $location ) );
+}
+
+// Capitalizes first letter of location name
+function community_directory_format_display_name( $location ) {
+    return ucwords( strtolower( $location ) );
+}
