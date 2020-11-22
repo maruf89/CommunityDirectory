@@ -5,8 +5,11 @@ use Maruf89\CommunityDirectory\Includes\ClassPublic;
 use Maruf89\CommunityDirectory\Includes\ClassActivator;
 use Maruf89\CommunityDirectory\Includes\ClassTables;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\ClassUWPForms;
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
 use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
+use Maruf89\CommunityDirectory\Admin\ClassAccount;
+use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
 
 final class ClassCommunityDirectory {
 
@@ -43,13 +46,20 @@ final class ClassCommunityDirectory {
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
         $this->location = new ClassLocation();
+        $this->uwp_forms = new ClassUWPForms();
+
+        $this->admin_uwpform_builder = new ClassUWPFormBuilder();
+        $this->account = new ClassAccount();
 
         // actions and filters
         $this->load_tables_actions_and_filters( $this->tables );
         $this->load_location_actions_and_filters( $this->location );
+        $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
 
         //admin
+        $this->load_account_actions_and_filters( $this->account );
         $this->load_menus_actions_and_filters( $this->menus );
+        $this->load_uwp_form_hooks_and_filters( $this->admin_uwpform_builder );
 
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
     }
@@ -116,12 +126,27 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_location_actions_and_filters($instance) {
+    public function load_location_actions_and_filters( $instance ) {
         add_action( 'community_directory_create_locations', array( $instance, 'create_locations' ), 10, 1 );
         add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
 
         add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
         add_action( 'community_directory_delete_location', array( $instance, 'delete_location' ), 10, 1 );
+    }
+
+    /**
+     * Actions & Filters for rendering UsersWP forms relating to this plugin
+     */
+    public function load_uwp_forms_actions_and_filters( $instance ) {
+        add_filter( 'uwp_form_input_html_locationselect', array( $instance, 'builder_extra_fields_locationselect' ), 10, 4 );
+    }
+
+    /**
+     * Actions & Filters for account & registration
+     */
+    public function load_account_actions_and_filters( $instance ) {
+        add_filter( 'uwp_validate_fields_before', array( $instance, 'validate_user_registration_before' ), 11, 3 );
+        add_filter( 'uwp_before_extra_fields_save', array( $instance, 'save_data_to_user_meta' ), 11, 3 );
     }
 
     /**
@@ -132,6 +157,10 @@ final class ClassCommunityDirectory {
     public function load_menus_actions_and_filters($instance) {
         add_action( 'load-nav-menus.php', array($instance, 'users_wp_admin_menu_metabox') );
         add_action( 'admin_bar_menu', array($instance, 'admin_bar_menu'), 51 );
+    }
+
+    public function load_uwp_form_hooks_and_filters( $instance ) {
+        add_filter( 'uwp_form_fields_predefined', array( $instance, 'load_uwp_form_fields' ), 10, 2 );
     }
 
     /**

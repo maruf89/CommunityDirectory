@@ -11,7 +11,8 @@ namespace Maruf89\CommunityDirectory\Includes;
 class ClassLocation {
 
     public function __construct() {
-
+        define( 'COMMUNITY_DIRECTORY_DISPLAY_NAME', 'display_name' );
+        define( 'COMMUNITY_DIRECTORY_SLUG', 'slug' );
     }
 
     /**
@@ -48,7 +49,14 @@ class ClassLocation {
     /**
      * Adds new locations to the locations table
      * 
-     * @param $new_locations a multi-dimensional like: array [] => array([display_name] => 'string', [status] => 'enum') of new locations
+     * @param $new_locations a multi-dimensional of new locations
+     *      array(
+     *          array(
+     *              [display_name] => 'string',
+     *              [status] => 'enum' (default: 'PENDING')
+     *          ),
+     *          ...
+     *      )
      */
     public static function create_locations( $new_locations ) {
         if ( !count( $new_locations ) ) return false;
@@ -58,11 +66,13 @@ class ClassLocation {
         foreach ( $new_locations as $row ) {
             if ( empty( $row['display_name'] ) ) continue;
 
+            // If status isn't set, default is PENDING
+            $status = isset( $row['status'] ) ? community_directory_status_to_enum( $row['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
 
             $create_array[] = array(
                 'display_name' => community_directory_format_display_name( $row['display_name'] ),
                 'slug' => community_directory_location_name_to_slug( $row['display_name'] ),
-                'status' => community_directory_status_to_enum( $row['status'] )
+                'status' => $status
             );
         }
 

@@ -3,8 +3,7 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://wpgeodirectory.com
- * @since      1.0.0
+ * @since      0.0.1
  *
  * @package    community-directory
  * @subpackage community-directory/includes
@@ -18,7 +17,7 @@ class ClassPublic {
     /**
      * Register the stylesheets for the public-facing side of the site.
      *
-     * @since    1.0.0
+     * @since    0.0.1
      */
     public function enqueue_styles() {
         wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
@@ -28,7 +27,7 @@ class ClassPublic {
     /**
      * Register the JavaScript for the public-facing side of the site.
      *
-     * @since    1.0.0
+     * @since    0.0.1
      */
     public function enqueue_scripts() {
 

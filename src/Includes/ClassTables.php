@@ -2,8 +2,8 @@
 /**
  * Community Directory table related functions
  *
- * @since      1.0.0
- * @author     GeoDirectory Team <info@wpgeodirectory.com>
+ * @since      0.0.1
+ * @author     Marius Miliunas <mvmiliunas@gmail.com>
  */
 
 namespace Maruf89\CommunityDirectory\Includes;
