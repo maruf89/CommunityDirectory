@@ -71,8 +71,8 @@ class ClassLocation {
     /**
      * Updates an existing location's name and slug
      * 
-     * @param $update_locations_array an array of [id] => array([display_name] => 'string', [status] => 'enum') modifications
-     * @return true|false
+     * @param           $update_locations_array     array   [id] => array([display_name] => 'string', [status] => 'enum') modifications
+     * @return                                      true|false
      */
     public static function update_locations( $update_locations_array ) {
         if ( !count( $update_locations_array ) ) return false;
@@ -86,8 +86,11 @@ class ClassLocation {
                 $data['display_name'] = community_directory_format_display_name( $row['display_name'] );
                 $data['slug'] = community_directory_location_name_to_slug( $row['display_name'] );
             }
-            if ( isset( $row['status'] ) ) 
+            if ( isset( $row['status'] ) ) {
                 $data['status'] = community_directory_status_to_enum( $row['status'] );
+                $post_id = self::get_row_var( $id, 'post_id' );
+                self::update_post_status( $post_id, $data['status'] );
+            }
 
             $result = $wpdb->update(
                 COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
@@ -110,6 +113,7 @@ class ClassLocation {
      *          ),
      *          ...
      *      )
+     * @return                      (int|bool)  returns false if no change, or number of created rows
      */
     public static function create_locations( $new_locations ) {
         if ( !count( $new_locations ) ) return false;
@@ -164,20 +168,9 @@ class ClassLocation {
     }
 
     /**
-     * Converts a location status enum to a wp post status type
+     * Gathers passed in POST data to delet a location and it's corresponding wp post
      */
-    public static function location_status_to_post_status( $status = '' ) {
-        switch ( $status ) {
-            case COMMUNITY_DIRECTORY_ENUM_PENDING:
-                return 'pending';
-            case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
-                return 'publish';
-            default:
-                return 'draft';
-        }
-    }
-
-    public static function delete_location_ajax(  ) {
+    public static function delete_location_ajax() {
         if ( !isset( $_POST['location_id'] ) || empty( $_POST['location_id'] ) ) {
             die( wp_send_json_error( 'Error: missing location_id' ) );
         }
@@ -192,6 +185,11 @@ class ClassLocation {
         }
     }
 
+    /**
+     * Deletes an individual location from MySQL
+     * 
+     * @param           $location_id        int
+     */
     public static function delete_location( $location_id ) {
         global $wpdb;
 
@@ -202,6 +200,44 @@ class ClassLocation {
         );
     }
 
+/////////// Wordpress Methods //////////
+
+    /**
+     * Converts a location status enum to a wp post status type
+     * 
+     * @param           $status         string      COMMUNITY_DIRECTORY_ENUM_(PENDING|ACTIVE)
+     * @return                          string      returns the corresponding wp post status type
+     */
+    public static function location_status_to_post_status( $status = '' ) {
+        switch ( $status ) {
+            case COMMUNITY_DIRECTORY_ENUM_PENDING:
+                return 'pending';
+            case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
+                return 'publish';
+            default:
+                return 'draft';
+        }
+    }
+
+    /**
+     * Updates the status of a wp post
+     * 
+     * @param           $post_id        int             ID of the wp post to update
+     * @param           $status         string          COMMUNITY_DIRECTORY_ENUM_(PENDING|ACTIVE)
+     * @return                          (int|WP_Error)  The post ID on success, or error
+     */
+    public static function update_post_status( $post_id, $status ) {
+        return wp_update_post(
+            array(
+                'ID' => $post_id,
+                'post_status' => self::location_status_to_post_status( $status )
+            )
+        );
+    }
+
+    /**
+     * Force deletes an individual post
+     */
     public static function delete_location_post( $post_id ) {
         return wp_delete_post( $post_id, true );
     }
