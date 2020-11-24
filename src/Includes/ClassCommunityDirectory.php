@@ -6,6 +6,7 @@ use Maruf89\CommunityDirectory\Includes\ClassActivator;
 use Maruf89\CommunityDirectory\Includes\ClassTables;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
 use Maruf89\CommunityDirectory\Includes\ClassUWPForms;
+use Maruf89\CommunityDirectory\Includes\ClassShortcodes;
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
 use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
 use Maruf89\CommunityDirectory\Admin\ClassAccount;
@@ -47,6 +48,7 @@ final class ClassCommunityDirectory {
         $this->admin = new ClassAdmin();
         $this->location = new ClassLocation();
         $this->uwp_forms = new ClassUWPForms();
+        $this->shortcodes = new ClassShortcodes();
 
         $this->admin_uwpform_builder = new ClassUWPFormBuilder();
         $this->account = new ClassAccount();
@@ -55,13 +57,17 @@ final class ClassCommunityDirectory {
         $this->load_tables_actions_and_filters( $this->tables );
         $this->load_location_actions_and_filters( $this->location );
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
+        $this->load_public_actions_and_filters( $this->assets );
+
+        // shortcodes
+        $this->load_shortcodes( $this->shortcodes );
 
         //admin
         $this->load_account_actions_and_filters( $this->account );
         $this->load_menus_actions_and_filters( $this->menus );
         $this->load_uwp_form_hooks_and_filters( $this->admin_uwpform_builder );
 
-        add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
+        
     }
 
     public function has_required_plugins() {
@@ -98,8 +104,11 @@ final class ClassCommunityDirectory {
         register_activation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'activate' ) );
         register_deactivation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'deactivate' ) );
         add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
-        add_action( 'init', array($this, 'load_plugin_textdomain'));
-        add_action( 'community_directory_language_file_add_string', array($this, 'register_string'), 10, 1);
+        add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+        add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
+        add_action( 'init', array( __NAMESPACE__ . '\\ClassLocation', 'register_location_post_type' ) );
+	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
+        add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
     }
 
     /**
@@ -117,8 +126,9 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_tables_actions_and_filters($instance) {
-        add_filter( 'wpmu_drop_tables', array($instance, 'drop_tables_on_delete_blog'));
+    public function load_tables_actions_and_filters( $instance ) {
+        add_action( 'community_directory_create_tables', array( $instance, 'create_tables' ), 10, 0 );
+        add_filter( 'wpmu_drop_tables', array( $instance, 'drop_tables_on_delete_blog' ) );
     }
 
     /**
@@ -141,6 +151,14 @@ final class ClassCommunityDirectory {
         add_filter( 'uwp_form_input_html_locationselect', array( $instance, 'builder_extra_fields_locationselect' ), 10, 4 );
     }
 
+    public function load_shortcodes( $instance ) {
+        add_shortcode( 'community_directory_list_locations', array( $instance, 'list_locations' ) );
+    }
+
+    public function load_public_actions_and_filters( $instance ) {
+        add_filter( 'single_template', array( $instance, 'load_location_template' ), 99 );
+    }
+
     /**
      * Actions & Filters for account & registration
      */
@@ -155,7 +173,7 @@ final class ClassCommunityDirectory {
      * @param $instance
      */
     public function load_menus_actions_and_filters($instance) {
-        add_action( 'load-nav-menus.php', array($instance, 'users_wp_admin_menu_metabox') );
+        // add_action( 'load-nav-menus.php', array($instance, 'users_wp_admin_menu_metabox') );
         add_action( 'admin_bar_menu', array($instance, 'admin_bar_menu'), 51 );
     }
 
@@ -181,16 +199,33 @@ final class ClassCommunityDirectory {
 
     }
 
+	/**
+	 * Flush rewrite rules.
+	 *
+	 * @return      void
+	 */
+	public function flush_rewrite_rules(){
+		flush_rewrite_rules();
+	}
+
     /**
      * Load the plugin text domain for translation.
      *
-     * @since       1.0.0
+     * @since       2020.11
      * @package     community-directory
      * @return      void
      */
     public function load_plugin_textdomain() {
 
-        load_plugin_textdomain( 'community-directory', false, basename( dirname (dirname( __FILE__ ) ) ) . '/languages' );
+        $domain = COMMUNITY_DIRECTORY_NAME;
+        $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+
+        if ( $loaded = load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . 'plugins' . '/' . $domain . '-' . $locale . '.mo' ) ) {
+
+        } else {
+            // die(basename( dirname(dirname(dirname( __FILE__ ) ))) . '/languages/');
+            load_plugin_textdomain( $domain, FALSE, basename( dirname(dirname(dirname( __FILE__ ) ))) . '/languages/' );
+        }
 
         do_action('community_directory_loaded');
 

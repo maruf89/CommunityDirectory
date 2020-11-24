@@ -50,7 +50,7 @@ class ClassAdminSettings {
             // $settings[] = include( 'class-settings-emails.php' );
             // $settings[] = include( 'class-settings-import-export.php' );
             // $settings[] = include( 'class-settings-addons.php' );
-            // $settings[] = include( 'class-settings-uninstall.php' );
+            $settings[] = new ClassSettingsUninstall();
 
             self::$settings = apply_filters( 'community_directory_get_settings_pages', $settings );
         }
@@ -539,6 +539,7 @@ class ClassAdminSettings {
                     } else {
                         $option_value = self::get_option( $value['id'], $value['default'] );
                     }
+
                     $visibility_class = array();
 
                     if ( ! isset( $value['hide_if_checked'] ) ) {

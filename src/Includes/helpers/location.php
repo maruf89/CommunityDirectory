@@ -21,6 +21,7 @@ function community_directory_get_location_names( $status = '' ) {
 }
 
 function community_directory_status_to_enum( $status = 'active' ) {
+    
     switch (strtoupper($status)) {
         case 'PENDING':
             return COMMUNITY_DIRECTORY_ENUM_PENDING;

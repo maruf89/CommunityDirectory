@@ -123,6 +123,9 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         return apply_filters( 'community_directory_get_sections_' . $this->id, $sections );
     }
 
+    private function is_loc_active( $status, $ifTrue = true, $ifFalse = false ) {
+        return $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? $ifTrue : $ifFalse;
+    }
 
     /**
      * Save settings.
@@ -133,7 +136,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         $settings = $this->get_settings( $current_section );
         
         if ( $current_section === 'edit' ) do_action( 'community_directory_settings_save_edit_location_list' );
-        ClassAdminSettings::save_fields( $settings );
+        else ClassAdminSettings::save_fields( $settings );
     }
 
     public function output_location_list( $value ) {
@@ -156,10 +159,6 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
             </tr>
 
         <?php endforeach;
-    }
-
-    private function is_loc_active( $status, $ifTrue = true, $ifFalse = false ) {
-        return $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? $ifTrue : $ifFalse;
     }
 
     public function output_edit_location_list( $value ) {
@@ -227,7 +226,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                                 value="" /></td>
                     <td>–––</td>
                     <td>
-                        <select class="edit-status edit-field changed"
+                        <select class="edit-status edit-field"
                                 name="new_loc_status[]">
                             <option value="<?= COMMUNITY_DIRECTORY_ENUM_ACTIVE ?>"><?= __( 'Active', 'community-directory' ) ?></option>
                             <option value="<?= COMMUNITY_DIRECTORY_ENUM_PENDING ?>" selected><?= __( 'Pending', 'community-directory' ) ?></option>
@@ -268,14 +267,15 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         if ( isset ( $data['new_loc_display_name'] ) )
             foreach ( $data['new_loc_display_name'] as $id => $display_name ){
                 $merged_create_arr[$id] = array(
-                    ['display_name'] => $display_name
+                    'display_name' => $display_name
                 );
             }
             
         if ( isset ( $data['new_loc_status'] ) )
-            foreach ( $data['new_loc_status'] as $id => $display_name ){
+            foreach ( $data['new_loc_status'] as $id => $status ){
                 // Cannot create new location without an existing display_name set
                 if ( !isset( $merged_create_arr[$id] ) ) continue;
+                $merged_create_arr[$id]['status'] = $status;
             }
 
         // Will hold the messages for each kind of change
@@ -286,7 +286,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
             do_action( 'community_directory_update_locations', $merged_update_arr );
             array_push( $updated_message_arr, sprintf( __( 'Updated %d location(s)', 'community-directory' ), $updated_loc_count ) );
         }
-
+        
         $created_loc_count = count( $merged_create_arr );
         if ( $created_loc_count ) {
             do_action( 'community_directory_create_locations', $merged_create_arr );

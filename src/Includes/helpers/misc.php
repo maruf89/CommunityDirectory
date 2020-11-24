@@ -183,7 +183,7 @@ if ( !function_exists( 'wp_insert_rows' ) ) {
         }
         
         $sql = $wpdb->prepare($query, $values);
-        console_log($sql);
+
         if ($wpdb->query($sql)) {
             return true;
         } else {

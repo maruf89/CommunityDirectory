@@ -24,7 +24,7 @@ class ClassUWPFormBuilder {
             'class'       =>  'community-directory-location',
             'icon'        =>  'location',
             'name'        =>  __( 'Community Directory Location', 'community-directory' ),
-            'description' =>  __( 'Adds a input for Location field.', 'community-directory' ),
+            'description' =>  __( 'Adds an input for Location field.', 'community-directory' ),
             'defaults'    => array(
                 'admin_title'         =>  'Location',
                 'site_title'          =>  'Location',

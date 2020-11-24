@@ -1,27 +1,9 @@
 <?php
 
 /**
- * Creates CommunityDirectory related tables.
- *
- * @since       0.0.1
- * @package     community-directory
- *
- * @return      void
- */
-function community_directory_create_tables() {
-    $Tables = new ClassTables();
-    $Tables->create_tables();
-}
-
-function community_directory_drop_tables_on_delete_blog( $tables ) {
-    $Tables = new ClassTables();
-    return $Tables->drop_tables_on_delete_blog( $tables );
-}
-
-/**
  * Returns the installation type.
  *
- * @since       1.0.0
+ * @since       2020.11
  * @package     userswp
  *
  * @return      string      Installation type.

@@ -14,6 +14,7 @@
         if ($(el).hasClass('edit-status')) $(el).addClass('changed');
       });
       $table.append($clone);
+      $clone.find('.edit-name').focus();
     });
   
     // Deletes locations via ajax

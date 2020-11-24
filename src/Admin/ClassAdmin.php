@@ -31,7 +31,7 @@ class ClassAdmin {
     /**
      * Redirects to UsersWP info page after plugin activation.
      *
-     * @since       1.0.0
+     * @since       2020.11
      * @package     community-directory
      * @return      void
      */

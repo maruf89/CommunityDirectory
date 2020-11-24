@@ -3,9 +3,10 @@
    Plugin Name: Community Directory
    Plugin URI: http://www.priemuses.lt
    description: A plugin to connect communities.
-   Version: 0.1
+   Version: 2020.11
    Author: Marius V. Miliunas
    Author URI: http://www.maruf-hops-maps.com
+   Text Domain: community-directory
    License: GPL2
    */
 
@@ -32,6 +33,10 @@
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_ADMIN_PATH' ) ) {
     define( 'COMMUNITY_DIRECTORY_ADMIN_PATH', plugin_dir_path( __FILE__ ) . 'src/Admin/' );
+  }
+
+  if ( ! defined( 'COMMUNITY_DIRECTORY_TEMPLATES_PATH' ) ) {
+    define( 'COMMUNITY_DIRECTORY_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'src/views/' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_PLUGIN_URL' ) ) {

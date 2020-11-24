@@ -2,7 +2,7 @@
 /**
  * Gets CommunityDirectory setting value using key.
  *
- * @since       1.0.0
+ * @since       2020.11
  * @package     community-directory
  *
  * @param       string          $key        Setting Key.
@@ -28,7 +28,7 @@ function community_directory_get_option( $key = '', $default = false, $cache = t
 /**
  * Updates CommunityDirectory setting value using key.
  *
- * @since       1.0.0
+ * @since       2020.11
  * @package     community-directory
  *
  * @param       string|bool     $key        Setting Key.
