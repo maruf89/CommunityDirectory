@@ -53,6 +53,7 @@
             "src/Includes/helpers/misc.php",
             "src/Includes/helpers/tables.php",
             "src/Includes/helpers/acf.php",
+            "src/Includes/helpers/entity.php",
             "src/Admin/Settings/functions.php"
         ]
     }

@@ -3,6 +3,7 @@
 namespace Maruf89\CommunityDirectory\Admin;
 
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
 
 /**
  * The account and registration part of the plugin
@@ -55,24 +56,33 @@ class ClassAccount {
              !isset( $result[ClassUWPFormBuilder::$community_directory_location_name] ) )
                 return $result;
 
+        // Get the location's display name
         $location = $result[ClassUWPFormBuilder::$community_directory_location_name];
 
-        $loc_data = array( 'display_name' => $location );
+        $loc_data = array( 'display_name' => $location, 'user_id' => $user_id );
         $loc_data = apply_filters( 'community_directory_prepare_location_for_creation', $loc_data );
         
         // Only add new location if the user didn't enter an already existing location
-        if ( !community_directory_location_exists( $location ) )
-            do_action( 'community_directory_create_locations', array( $loc_data ) );
+        if ( !community_directory_location_exists( $location ) ) {
+            $inserted_data = community_directory_create_location( $loc_data );
+            $loc_post_id = $inserted_data['post_id'];
+        } else {
+            $post = get_page_by_path( $loc_data['slug'], OBJECT, ClassLocation::$location_post_type );
+            $loc_post_id = $post->ID;
+        }
 
-        do_action( 'community_directory_add_entity_location_data', array(
+        $entity_post_id = community_directory_add_entity_location_data( array(
             'user_id' => $user_id,
+            'first_name' => $result['first_name'],
+            'last_name' => $result['last_name'],
             'location_id' => community_directory_get_row_var( $loc_data['slug'], 'id' ),
+            'location_post_id' => $loc_post_id,
             'slug' => $loc_data['slug'],
         ) );
 
         // Save user meta to ACF
         do_action( 'community_directory_acf_initiate_entity', array(
-            'user_id' => $user_id,
+            'entity_id' => $entity_post_id,
             'first_name' => $result['first_name'],
             'last_name' => $result['last_name'],
         ) );

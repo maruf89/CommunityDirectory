@@ -37,11 +37,11 @@ final class ClassCommunityDirectory {
         $this->init_hooks();
 
         $this->assets = new ClassPublic();
-        $this->user = new ClassEntity();
+        $this->user = ClassEntity::get_instance();
         $this->menus = new ClassAdminMenus();
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
-        $this->location = new ClassLocation();
+        $this->location = ClassLocation::get_instance();
         $this->uwp_forms = new ClassUWPForms();
         $this->shortcodes = new ClassShortcodes();
         $this->acf = new ClassACF();
@@ -55,6 +55,7 @@ final class ClassCommunityDirectory {
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
         $this->load_public_actions_and_filters( $this->assets );
         $this->load_user_actions_and_filters( $this->user );
+        $this->load_acf_actions_and_filters( $this->acf );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -143,6 +144,8 @@ final class ClassCommunityDirectory {
         add_action( 'community_directory_delete_location', array( $instance, 'delete_location' ), 10, 1 );
 
         add_filter( 'community_directory_prepare_location_for_creation', array( $instance, 'prepare_location_for_creation' ) );
+
+        add_filter( 'acf/update_value/key=' . ClassACF::$field_is_active_key, array( $instance, 'update_inhabitants_count' ), 10, 3 );
     }
 
     /**
@@ -161,10 +164,17 @@ final class ClassCommunityDirectory {
     }
 
     public function load_user_actions_and_filters( $instance ) {
-        add_action( 'community_directory_add_entity_location_data', array( $instance, 'add_entity_location_data' ), 10, 1 );
-
         add_filter( 'community_directory_get_users_for_location', array( $instance, 'get_entities_for_location' ), 10, 2 );
     }
+
+    public function load_acf_actions_and_filters( $instance ) {
+        add_action( 'acf/init', array( $instance, 'initiate_plugin' ) );
+        add_action( 'community_directory_acf_initiate_entity', array( $instance, 'initiate_entity' ) );
+
+        add_filter( 'community_directory_required_acf_fields', array( $instance, 'generate_required_fields' ), 10, 1 );
+    }
+
+    
 
     /**
      * Actions & Filters for account & registration

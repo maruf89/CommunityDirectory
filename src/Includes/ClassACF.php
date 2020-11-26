@@ -24,13 +24,6 @@ class ClassACF {
      * @package     community-directory
      * @return      void
      */
-    public function __construct() {
-        add_action( 'acf/init', array( $this, 'initiate_plugin' ) );
-        add_action( 'community_directory_acf_initiate_entity', array( $this, 'initiate_user' ) );
-
-        add_filter( 'community_directory_required_acf_fields', array( $this, 'generate_required_fields' ), 10, 1 );
-    }
-
     public static function initiate_plugin() {
         // if form already exists, do nothing
         if ( acf_get_field_group_post( self::$form_group_key ) ) return;
@@ -40,13 +33,13 @@ class ClassACF {
             'title' => __( 'Community Directory Form', 'community-directory' ),
             'fields' => apply_filters( 'community_directory_required_acf_fields', array() ),
             'location' => array (
-                // array (
-                //     array (
-                //         'param' => 'post_type',
-                //         'operator' => '==',
-                //         'value' => 'post',
-                //     ),
-                // ),
+                array (
+                    array (
+                        'param' => 'post_type',
+                        'operator' => '==',
+                        'value' => ClassEntity::$entity_post_type,
+                    ),
+                ),
             ),
             'menu_order' => 0,
             'position' => 'normal',
@@ -115,31 +108,8 @@ class ClassACF {
         );
 
         $fields_arr[] = array(
-            'key' => 'field_cd_profile_picture',
-			'label' => __( 'Profile Picture', 'community-directory' ),
-			'name' => 'profile_picture',
-			'type' => 'image',
-			'instructions' => __( 'Upload a photo of your place, which will be displayed on your profile', 'community-directory' ),
-			'required' => 0,
-			'wrapper' => array(
-				'class' => 'cd-image',
-			),
-			'conditional_logic' => 0,
-			'return_format' => 'array',
-			'preview_size' => 'medium',
-			'library' => 'all',
-			'min_width' => 300,
-			'min_height' => 300,
-			'min_size' => '',
-			'max_width' => '',
-			'max_height' => '',
-			'max_size' => 15,
-			'mime_types' => 'jpg,jpeg,png,gif',
-        );
-
-        $fields_arr[] = array(
             'key' => 'field_cd_user_about',
-			'label' => 'Apie Mus',
+			'label' => __( 'Bio', 'community-directory' ),
 			'name' => 'user_about',
 			'type' => 'textarea',
 			'instructions' => __( 'Write something about yourself or about your place. Don\'t know what to write about? Write about what you do, the history of your place, or what you would like to see more of around you.', 'community-directory' ),
@@ -150,30 +120,61 @@ class ClassACF {
 			'maxlength' => '2000',
         );
 
+        $fields_arr[] = array(
+            'key' => 'field_cd_contact_email',
+			'label' => __( 'Contact Email', 'community-directory' ),
+			'name' => 'contact_email',
+			'type' => 'email',
+			'instructions' => __( 'Add an e-mail by which others can reach you.', 'community-directory' ),
+			'wrapper' => array(
+				'class' => 'cd-email cd-text',
+			),
+			'placeholder' => __( 'email@example.com', 'community-directory' ),
+        );
+
+        $fields_arr[] = array(
+            'key' => 'field_cd_contact_tel',
+			'label' => __( 'Contact Telephone', 'community-directory' ),
+			'name' => 'contact_tel',
+			'type' => 'number',
+			'instructions' => __( 'Add a phone number by which you can be reached.', 'community-directory' ),
+			'wrapper' => array(
+				'class' => 'cd-number cd-text',
+			),
+			'placeholder' => __( '248-851-6979', 'community-directory' ),
+        );
+
+        $fields_arr[] = array(
+            'key' => 'field_cd_offering',
+			'label' => __( 'Offering', 'community-directory' ),
+			'name' => 'offering',
+			'type' => 'number',
+			'instructions' => __( 'Add a phone number by which you can be reached.', 'community-directory' ),
+			'wrapper' => array(
+				'class' => 'cd-number cd-text',
+			),
+			'placeholder' => __( '248-851-6979', 'community-directory' ),
+        );
+
 
         return $fields_arr;
-    }
-
-    public static function generate_loc_name_from_user_name( $first, $last ) {
-        $l = substr( $last, 0, 1 ) . '.';
-        return "$first $l";
     }
 
     /**
      * Creates a user's initial field data in the ACF user meta db
      * 
-     * @param       $user_id        a_array     requires: 'first_name', 'last_name', 'user_id'
+     * @param       $entity_data        a_array     requires: 'first_name', 'last_name', 'entity_id'
      */
-    public static function initiate_user( $user_data ) {
+    public static function initiate_entity( $entity_data ) {
         // turn array vars into accessable vars
-        extract( $user_data );
+        extract( $entity_data );
 
         $update_values = array();
         $update_values[self::$field_location_name_key] =
-            self::generate_loc_name_from_user_name( $first_name, $last_name );
+            community_directory_generate_display_name_from_user_name( $first_name, $last_name );
         $update_values[self::$field_is_active_key] = 'false';
         
-        acf_update_values( $update_values, "user_{$user_id}" );
+        acf_update_values( $update_values, $entity_id );
     }
 
 }

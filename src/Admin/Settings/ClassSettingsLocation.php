@@ -10,6 +10,9 @@
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;
 
+// Temp for testing
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
@@ -282,9 +285,9 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         // Will hold the messages for each kind of change
         $updated_message_arr = array();
 
-        $updated_loc_count = count( $merged_update_arr );
-        if ( $updated_loc_count ) {
-            do_action( 'community_directory_update_locations', $merged_update_arr );
+        
+        if ( count( $merged_update_arr ) ) {
+            $updated_loc_count = community_directory_update_locations( $merged_update_arr );
             array_push( $updated_message_arr, sprintf( __( 'Updated %d location(s)', 'community-directory' ), $updated_loc_count ) );
         }
         

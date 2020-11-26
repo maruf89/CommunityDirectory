@@ -1,24 +1,34 @@
 <?php
 
-function community_directory_get_locations( $status = '' ) {
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
+
+/**
+ * Creates a new location in the db
+ * 
+ * @param           $data       a_array         Must contain 'display_name'
+ * @return          Returns the wp_post id upon create or WP_Error
+ */
+function community_directory_create_location( $data ) {
+    $Location = ClassLocation::get_instance();
+    return $Location::create_location( $data );
+}
+
+function community_directory_get_locations( $active = false, $with_inhabitants = false ) {
     global $wpdb;
 
+    $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
     $where = '';
-    if ( !empty( $status ) ) $where = " WHERE status = '$status'";
+    if ( $active ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
+    if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
 
-    return $wpdb->get_results( "SELECT * FROM " . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . $where );
+    return $wpdb->get_results( $sql );
 }
 
-function community_directory_get_location_names( $status = '' ) {
-    $locations = community_directory_get_locations( $status );
-    $locations_by_name = array();
-
-    foreach ( $locations as $row ) {
-        $locations_by_name[$row->slug] = $row->display_name;
-    }
-
-    return $locations_by_name;
+function community_directory_update_locations( $data ) {
+    $Location = ClassLocation::get_instance();
+    return $Location::update_locations( $data );
 }
+
 
 function community_directory_status_to_enum( $status = 'active' ) {
     

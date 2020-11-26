@@ -10,6 +10,16 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassEntity {
 
+    private static $instance;
+
+    public static function get_instance() {
+        if (self::$instance == null) {
+            self::$instance = new ClassEntity();
+        }
+ 
+        return self::$instance;
+    }
+    
     public static $entity_post_type = 'cd-entity';
 
     public static function register_entity_post_type() {
@@ -64,28 +74,33 @@ class ClassEntity {
     }
 
     /**
-     * Adds a user to the CD User table with the given location data
+     * Creates a new Entity post with the user's info
      * 
-     * @param       $data       a_array         must contain: 'user_id', 'location_id', 'slug'
+     * @param       $data       a_array         must contain: 'user_id', 'location_id', 'first_name', 'last_name', 'location_post_id'
      * return                   int|WP_Error    either the returned row id or error
      */
     public static function add_entity_location_data( $data ) {
-        if ( !isset( $data['user_id'] ) || !isset( $data['location_id'] ) || !isset( $data['slug'] ) ) {
-            $error = new WP_Error();
-            $error->add( 'ClassEntity->add_entity_location_data requires user_id, slug, and location_id' );
-            return $error;
+        // Turn the array variables to be locally accessible
+        extract( $data );
+        
+        if ( !isset( $user_id ) || !isset( $location_id ) || !isset( $location_post_id ) ) {
+            dump($data);
+            die( 'ClassEntity->add_entity_location_data requires user_id, location_id, first_name, last_name, location_post_id' );
         }
         
-        global $wpdb;
-        return $wpdb->insert(
-            COMMUNITY_DIRECTORY_DB_TABLE_USERS,
+        $title = community_directory_generate_display_name_from_user_name( $first_name, $last_name );
+        
+        $row_id = wp_insert_post(
             array(
-                'user_id' => $data['user_id'],
-                'location_id' => $data['location_id'],
-                'slug' => $data['slug'],
+                'post_author' => $user_id,
+                'post_title' => $title,
+                'post_name' => strtolower( $title ),
+                'post_parent' => $location_post_id,
+                'post_type' => self::$entity_post_type,
             ),
-            array( '%d', '%d', '%s' )
         );
+
+        return $row_id;
     }
 
     public static function get_entities_for_location( $user_arr, $loc_id_or_slug ) {
@@ -98,11 +113,11 @@ class ClassEntity {
         $location_name = ClassACF::$field_location_name;
 
         $users = $wpdb->get_results("
-            SELECT cd_users.user_id, usermeta.meta_value as $location_name
-            FROM $user_table AS cd_users
-            JOIN $wpdb->usermeta AS usermeta
-            ON cd_users.user_id = usermeta.user_id
-            WHERE cd_users.$where_var = '$loc_id_or_slug' AND usermeta.meta_key = '$location_name'
+            SELECT posts.ID, posts.post_title as $location_name
+            FROM $wpdb->posts AS parent
+            JOIN $wpdb->posts AS posts
+            ON parent.ID = posts.post_parent
+            WHERE parent.post_name = '$loc_id_or_slug'
         ");
 
         return array_merge( $user_arr, $users );

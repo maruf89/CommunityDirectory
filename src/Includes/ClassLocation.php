@@ -10,6 +10,16 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassLocation {
 
+    private static $instance;
+
+    public static function get_instance() {
+        if (self::$instance == null) {
+            self::$instance = new ClassLocation();
+        }
+ 
+        return self::$instance;
+    }
+
     public static $location_post_type = 'location';
 
     public function __construct() {
@@ -39,6 +49,7 @@ class ClassLocation {
             'description' => __( 'Community Directory Locations', 'community-directory' ), 
             'exclude_from_search' => false,
             'show_ui' => false,
+            'hierarchical' => true,
             'show_in_menu' => COMMUNITY_DIRECTORY_NAME,
             'capability_type' => array( 'location', 'locations' ),
             'capabilities' => array(
@@ -69,43 +80,48 @@ class ClassLocation {
     }
 
     /**
-     * Add custom taxonomies
-     *
-     * Additional custom taxonomies can be defined here
-     * http://codex.wordpress.org/Function_Reference/register_taxonomy
+     * Accepts an array of location 'id' values and returns the rows
+     * 
+     * @param       $ids        array           array of location ids
+     * @param       $formatted  string|bool     if string, will use that as the key to format rows by
+     *                                          if true, defaults to default key, if false - returns raw
+     * @return                  ARRAY_A         the rows
      */
-    public static function add_custom_location_taxonomy() {
-        // Not currently used
+    public static function get_locations_by_ids( $ids, $formatted = false ) {
+        if ( gettype( $ids ) === 'integer' ) $ids = array( $ids );
+
+        if ( !count( $ids ) ) return false;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+
+        $id_string = "'" . implode( "', '", $ids ) . "'";
         
-        // Add new "Locations" taxonomy to Posts 
-        register_taxonomy('location', 'post', array(
-            // Hierarchical taxonomy (like categories)
-            'hierarchical' => true,
-            // This array of options controls the labels displayed in the WordPress Admin UI
-            'labels' => array(
-                'name' => __( 'Locations', 'taxonomy general name', 'community-directory' ),
-                'singular_name' => __( 'Location', 'taxonomy singular name', 'community-directory' ),
-                'search_items' =>  __( 'Search Locations', 'community-directory' ),
-                'all_items' => __( 'All Locations', 'community-directory' ),
-                'parent_item' => __( 'Parent Location', 'community-directory' ),
-                'parent_item_colon' => __( 'Parent Location:', 'community-directory' ),
-                'edit_item' => __( 'Edit Location', 'community-directory' ),
-                'update_item' => __( 'Update Location', 'community-directory' ),
-                'add_new_item' => __( 'Add New Location', 'community-directory' ),
-                'new_item_name' => __( 'New Location Name', 'community-directory' ),
-                'menu_name' => __( 'Locations', 'community-directory' ),
-            ),
-            // Control the slugs used for this taxonomy
-            'rewrite' => array(
-                'slug' => __( 'location', 'community-directory' ), // This controls the base slug that will display before each term
-                'with_front' => false, // Don't display the category base before "/locations/"
-                'hierarchical' => true // This will allow URL's like "/locations/boston/cambridge/"
-            ),
-        ));
+        global $wpdb;
+        if ( $results = $wpdb->get_results("
+            SELECT *
+            FROM $table
+            WHERE id IN ($id_string)
+        ", ARRAY_A) ) {
+            switch ( gettype( $formatted ) ) {
+                case 'string':
+                    return self::format_row_locations( $results, $formatted );
+                default:
+                    return $formatted ? self::format_row_locations( $results ) : $results;
+            }
+            
+        } else return false;
+    }
+
+    public static function format_row_locations( $rows, $format_by = 'id' ) {
+        $formatted = array();
+        foreach ( $rows as $row )
+            $formatted[$row[$format_by]] = $row;
+
+        return $formatted;
     }
 
     /**
-     * Updates an existing location's name and slug
+     * Updates any number of locations
      * 
      * @param           $update_locations_array     array   [id] => array([display_name] => 'string', [status] => 'enum') modifications
      * @return                                      true|false
@@ -116,26 +132,89 @@ class ClassLocation {
         global $wpdb;
         $update_array = array();
 
+        $updated_rows = 0;
+
+        // return the existing rows
+        $db_rows = self::get_locations_by_ids( array_keys( $update_locations_array ), true );
+
         foreach ( $update_locations_array as $id => $row ) {
+            
+            // changes will go here
             $data = array();
+            // the existing db row
+            $db_row =& $db_rows[$id];
+            
+            // Check if the display_name needs changing
             if ( isset( $row['display_name'] ) ) {
-                $data['display_name'] = community_directory_format_display_name( $row['display_name'] );
-                $data['slug'] = community_directory_location_name_to_slug( $row['display_name'] );
-            }
-            if ( isset( $row['status'] ) ) {
-                $data['status'] = community_directory_status_to_enum( $row['status'] );
-                $post_id = community_directory_get_row_var( $id, 'post_id' );
-                self::update_post_status( $post_id, $data['status'] );
+                $display_name = community_directory_format_display_name( $row['display_name'] );
+                if ( community_directory_values_differ( $display_name, $db_row['display_name'] )) {
+                    $data['display_name'] = $display_name;
+                    $data['slug'] = community_directory_location_name_to_slug( $display_name );
+                }
+                
             }
 
-            $result = $wpdb->update(
-                COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-                $data,
-                array( 'id' => $id )
-            );
+            // Check if status needs changing
+            if ( isset( $row['status'] ) ) {
+                $status = community_directory_status_to_enum( $row['status'] );
+                if ( community_directory_values_differ( $status, $db_row['status'] ) ) {
+                    $data['status'] = $status;
+                }
+            }
+
+            // Check what changed so that we update the corresponding custom post type
+            $changes = array_keys( $data );
+            
+            if ( count( $changes ) ) {
+                self::update_post_with_changes( $db_row['post_id'], $data );
+
+                if ( $updated_num = $wpdb->update(
+                    COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+                    $data,
+                    array( 'id' => $id )
+                ) ) {
+                    $updated_rows += $updated_num;
+                }
+            }
         }
         
-        return true;
+        return $updated_rows;
+    }
+
+    public static function update_inhabitants_count( $value, $post_id, $field ) {
+        if ( !isset( $_POST['acf'][ClassACF::$field_is_active_key] ) ) return $value;
+        
+        global $wpdb;
+        global $post;
+        
+        // get the old (saved) value
+        $old_value = get_field(ClassACF::$field_is_active, $post_id);
+        // get the new (posted) value
+        $new_value = $_POST['acf'][ClassACF::$field_is_active_key];
+
+        $post_parent = $post->post_parent;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = "UPDATE $table SET ";
+        $plus_minus_active = $new_value ? '+' : '-';
+        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
+        $plus_minus_inactive = $new_value ? '-' : '+';
+        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
+        $where = "WHERE post_id = $post_parent";
+        
+        $res = $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
+
+        $status = $new_value ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
+        
+        // Update the post to be published or pending
+        wp_update_post(
+            array(
+                'ID' => $post_id,
+                'post_status' => self::location_status_to_post_status( $status )
+            )
+        );
+        
+        return $value;
     }
 
     /**
@@ -151,6 +230,7 @@ class ClassLocation {
         // If status isn't set, default is PENDING
         $location_arr['status'] = isset( $location_arr['status'] ) ?
         community_directory_status_to_enum( $location_arr['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
+        $location_arr['inactive_inhabitants'] = 1;
         
         return $location_arr;
     }
@@ -191,21 +271,38 @@ class ClassLocation {
     }
 
     /**
-     * Creates a new wp post for the location
-     * 
-     * @param       $data       array       an associative array with 'display_name', and 'slug' required
+     * Same as above except only creates 1 location and returns the custom post type post_id on success
      */
-    public static function create_new_post( $data ) {
-        // Create post object
-        $my_post = array(
-            'post_title'    => $data['display_name'],
-            'post_content'  => '',
-            'post_status'   => self::location_status_to_post_status( $data['status'] ),
-            'post_type'     => self::$location_post_type,
+    public static function create_location ( $data ) {
+
+        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
+            die( 'display_name must be set and cannot be empty' );
+        }
+
+        global $wpdb;
+
+        if ( !isset( $data['slug'] ) )
+            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
+
+        $data['post_id'] = self::create_new_post( $data );
+        $wpdb->insert( 
+            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+            array(
+                'display_name'  => $data['display_name'],
+                'slug'          => $data['slug'],
+                'status'        => $data['status'],
+                'post_id'       => $data['post_id'],
+                'inactive_inhabitants' => $data['inactive_inhabitants'],
+            ),
+            array(
+                '%s',
+                '%s',
+                '%s',
+                '%d',
+            )
         );
-        
-        // Insert the post into the database
-        return wp_insert_post( $my_post );
+
+        return $data;
     }
 
     /**
@@ -261,19 +358,53 @@ class ClassLocation {
     }
 
     /**
-     * Updates the status of a wp post
+     * Creates a new wp post for the location
+     * 
+     * @param       $data       array       an associative array with 'display_name', and 'slug' required
+     */
+    public static function create_new_post( $data ) {
+        // Create post object
+        $my_post = array(
+            'post_title'    => $data['display_name'],
+            'post_status'   => self::location_status_to_post_status( $data['status'] ),
+            'post_type'     => self::$location_post_type,
+            'post_author'   => isset( $data['user_id' ] ) ? $data['user_id'] : 0,
+        );
+        
+        // Insert the post into the database
+        $post_id = wp_insert_post( $my_post );
+
+        // For some reason the post_name doesn't save upon insertion so we update it afterwards
+        global $wpdb;
+        $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET post_name = %s where ID = $post_id", $data['slug'] ) );
+
+        return $post_id;
+    }
+
+    /**
+     * Updates the data of a wp post
      * 
      * @param           $post_id        int             ID of the wp post to update
-     * @param           $status         string          COMMUNITY_DIRECTORY_ENUM_(PENDING|ACTIVE)
+     * @param           $data           ARRAY_A         containing any of the possible values
      * @return                          (int|WP_Error)  The post ID on success, or error
      */
-    public static function update_post_status( $post_id, $status ) {
-        return wp_update_post(
-            array(
-                'ID' => $post_id,
-                'post_status' => self::location_status_to_post_status( $status )
-            )
-        );
+    public static function update_post_with_changes( $post_id, $data ) {
+        $update_data = array( 'ID' => $post_id );
+        foreach ( $data as $key => $value ) {
+            switch ( $key ) {
+                case 'display_name':
+                    $update_data['post_title'] = $data['display_name'];
+                    break;
+                case 'slug':
+                    $update_data['post_name'] = $data['slug'];
+                    break;
+                case 'status':
+                    $update_data['post_status'] = self::location_status_to_post_status( $data['status'] );
+                    break;
+            }
+        }
+        
+        return wp_update_post( $update_data );
     }
 
     /**

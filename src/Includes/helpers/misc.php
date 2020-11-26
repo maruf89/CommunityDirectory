@@ -1,6 +1,22 @@
 <?php
 
 /**
+ * Converts the first and last variables to display name
+ */
+function community_directory_generate_display_name_from_user_name( $first, $last ) {
+    $first = ucfirst( $first );
+    $l = ucfirst( substr( $last, 0, 1 ) ) . '.';
+    return "$first $l";
+}
+
+/**
+ * Possibly some more in depth checks to come
+ */
+function community_directory_values_differ( $a, $b ) {
+    return $a !== $b;
+}
+
+/**
  * Display a help tip for settings.
  *
  * @param  string $tip Help tip text
