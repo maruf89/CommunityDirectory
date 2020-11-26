@@ -34,6 +34,24 @@ function community_directory_status_to_enum( $status = 'active' ) {
 }
 
 /**
+ * Returns a variable from a table
+ * 
+ * @param       $where_val          any         the value to check agaist
+ * @param       $var                string      the variable to get
+ * @param       $where_var          string      the field to check $where_val against
+ *                                              (if empty: returns 'id' if $where_val is an int, otherwise 'slug')
+ * @param       $table              string      the table to query on
+ * @return                          any
+ */
+function community_directory_get_row_var( $where_val, $var, $where_var = '', $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS ) {
+    global $wpdb;
+    if ( empty( $where_var ) )
+        $where_var = gettype( $where_val ) === 'integer' ? 'id' : 'slug';
+
+    return $wpdb->get_var( $wpdb->prepare( "SELECT $var FROM $table WHERE $where_var = %s", $where_val ) );
+}
+
+/**
  * Checks whether a location already exists with a given display name
  * 
  * @param $name 'string' value that gets converted to a display_name and checked against that value

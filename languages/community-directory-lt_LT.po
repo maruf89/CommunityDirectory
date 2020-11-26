@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-11-23 16:36+0200\n"
-"PO-Revision-Date: 2020-11-23 16:39+0200\n"
+"PO-Revision-Date: 2020-11-24 11:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -106,7 +106,7 @@ msgstr "Aktyvūs Gyventojai"
 #: src/Admin/Settings/ClassSettingsLocation.php:200
 #: src/Admin/Settings/ClassSettingsLocation.php:231
 msgid "Active"
-msgstr "Aktyku"
+msgstr "Aktyvu"
 
 #: src/Admin/Settings/ClassSettingsLocation.php:175
 msgid "Insert Location"

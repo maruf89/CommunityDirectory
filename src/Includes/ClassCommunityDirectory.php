@@ -1,12 +1,6 @@
 <?php
 
 namespace Maruf89\CommunityDirectory\Includes;
-use Maruf89\CommunityDirectory\Includes\ClassPublic;
-use Maruf89\CommunityDirectory\Includes\ClassActivator;
-use Maruf89\CommunityDirectory\Includes\ClassTables;
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
-use Maruf89\CommunityDirectory\Includes\ClassUWPForms;
-use Maruf89\CommunityDirectory\Includes\ClassShortcodes;
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
 use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
 use Maruf89\CommunityDirectory\Admin\ClassAccount;
@@ -43,12 +37,14 @@ final class ClassCommunityDirectory {
         $this->init_hooks();
 
         $this->assets = new ClassPublic();
+        $this->user = new ClassEntity();
         $this->menus = new ClassAdminMenus();
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
         $this->location = new ClassLocation();
         $this->uwp_forms = new ClassUWPForms();
         $this->shortcodes = new ClassShortcodes();
+        $this->acf = new ClassACF();
 
         $this->admin_uwpform_builder = new ClassUWPFormBuilder();
         $this->account = new ClassAccount();
@@ -58,6 +54,7 @@ final class ClassCommunityDirectory {
         $this->load_location_actions_and_filters( $this->location );
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
         $this->load_public_actions_and_filters( $this->assets );
+        $this->load_user_actions_and_filters( $this->user );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -107,6 +104,8 @@ final class ClassCommunityDirectory {
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
         add_action( 'init', array( __NAMESPACE__ . '\\ClassLocation', 'register_location_post_type' ) );
+        // add_action( 'init', array( __NAMESPACE__ . '\\ClassLocation', 'add_custom_location_taxonomy' ) );
+        add_action( 'init', array( __NAMESPACE__ . '\\ClassEntity', 'register_entity_post_type' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
         add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
     }
@@ -142,6 +141,8 @@ final class ClassCommunityDirectory {
 
         add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
         add_action( 'community_directory_delete_location', array( $instance, 'delete_location' ), 10, 1 );
+
+        add_filter( 'community_directory_prepare_location_for_creation', array( $instance, 'prepare_location_for_creation' ) );
     }
 
     /**
@@ -157,6 +158,12 @@ final class ClassCommunityDirectory {
 
     public function load_public_actions_and_filters( $instance ) {
         add_filter( 'single_template', array( $instance, 'load_location_template' ), 99 );
+    }
+
+    public function load_user_actions_and_filters( $instance ) {
+        add_action( 'community_directory_add_entity_location_data', array( $instance, 'add_entity_location_data' ), 10, 1 );
+
+        add_filter( 'community_directory_get_users_for_location', array( $instance, 'get_entities_for_location' ), 10, 2 );
     }
 
     /**

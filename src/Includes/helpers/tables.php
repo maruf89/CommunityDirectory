@@ -4,7 +4,7 @@
  * Returns the installation type.
  *
  * @since       2020.11
- * @package     userswp
+ * @package     community-directory
  *
  * @return      string      Installation type.
  */
@@ -19,7 +19,7 @@ function community_directory_get_installation_type() {
         }
 
         // Network active.
-        if ( is_plugin_active_for_network( 'userswp/userswp.php' ) ) {
+        if ( is_plugin_active_for_network( 'community-directory/community-directory.php' ) ) {
             if (defined('COMMUNITY_DIRECTORY_ROOT_PAGES')) {
                 if (COMMUNITY_DIRECTORY_ROOT_PAGES == 'all') {
                     // *. Multisite - Network Active - Pages on all sites

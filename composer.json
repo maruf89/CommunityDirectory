@@ -52,6 +52,7 @@
             "src/Includes/helpers/location.php",
             "src/Includes/helpers/misc.php",
             "src/Includes/helpers/tables.php",
+            "src/Includes/helpers/acf.php",
             "src/Admin/Settings/functions.php"
         ]
     }

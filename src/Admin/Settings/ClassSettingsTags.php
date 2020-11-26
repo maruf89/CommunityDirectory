@@ -15,30 +15,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * ClassSettingsLocation.
+ * ClassSettingsTags.
  */
-class ClassSettingsLocation extends AbstractClassSettingsPage {
+class ClassSettingsTags extends AbstractClassSettingsPage {
 
     private $settings;
 
     private $edit_display_name = 'display_name-';
-    private $edit_display_name_new = 'new_location-';
+    private $edit_display_name_new = 'new_tag-';
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id    = 'location';
-        $this->label = __( 'Locations', 'community-directory' );
+        $this->id    = 'tag';
+        $this->label = __( 'Tags', 'community-directory' );
 
         add_filter( 'community_directory_settings_tabs_array', array( $this, 'add_settings_page' ), 20 );
         add_action( 'community_directory_settings_' . $this->id, array( $this, 'output' ) );
         // add_action( 'community_directory_sections_' . $this->id, array( $this, 'output_toggle_advanced' ) );
         add_action( 'community_directory_settings_save_' . $this->id, array( $this, 'save' ) );
         add_action( 'community_directory_sections_' . $this->id, array( $this, 'output_sections' ) );
-        add_action( 'community_directory_admin_field_location_list', array( $this, 'output_location_list' ) );
-        add_action( 'community_directory_admin_field_edit_location_list', array( $this, 'output_edit_location_list' ) );
-        add_action( 'community_directory_settings_save_edit_location_list', array( $this, 'save_edit_location' ) );
+        add_action( 'community_directory_admin_field_tag_list', array( $this, 'output_tag_list' ) );
+        add_action( 'community_directory_admin_field_edit_tag_list', array( $this, 'output_edit_tag_list' ) );
+        add_action( 'community_directory_settings_save_edit_tag_list', array( $this, 'save_edit_tag' ) );
     }
 
     /**
@@ -68,15 +68,15 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                     array(
                         'title' => $title,
                         'type'  => 'title',
-                        'attr' => array( 'class="edit-locations-table form-table"' ),
-                        'desc'  => __( 'Edit existing locations or add new ones', 'community-directory' ),
+                        'attr' => array( 'class="edit-tags-table form-table"' ),
+                        'desc'  => __( 'Edit existing tags or add new ones', 'community-directory' ),
                         'desc_tip' => true,
                     ),
                     array(
-                        'name' => __( 'Edit Locations', 'community-directory' ),
-                        'desc'     => __( 'These are the locations currently active and selectable', 'community-directory' ),
-                        'id'    => 'edit_location',
-                        'type'  => 'edit_location_list',
+                        'name' => __( 'Edit Tags', 'community-directory' ),
+                        'desc'     => __( 'These are the tags currently active and selectable', 'community-directory' ),
+                        'id'    => 'edit_tag',
+                        'type'  => 'edit_tag_list',
                         'desc'  => __( 'temp', 'community-directory' ),
                         'desc_tip' => true,
                     ),
@@ -88,14 +88,14 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                     array(
                         'title' => $title,
                         'type'  => 'title',
-                        'desc'  => 'Everything dealing with locations',
+                        'desc'  => 'Everything dealing with tags',
                         'desc_tip' => true,
                     ),
                     array(
-                        'name'     => __( 'Locations', 'community-directory' ),
-                        'desc'     => __( 'These are the locations currently active and selectable', 'community-directory' ),
-                        'id'       => 'locations',
-                        'type'     => 'location_list',
+                        'name'     => __( 'Tags', 'community-directory' ),
+                        'desc'     => __( 'These are the tags currently active and selectable', 'community-directory' ),
+                        'id'       => 'tags',
+                        'type'     => 'tag_list',
                         'status'   => community_directory_status_to_enum( $current_section ),
                         'desc_tip' => true,
                     ),
@@ -115,16 +115,11 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     public function get_sections() {
 
         $sections = array(
-            ''      => __( 'Active Locations', 'community-directory' ),
-            'pending'      => __( 'Pending Locations', 'community-directory' ),
-            'edit'      => __( 'Edit Locations', 'community-directory' ),
+            ''      => __( 'Tags', 'community-directory' ),
+            'edit'      => __( 'Edit Tags', 'community-directory' ),
         );
 
         return apply_filters( 'community_directory_get_sections_' . $this->id, $sections );
-    }
-
-    private function is_loc_active( $status, $ifTrue = true, $ifFalse = false ) {
-        return $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? $ifTrue : $ifFalse;
     }
 
     /**
@@ -135,12 +130,12 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
         $settings = $this->get_settings( $current_section );
         
-        if ( $current_section === 'edit' ) do_action( 'community_directory_settings_save_edit_location_list' );
+        if ( $current_section === 'edit' ) do_action( 'community_directory_settings_save_edit_tag_list' );
         else ClassAdminSettings::save_fields( $settings );
     }
 
-    public function output_location_list( $value ) {
-        $locations = community_directory_get_locations( $value['status'] );
+    public function output_tag_list( $value ) {
+        $tags = community_directory_get_tags( $value['status'] );
 
         ?>
             <tr>
@@ -150,20 +145,19 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
             </tr>
         <?php
 
-        foreach ( $locations as $location ): ?>
+        foreach ( $tags as $tag ): ?>
 
-            <tr data-location-id="<?= $location->id ?>">
-                <td><?= $location->display_name ?></td>
-                <td><?= $location->slug ?></td>
-                <td><?= $location->active_inhabitants ?></td>
+            <tr data-tag-id="<?= $tag->id ?>">
+                <td><?= $tag->display_name ?></td>
+                <td><?= $tag->slug ?></td>
+                <td><?= $tag->active_inhabitants ?></td>
             </tr>
 
         <?php endforeach;
-
     }
 
-    public function output_edit_location_list( $value ) {
-        $locations = community_directory_get_locations();
+    public function output_edit_tag_list( $value ) {
+        $tags = community_directory_get_tags();
 
         ?>
                   <tr>
@@ -181,32 +175,32 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
                 <?php
 
-                    foreach ( $locations as $location ): ?>
+                    foreach ( $tags as $tag ): ?>
 
-                        <tr class="location-row" data-location-id="<?= $location->id ?>">
+                        <tr class="tag-row" data-tag-id="<?= $tag->id ?>">
                             <td>
                                 <input  type="text"
-                                        name="display_name[<?= $location->id ?>]" 
+                                        name="display_name[<?= $tag->id ?>]" 
                                         class="edit-name edit-field" 
-                                        data-original-value="<?= $location->display_name ?>"
-                                        value="<?= $location->display_name ?>" /></td>
-                            <td class="slug-value"><?= $location->slug ?></td>
+                                        data-original-value="<?= $tag->display_name ?>"
+                                        value="<?= $tag->display_name ?>" /></td>
+                            <td class="slug-value"><?= $tag->slug ?></td>
                             <td>
                                 <select class="edit-status edit-field"
-                                        name="status[<?= $location->id ?>]"
-                                        data-original-value="<?= $location->status ?>"
-                                        value=<?= $location->status ?>>
+                                        name="status[<?= $tag->id ?>]"
+                                        data-original-value="<?= $tag->status ?>"
+                                        value=<?= $tag->status ?>>
                                     <option value="<?= COMMUNITY_DIRECTORY_ENUM_ACTIVE ?>"
-                                            <?= $this->is_loc_active( $location->status, 'selected', '') ?>>
+                                            <?= $this->is_loc_active( $tag->status, 'selected', '') ?>>
                                                 <?= __( 'Active', 'community-directory' ) ?>
                                     </option>
                                     <option value="<?= COMMUNITY_DIRECTORY_ENUM_PENDING ?>"
-                                            <?= $this->is_loc_active( $location->status, '', 'selected') ?>>
+                                            <?= $this->is_loc_active( $tag->status, '', 'selected') ?>>
                                         <?= __( 'Pending', 'community-directory' ) ?>
                                     </option>
                                 </select>
                             </td>
-                            <td><?= $location->active_inhabitants ?></td>
+                            <td><?= $tag->active_inhabitants ?></td>
                             <td>
                               <span class="table-remove dashicons dashicons-remove"></span>
                             </td>
@@ -218,7 +212,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
                   
                   <!-- This is our clonable table line -->
-                  <tr class="hide location-row">
+                  <tr class="hide tag-row">
                     <td>
                         <input  type="text"
                                 name="new_loc_display_name[]" 
@@ -241,7 +235,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
         <?php
     }
 
-    public function save_edit_location() {
+    public function save_edit_tag() {
         $array_ignore = array( '_wpnonce', '_wp_http_referer' );
         $data = $_POST;
 
@@ -249,7 +243,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
             return false;
         }
 
-        // Preapre Update Locations Data
+        // Preapre Update Tags Data
         $merged_update_arr = array();
         if ( isset( $data['display_name'] ) )
             foreach ( $data['display_name'] as $id => $display_name ) {
@@ -263,7 +257,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                 $merged_update_arr[$id]['status'] = $status;
             }
 
-        // Prepare Create Locations Data
+        // Prepare Create Tags Data
         $merged_create_arr = array();
         if ( isset ( $data['new_loc_display_name'] ) )
             foreach ( $data['new_loc_display_name'] as $id => $display_name ){
@@ -274,7 +268,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
             
         if ( isset ( $data['new_loc_status'] ) )
             foreach ( $data['new_loc_status'] as $id => $status ){
-                // Cannot create new location without an existing display_name set
+                // Cannot create new tag without an existing display_name set
                 if ( !isset( $merged_create_arr[$id] ) ) continue;
                 $merged_create_arr[$id]['status'] = $status;
             }
@@ -284,14 +278,14 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
         $updated_loc_count = count( $merged_update_arr );
         if ( $updated_loc_count ) {
-            do_action( 'community_directory_update_locations', $merged_update_arr );
-            array_push( $updated_message_arr, sprintf( __( 'Updated %d location(s)', 'community-directory' ), $updated_loc_count ) );
+            do_action( 'community_directory_update_tags', $merged_update_arr );
+            array_push( $updated_message_arr, sprintf( __( 'Updated %d tag(s)', 'community-directory' ), $updated_loc_count ) );
         }
         
         $created_loc_count = count( $merged_create_arr );
         if ( $created_loc_count ) {
-            do_action( 'community_directory_create_locations', $merged_create_arr );
-            array_push( $updated_message_arr, sprintf( __( 'Created %d location(s)', 'community-directory' ), $created_loc_count ) );
+            do_action( 'community_directory_create_tags', $merged_create_arr );
+            array_push( $updated_message_arr, sprintf( __( 'Created %d tag(s)', 'community-directory' ), $created_loc_count ) );
         }
 
         if ( count( $updated_message_arr ) )

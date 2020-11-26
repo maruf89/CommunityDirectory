@@ -23,20 +23,8 @@ class ClassAdmin {
      * @since    1.0.0
      */
     public function __construct() {
-        // add_action( 'admin_init', array($this, 'activation_redirect'));
         add_action( 'admin_enqueue_scripts', array($this, 'enqueue_styles') );
         add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts') );
-    }
-
-    /**
-     * Redirects to UsersWP info page after plugin activation.
-     *
-     * @since       2020.11
-     * @package     community-directory
-     * @return      void
-     */
-    public function activation_redirect() {
-
     }
 
 
@@ -52,7 +40,6 @@ class ClassAdmin {
             $stylus = new Stylus();
             $stylus->setReadDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css/styl' );
             $stylus->setWriteDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css' );
-            // $stylus->setImportDir('import'); //if you import a file without setting this, it will import from the read directory
             $stylus->assign( 'base-font-size', '14px' );
             $stylus->parseFiles(true);
         }

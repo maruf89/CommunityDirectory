@@ -38,7 +38,7 @@ class ClassLocation {
             'public' => true,
             'description' => __( 'Community Directory Locations', 'community-directory' ), 
             'exclude_from_search' => false,
-            'show_ui' => true,
+            'show_ui' => false,
             'show_in_menu' => COMMUNITY_DIRECTORY_NAME,
             'capability_type' => array( 'location', 'locations' ),
             'capabilities' => array(
@@ -69,6 +69,42 @@ class ClassLocation {
     }
 
     /**
+     * Add custom taxonomies
+     *
+     * Additional custom taxonomies can be defined here
+     * http://codex.wordpress.org/Function_Reference/register_taxonomy
+     */
+    public static function add_custom_location_taxonomy() {
+        // Not currently used
+        
+        // Add new "Locations" taxonomy to Posts 
+        register_taxonomy('location', 'post', array(
+            // Hierarchical taxonomy (like categories)
+            'hierarchical' => true,
+            // This array of options controls the labels displayed in the WordPress Admin UI
+            'labels' => array(
+                'name' => __( 'Locations', 'taxonomy general name', 'community-directory' ),
+                'singular_name' => __( 'Location', 'taxonomy singular name', 'community-directory' ),
+                'search_items' =>  __( 'Search Locations', 'community-directory' ),
+                'all_items' => __( 'All Locations', 'community-directory' ),
+                'parent_item' => __( 'Parent Location', 'community-directory' ),
+                'parent_item_colon' => __( 'Parent Location:', 'community-directory' ),
+                'edit_item' => __( 'Edit Location', 'community-directory' ),
+                'update_item' => __( 'Update Location', 'community-directory' ),
+                'add_new_item' => __( 'Add New Location', 'community-directory' ),
+                'new_item_name' => __( 'New Location Name', 'community-directory' ),
+                'menu_name' => __( 'Locations', 'community-directory' ),
+            ),
+            // Control the slugs used for this taxonomy
+            'rewrite' => array(
+                'slug' => __( 'location', 'community-directory' ), // This controls the base slug that will display before each term
+                'with_front' => false, // Don't display the category base before "/locations/"
+                'hierarchical' => true // This will allow URL's like "/locations/boston/cambridge/"
+            ),
+        ));
+    }
+
+    /**
      * Updates an existing location's name and slug
      * 
      * @param           $update_locations_array     array   [id] => array([display_name] => 'string', [status] => 'enum') modifications
@@ -88,7 +124,7 @@ class ClassLocation {
             }
             if ( isset( $row['status'] ) ) {
                 $data['status'] = community_directory_status_to_enum( $row['status'] );
-                $post_id = self::get_row_var( $id, 'post_id' );
+                $post_id = community_directory_get_row_var( $id, 'post_id' );
                 self::update_post_status( $post_id, $data['status'] );
             }
 
@@ -100,6 +136,23 @@ class ClassLocation {
         }
         
         return true;
+    }
+
+    /**
+     * A method to sanitize or fill out any fields for a location before adding it to the DB
+     * 
+     * @param           a_array         $location_arr       must contain ('display_name' => string)
+     * @return                          a_array
+     */
+    public static function prepare_location_for_creation( $location_arr ) {
+        
+        $location_arr['display_name'] = community_directory_format_display_name( $location_arr['display_name'] );
+        $location_arr['slug'] = community_directory_location_name_to_slug( $location_arr['display_name'] );
+        // If status isn't set, default is PENDING
+        $location_arr['status'] = isset( $location_arr['status'] ) ?
+        community_directory_status_to_enum( $location_arr['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
+        
+        return $location_arr;
     }
 
     /**
@@ -124,29 +177,17 @@ class ClassLocation {
         foreach ( $new_locations as $row ) {
             if ( empty( $row['display_name'] ) ) continue;
 
-            // If status isn't set, default is PENDING
-            $status = isset( $row['status'] ) ? community_directory_status_to_enum( $row['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
+            if ( !isset( $row['slug'] ) )
+                $row = apply_filters( 'community_directory_prepare_location_for_creation', $row );
 
-            $this_row = array(
-                'display_name' => community_directory_format_display_name( $row['display_name'] ),
-                'slug' => community_directory_location_name_to_slug( $row['display_name'] ),
-                'status' => $status,
-            );
-
-            $this_row['post_id'] = self::create_new_post( $this_row );
-            $create_array[] = $this_row;
+            $row['post_id'] = self::create_new_post( $row );
+            $create_array[] = $row;
         }
 
         if ( !count( $create_array ) ) return false;
         
         $result = wp_insert_rows( $create_array, COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS );
         return $result;
-    }
-
-    public static function get_row_var( $id, $var ) {
-        global $wpdb;
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        return $wpdb->get_var( $wpdb->prepare( "SELECT $var FROM $table WHERE id = %s", $id ) );
     }
 
     /**
@@ -175,7 +216,7 @@ class ClassLocation {
             die( wp_send_json_error( 'Error: missing location_id' ) );
         }
 
-        $post_id = self::get_row_var( $_POST['location_id'], 'post_id' );
+        $post_id = community_directory_get_row_var( $_POST['location_id'], 'post_id' );
         self::delete_location_post( $post_id );
 
         if ( $deleted_rows = ClassLocation::delete_location( (int) $_POST['location_id'] ) ) {

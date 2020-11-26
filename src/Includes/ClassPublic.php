@@ -13,6 +13,10 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassPublic {
 
+    public function __construct() {
+        add_action( 'wp_enqueue_scripts', array($this, 'enqueue_styles') );
+        // add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts') );
+    }
     
     /**
      * Register the stylesheets for the public-facing side of the site.
@@ -20,7 +24,7 @@ class ClassPublic {
      * @since    0.0.1
      */
     public function enqueue_styles() {
-        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), COMMUNITY_DIRECTORY_VERSION, 'all' );
+        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
     }
 
     /**

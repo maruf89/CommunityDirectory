@@ -2,10 +2,10 @@
 /**
  * UsersWP Settings Page/Tab
  *
- * @author      AyeCode
+ * @author      Marius Miliunas
  * @category    Admin
  * @package     community-directory/admin
- * @version     1.0.24
+ * @version     2020.11
  */
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;

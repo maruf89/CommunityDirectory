@@ -17,6 +17,7 @@ class ClassTables {
         define( 'COMMUNITY_DIRECTORY_ENUM_ACTIVE', 'ACTIVE' );
         define( 'COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS', $wpdb->prefix . 'community_directory_locations' );
         define( 'COMMUNITY_DIRECTORY_DB_TABLE_USERS', $wpdb->prefix . 'community_directory_users' );
+        define( 'COMMUNITY_DIRECTORY_DB_TABLE_TAGS', $wpdb->prefix . 'community_directory_tags' );
     }
     
     /**
@@ -42,11 +43,12 @@ class ClassTables {
             $sql = "CREATE TABLE $table_name (
                 id bigint(20) NOT NULL AUTO_INCREMENT,
                 `status` ENUM('PENDING','ACTIVE') NOT NULL DEFAULT 'PENDING',
-                `display_name` varchar(25) NOT NULL,
-                `slug` varchar(25) NOT NULL,
+                `display_name` varchar(35) NOT NULL,
+                `slug` varchar(35) NOT NULL,
                 `active_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `inactive_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `post_id` BIGINT(20) UNSIGNED NOT NULL,
+                UNIQUE `unique_index`(`slug`, `post_id`),
                 PRIMARY KEY  (id)
                 )    $charset_collate;";
 
@@ -55,10 +57,22 @@ class ClassTables {
 
             $table_name = COMMUNITY_DIRECTORY_DB_TABLE_USERS;
             $sql = "CREATE TABLE $table_name (
-                user_id smallint(4) NOT NULL,
+                bigint smallint(20) NOT NULL,
                 `status` ENUM('INACTIVE','ACTIVE') NOT NULL DEFAULT 'INACTIVE',
-                `location_id` smallint(4) NOT NULL,
+                `location_id` bigint(20) NOT NULL,
+                `slug` varchar(35) NOT NULL,
                 PRIMARY KEY  (user_id)
+                )    $charset_collate;";
+
+            dbDelta( $sql );
+
+            $table_name = COMMUNITY_DIRECTORY_DB_TABLE_TAGS;
+            $sql = "CREATE TABLE $table_name (
+                id bigint(20) NOT NULL,
+                `name` varchar(50) NOT NULL,
+                `slug` varchar(50) NOT NULL,
+                `parent_id` bigint(20) NOT NULL,
+                PRIMARY KEY  (id)
                 )    $charset_collate;";
 
             dbDelta( $sql );

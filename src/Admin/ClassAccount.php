@@ -15,7 +15,15 @@ use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
  */
 class ClassAccount {
 
-    public static function validate_user_registration_before($errors, $data, $validation_type) {
+    /**
+     * Upon registration submission, field values are validated. Here we validate the location field.
+     * 
+     * @param           $errors             WP_Error
+     * @param           $data               a_array     the $_POST data passed from the form
+     * @param           $validation_type    string      uwp validation type
+     * @return                              WP_Error    $errors obj
+     */
+    public static function validate_user_registration_before( $errors, $data, $validation_type ) {
         // return if validating something else
         if ( $validation_type !== 'register' ||
              !isset( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
@@ -32,7 +40,16 @@ class ClassAccount {
         return $errors;
     }
 
-    public static function save_data_to_user_meta($result, $validation_type, $user_id) {
+    /**
+     * Upon registration submission, field values are validated. Here we validate the location field.
+     * 
+     * @param           $result             a_array     the validated form data, minus any extra fields not
+     *                                                  correlating to something in the uwp form
+     * @param           $validation_type    string      uwp validation type
+     * @param           $user_id            int         
+     * @return                              a_array     $result
+     */
+    public static function save_data_to_user_meta( $result, $validation_type, $user_id ) {
         // return if validating something else
         if ( $validation_type !== 'register' ||
              !isset( $result[ClassUWPFormBuilder::$community_directory_location_name] ) )
@@ -40,11 +57,25 @@ class ClassAccount {
 
         $location = $result[ClassUWPFormBuilder::$community_directory_location_name];
 
+        $loc_data = array( 'display_name' => $location );
+        $loc_data = apply_filters( 'community_directory_prepare_location_for_creation', $loc_data );
+        
         // Only add new location if the user didn't enter an already existing location
         if ( !community_directory_location_exists( $location ) )
-            do_action( 'community_directory_create_locations', array( array( 'display_name' => $location ) ) );
+            do_action( 'community_directory_create_locations', array( $loc_data ) );
 
-        // add_user_meta($user_id, ClassUWPFormBuilder::$community_directory_location_name, $location);
+        do_action( 'community_directory_add_entity_location_data', array(
+            'user_id' => $user_id,
+            'location_id' => community_directory_get_row_var( $loc_data['slug'], 'id' ),
+            'slug' => $loc_data['slug'],
+        ) );
+
+        // Save user meta to ACF
+        do_action( 'community_directory_acf_initiate_entity', array(
+            'user_id' => $user_id,
+            'first_name' => $result['first_name'],
+            'last_name' => $result['last_name'],
+        ) );
 
         return $result;
     }
