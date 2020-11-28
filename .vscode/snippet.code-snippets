@@ -23,5 +23,23 @@
 			"__( '$1', 'community-directory' )$0"
 		],
 		"description": "Add translation for community-directory"
-	}
+	},
+
+	"CD": {
+		"scope": "php",
+		"prefix": "CD",
+		"body": [
+			"community_directory_$1"
+		],
+		"description": "tired of typing"
+	},
+
+	"cd": {
+		"scope": "php",
+		"prefix": "cd",
+		"body": [
+			"'community-directory'$1"
+		],
+		"description": "tired of typing"
+	},
 }

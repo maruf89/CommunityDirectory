@@ -13,3 +13,9 @@ function community_directory_add_entity_location_data( $data ) {
     
     return $Entity::add_entity_location_data( $data );
 }
+
+function community_directory_activate_deactivate_entity( $activate, $id, $id_for_what = '', $status_only = false ) {
+    $Entity = ClassEntity::get_instance();
+    
+    return $Entity::activate_deactivate_entity( $activate, $id, $id_for_what, $status_only );
+}

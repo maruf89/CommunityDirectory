@@ -7,7 +7,7 @@
  *
  * @package    community-directory
  * @subpackage community-directory/admin/settings
- * @author     GeoDirectory Team <info@wpgeodirectory.com>
+ * @author     Marius Miliunas
  */
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;
@@ -47,10 +47,10 @@ class ClassAdminSettings {
             $settings = array();
 
             $settings[] = new ClassSettingsLocation();
-            // $settings[] = include( 'class-settings-emails.php' );
             // $settings[] = include( 'class-settings-import-export.php' );
             // $settings[] = include( 'class-settings-addons.php' );
             $settings[] = new ClassSettingsUninstall();
+            if ( wp_get_environment_type() !== 'production' ) $settings[] = new ClassSettingsTest();
 
             self::$settings = apply_filters( 'community_directory_get_settings_pages', $settings );
         }

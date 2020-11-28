@@ -12,10 +12,20 @@ namespace Maruf89\CommunityDirectory\Includes;
 class ClassACF {
 
     public static $form_group_key = 'group_community_directory';
-    public static $field_location_name_key = 'field_cd_location_name';
-    public static $field_location_name = 'location_name';
+    public static $field_location_name_key = 'field_cd_entity_location_name';
+    public static $field_location_name = 'entity_location_name';
     public static $field_is_active_key = 'field_cd_profile_active';
     public static $field_is_active = 'profile_active';
+
+    private static $instance;
+
+    public static function get_instance() {
+        if (self::$instance == null) {
+            self::$instance = new ClassACF();
+        }
+ 
+        return self::$instance;
+    }
 
     /**
      * This method gets fired during plugin activation.
@@ -37,7 +47,7 @@ class ClassACF {
                     array (
                         'param' => 'post_type',
                         'operator' => '==',
-                        'value' => ClassEntity::$entity_post_type,
+                        'value' => ClassEntity::$post_type,
                     ),
                 ),
             ),
@@ -163,7 +173,7 @@ class ClassACF {
     /**
      * Creates a user's initial field data in the ACF user meta db
      * 
-     * @param       $entity_data        a_array     requires: 'first_name', 'last_name', 'entity_id'
+     * @param       $entity_data        ARRAY_A     requires: 'first_name', 'last_name', 'entity_id' (post_id)
      */
     public static function initiate_entity( $entity_data ) {
         // turn array vars into accessable vars
@@ -175,6 +185,10 @@ class ClassACF {
         $update_values[self::$field_is_active_key] = 'false';
         
         acf_update_values( $update_values, $entity_id );
+    }
+
+    public static function update_entity( $entity_post_id, $entity_data ) {
+        acf_update_values( $entity_data, $entity_post_id );
     }
 
 }

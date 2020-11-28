@@ -12,7 +12,7 @@ use Stylus\Stylus;
  *
  * @package    community-directory
  * @subpackage community-directory/admin
- * @author     GeoDirectory Team <info@wpgeodirectory.com>
+ * @author     Marius Miliunas
  */
 class ClassAdmin {
 

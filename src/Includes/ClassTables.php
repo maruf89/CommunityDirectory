@@ -15,9 +15,8 @@ class ClassTables {
 
         define( 'COMMUNITY_DIRECTORY_ENUM_PENDING', 'PENDING' );
         define( 'COMMUNITY_DIRECTORY_ENUM_ACTIVE', 'ACTIVE' );
+        define( 'COMMUNITY_DIRECTORY_ENUM_INACTIVE', 'PENDING' );
         define( 'COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS', $wpdb->prefix . 'community_directory_locations' );
-        define( 'COMMUNITY_DIRECTORY_DB_TABLE_USERS', $wpdb->prefix . 'community_directory_users' );
-        define( 'COMMUNITY_DIRECTORY_DB_TABLE_TAGS', $wpdb->prefix . 'community_directory_tags' );
     }
     
     /**
@@ -54,28 +53,6 @@ class ClassTables {
 
          
             dbDelta( $sql );
-
-            $table_name = COMMUNITY_DIRECTORY_DB_TABLE_USERS;
-            $sql = "CREATE TABLE $table_name (
-                bigint smallint(20) NOT NULL,
-                `status` ENUM('INACTIVE','ACTIVE') NOT NULL DEFAULT 'INACTIVE',
-                `location_id` bigint(20) NOT NULL,
-                `slug` varchar(35) NOT NULL,
-                PRIMARY KEY  (user_id)
-                )    $charset_collate;";
-
-            dbDelta( $sql );
-
-            $table_name = COMMUNITY_DIRECTORY_DB_TABLE_TAGS;
-            $sql = "CREATE TABLE $table_name (
-                id bigint(20) NOT NULL,
-                `name` varchar(50) NOT NULL,
-                `slug` varchar(50) NOT NULL,
-                `parent_id` bigint(20) NOT NULL,
-                PRIMARY KEY  (id)
-                )    $charset_collate;";
-
-            dbDelta( $sql );
          
             add_option( 'community_directory_db_version', COMMUNITY_DIRECTORY_DB_VERSION );
         } else {
@@ -96,7 +73,6 @@ class ClassTables {
      */
     public static function drop_tables_on_delete_blog( $tables ) {
         $tables[] = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        $tables[] = COMMUNITY_DIRECTORY_DB_TABLE_USERS;
         return $tables;
     }
 

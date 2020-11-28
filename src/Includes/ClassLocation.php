@@ -3,7 +3,7 @@
  * Community Directory location related functions
  *
  * @since      2020.11
- * @author     GeoDirectory Team <info@wpgeodirectory.com>
+ * @author     Marius Miliunas
  */
 
 namespace Maruf89\CommunityDirectory\Includes;
@@ -20,7 +20,7 @@ class ClassLocation {
         return self::$instance;
     }
 
-    public static $location_post_type = 'location';
+    public static $post_type = 'cd-location';
 
     public function __construct() {
         define( 'COMMUNITY_DIRECTORY_DISPLAY_NAME', 'display_name' );
@@ -76,31 +76,37 @@ class ClassLocation {
         );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( self::$location_post_type, $customPostTypeArgs );
+        register_post_type( self::$post_type, $customPostTypeArgs );
+    }
+
+    public static function add_post_type( $arr ) {
+        $arr[] = self::$post_type;
+        return $arr;
     }
 
     /**
      * Accepts an array of location 'id' values and returns the rows
      * 
-     * @param       $ids        array           array of location ids
-     * @param       $formatted  string|bool     if string, will use that as the key to format rows by
-     *                                          if true, defaults to default key, if false - returns raw
-     * @return                  ARRAY_A         the rows
+     * @param       $field_values   array           array of location ids
+     * @param       $field_key      string          the field key to test the values against
+     * @param       $formatted      string|bool     if string, will use that as the key to format rows by
+     *                                              if true, defaults to default key, if false - returns raw
+     * @return                      ARRAY_A         the rows
      */
-    public static function get_locations_by_ids( $ids, $formatted = false ) {
-        if ( gettype( $ids ) === 'integer' ) $ids = array( $ids );
+    public static function get_locations_by_fields( $field_values, $field_key = 'id', $formatted = false ) {
+        if ( gettype( $field_values ) !== 'array' ) $field_values = array( $field_values );
 
-        if ( !count( $ids ) ) return false;
+        if ( !count( $field_values ) ) return false;
 
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
 
-        $id_string = "'" . implode( "', '", $ids ) . "'";
+        $field_values_str = "'" . implode( "', '", $field_values ) . "'";
         
         global $wpdb;
         if ( $results = $wpdb->get_results("
             SELECT *
             FROM $table
-            WHERE id IN ($id_string)
+            WHERE $field_key IN ($field_values_str)
         ", ARRAY_A) ) {
             switch ( gettype( $formatted ) ) {
                 case 'string':
@@ -112,127 +118,81 @@ class ClassLocation {
         } else return false;
     }
 
+    /**
+     * Formats location rows based on the second parameter
+     * 
+     * @param       $rows       OBJECT|ARRAY        location row data
+     * @param       $format_by  string              which field to use as the key
+     * @return                  ARRAY_A             formatted location array
+     */
     public static function format_row_locations( $rows, $format_by = 'id' ) {
         $formatted = array();
         foreach ( $rows as $row )
-            $formatted[$row[$format_by]] = $row;
+            if ( gettype( $row ) === 'object' )
+                $formatted[$row->{$format_by}] = $row;
+            else
+                $formatted[$row[$format_by]] = $row;
+
 
         return $formatted;
     }
 
     /**
-     * Updates any number of locations
+     * A method to sanitize or fill out any fields for a location before adding it to the DB
      * 
-     * @param           $update_locations_array     array   [id] => array([display_name] => 'string', [status] => 'enum') modifications
-     * @return                                      true|false
+     * @param           a_array         $data       must contain ('display_name' => string)
+     * @return                          a_array
      */
-    public static function update_locations( $update_locations_array ) {
-        if ( !count( $update_locations_array ) ) return false;
-
-        global $wpdb;
-        $update_array = array();
-
-        $updated_rows = 0;
-
-        // return the existing rows
-        $db_rows = self::get_locations_by_ids( array_keys( $update_locations_array ), true );
-
-        foreach ( $update_locations_array as $id => $row ) {
-            
-            // changes will go here
-            $data = array();
-            // the existing db row
-            $db_row =& $db_rows[$id];
-            
-            // Check if the display_name needs changing
-            if ( isset( $row['display_name'] ) ) {
-                $display_name = community_directory_format_display_name( $row['display_name'] );
-                if ( community_directory_values_differ( $display_name, $db_row['display_name'] )) {
-                    $data['display_name'] = $display_name;
-                    $data['slug'] = community_directory_location_name_to_slug( $display_name );
-                }
-                
-            }
-
-            // Check if status needs changing
-            if ( isset( $row['status'] ) ) {
-                $status = community_directory_status_to_enum( $row['status'] );
-                if ( community_directory_values_differ( $status, $db_row['status'] ) ) {
-                    $data['status'] = $status;
-                }
-            }
-
-            // Check what changed so that we update the corresponding custom post type
-            $changes = array_keys( $data );
-            
-            if ( count( $changes ) ) {
-                self::update_post_with_changes( $db_row['post_id'], $data );
-
-                if ( $updated_num = $wpdb->update(
-                    COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-                    $data,
-                    array( 'id' => $id )
-                ) ) {
-                    $updated_rows += $updated_num;
-                }
-            }
-        }
+    public static function prepare_location_for_creation( $data ) {
         
-        return $updated_rows;
-    }
-
-    public static function update_inhabitants_count( $value, $post_id, $field ) {
-        if ( !isset( $_POST['acf'][ClassACF::$field_is_active_key] ) ) return $value;
-        
-        global $wpdb;
-        global $post;
-        
-        // get the old (saved) value
-        $old_value = get_field(ClassACF::$field_is_active, $post_id);
-        // get the new (posted) value
-        $new_value = $_POST['acf'][ClassACF::$field_is_active_key];
-
-        $post_parent = $post->post_parent;
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        $sql = "UPDATE $table SET ";
-        $plus_minus_active = $new_value ? '+' : '-';
-        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
-        $plus_minus_inactive = $new_value ? '-' : '+';
-        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
-        $where = "WHERE post_id = $post_parent";
-        
-        $res = $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
-
-        $status = $new_value ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        
-        // Update the post to be published or pending
-        wp_update_post(
-            array(
-                'ID' => $post_id,
-                'post_status' => self::location_status_to_post_status( $status )
-            )
-        );
-        
-        return $value;
+        $data['display_name'] = community_directory_format_display_name( $data['display_name'] );
+        $data['slug'] = community_directory_location_name_to_slug( $data['display_name'] );
+        // If status isn't set, default is PENDING
+        $data['status'] = isset( $data['status'] ) ?
+            community_directory_status_to_enum( $data['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
+        $data['active_inhabitants'] = isset( $data['active_inhabitants'] ) ? $data['active_inhabitants'] : 0;
+        $data['inactive_inhabitants'] = isset( $data['inactive_inhabitants'] ) ? $data['inactive_inhabitants'] : 0;
+        return $data;
     }
 
     /**
-     * A method to sanitize or fill out any fields for a location before adding it to the DB
+     * Creates a new location in the db
      * 
-     * @param           a_array         $location_arr       must contain ('display_name' => string)
-     * @return                          a_array
+     * @param           $data       ARRAY_A         Must contain 'display_name'
+     * @return                      int             Returns the wp_post id upon create or WP_Error
      */
-    public static function prepare_location_for_creation( $location_arr ) {
+    public static function create_location ( $data ) {
+
+        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
+            die( 'display_name must be set and cannot be empty' );
+        }
+
+        global $wpdb;
+
+        if ( !isset( $data['slug'] ) )
+            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
+
+        $post_id = self::create_new_post( $data );
         
-        $location_arr['display_name'] = community_directory_format_display_name( $location_arr['display_name'] );
-        $location_arr['slug'] = community_directory_location_name_to_slug( $location_arr['display_name'] );
-        // If status isn't set, default is PENDING
-        $location_arr['status'] = isset( $location_arr['status'] ) ?
-        community_directory_status_to_enum( $location_arr['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        $location_arr['inactive_inhabitants'] = 1;
-        
-        return $location_arr;
+        $wpdb->insert( 
+            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+            array(
+                'display_name'          => $data['display_name'],
+                'slug'                  => $data['slug'],
+                'status'                => $data['status'],
+                'post_id'               => $post_id,
+                'active_inhabitants'    => $data['active_inhabitants'],
+                'inactive_inhabitants'  => $data['inactive_inhabitants'],
+            ),
+            array(
+                '%s',
+                '%s',
+                '%s',
+                '%d',
+            )
+        );
+
+        return $post_id;
     }
 
     /**
@@ -271,38 +231,162 @@ class ClassLocation {
     }
 
     /**
-     * Same as above except only creates 1 location and returns the custom post type post_id on success
+     * Updates any number of locations
+     * 
+     * @param           $update_locations_array     ARRAY_A     A hash array structured like
+     *                                      array(
+     *                                          [$update_by] => array(
+     *                                              [display_name] => 'string',
+     *                                              [status] => 'enum'
+     *                                              ...
+     *                                          )
+     *                                      )
+     * @param           $update_by                  string      if set, the field to update by
+     * @return                                      int         Returns number of changed rows 
      */
-    public static function create_location ( $data ) {
+    public static function update_locations( $update_locations_array, $update_by = 'id' ) {
+        if ( !count( $update_locations_array ) ) return 0;
 
-        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
-            die( 'display_name must be set and cannot be empty' );
+        global $wpdb;
+        $update_array = array();
+
+        $updated_rows = 0;
+
+        // return the existing rows
+        $db_rows = self::get_locations_by_fields( array_keys( $update_locations_array ), $update_by, true );
+
+        foreach ( $update_locations_array as $id => $row ) {
+            
+            // changes will go here
+            $data = array();
+            // the existing db row
+            $db_row =& $db_rows[$id];
+            
+            // Check if the display_name needs changing
+            if ( isset( $row['display_name'] ) ) {
+                $display_name = community_directory_format_display_name( $row['display_name'] );
+                if ( community_directory_values_differ( $display_name, $db_row['display_name'] )) {
+                    $data['display_name'] = $display_name;
+                    $data['slug'] = community_directory_location_name_to_slug( $display_name );
+                }
+                
+            }
+
+            // Check if status needs changing
+            if ( isset( $row['status'] ) ) {
+                $status = community_directory_status_to_enum( $row['status'] );
+                if ( community_directory_values_differ( $status, $db_row['status'] ) ) {
+                    $data['status'] = $status;
+                }
+            }
+
+            if ( isset( $row['active_inhabitants'] ) ) {
+                $active_count = $db_row['active_inhabitants'];
+                if ( community_directory_values_differ( $row['active_inhabitants'], $active_count ) ) {
+                    $data['active_inhabitants'] = $row['active_inhabitants'];
+                }
+            }
+
+            if ( isset( $row['inactive_inhabitants'] ) ) {
+                $inactive_count = $db_row['inactive_inhabitants'];
+                if ( community_directory_values_differ( $row['inactive_inhabitants'], $inactive_count ) ) {
+                    $data['inactive_inhabitants'] = $row['inactive_inhabitants'];
+                }
+            }
+
+            if ( isset( $row['post_id'] ) ) {
+                if ( community_directory_values_differ( $row['post_id'], $row['post_id'] ) ) {
+                    $data['post_id'] = $row['post_id'];
+                }
+            }
+
+            // Check what changed so that we update the corresponding custom post type
+            $changes = array_keys( $data );
+            
+            if ( count( $changes ) ) {
+                self::update_post_with_changes( $db_row['post_id'], $data );
+
+                if ( $updated_num = $wpdb->update(
+                    COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+                    $data,
+                    array( 'id' => $id )
+                ) ) {
+                    $updated_rows += $updated_num;
+                }
+            }
         }
+        
+        return $updated_rows;
+    }
+
+    /**
+     * Adds to the active/inactive inhabitants count based on the status and count
+     */
+    public static function add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
 
         global $wpdb;
 
-        if ( !isset( $data['slug'] ) )
-            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
+        $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
 
-        $data['post_id'] = self::create_new_post( $data );
-        $wpdb->insert( 
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array(
-                'display_name'  => $data['display_name'],
-                'slug'          => $data['slug'],
-                'status'        => $data['status'],
-                'post_id'       => $data['post_id'],
-                'inactive_inhabitants' => $data['inactive_inhabitants'],
-            ),
-            array(
-                '%s',
-                '%s',
-                '%s',
-                '%d',
-            )
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        
+        return $wpdb->query(
+            "UPDATE $table SET 
+            $field = $field + $count
+            WHERE $which = $loc_or_post_id"
         );
+    }
 
-        return $data;
+    /**
+     * An ACF hook that gets notified when the profile_active field gets changed
+     * Updates the count and updates the post's status to reflect it
+     * 
+     * Do not call directly!
+     */
+    public static function acf_shift_inhabitants_count( $value, $entity_post_id, $field ) {
+        if ( !isset( $_POST['acf'][ClassACF::$field_is_active_key] ) ) return $value;
+        
+        global $post;
+        
+        // get the old (saved) value
+        $was_active = get_field( ClassACF::$field_is_active, $entity_post_id ) === 'true';
+
+        $is_active = $_POST['acf'][ClassACF::$field_is_active_key] === 'true';
+        
+        if ( $was_active == $is_active ) return $value;
+
+        $post_parent = $post->post_parent;
+
+        self::shift_inhabitants_count( $post_parent, 'post_id', $is_active );
+
+        // Update the post's status
+        community_directory_activate_deactivate_entity( $is_active, $entity_post_id, 'post_id', true );
+        
+        return $value;
+    }
+
+    /**
+     * Shifts the active/inactive inhabitants count in the location table
+     * 
+     * @param       $loc_id_or_post_id      int     either the location id, or post_id
+     * @param       $which                  string  either 'id' or 'post_id'
+     * @param       $increment              bool    whether to increment active_inhabitants
+     */
+    public static function shift_inhabitants_count( $loc_id_or_post_id, $which, $increment ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
+
+        global $wpdb;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = "UPDATE $table SET ";
+        $plus_minus_active = $increment ? '+' : '-';
+        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
+        $plus_minus_inactive = $increment ? '-' : '+';
+        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
+        $where = "WHERE $which = $loc_id_or_post_id";
+        
+        return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
     }
 
     /**
@@ -341,23 +425,6 @@ class ClassLocation {
 /////////// Wordpress Methods //////////
 
     /**
-     * Converts a location status enum to a wp post status type
-     * 
-     * @param           $status         string      COMMUNITY_DIRECTORY_ENUM_(PENDING|ACTIVE)
-     * @return                          string      returns the corresponding wp post status type
-     */
-    public static function location_status_to_post_status( $status = '' ) {
-        switch ( $status ) {
-            case COMMUNITY_DIRECTORY_ENUM_PENDING:
-                return 'pending';
-            case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
-                return 'publish';
-            default:
-                return 'draft';
-        }
-    }
-
-    /**
      * Creates a new wp post for the location
      * 
      * @param       $data       array       an associative array with 'display_name', and 'slug' required
@@ -366,8 +433,8 @@ class ClassLocation {
         // Create post object
         $my_post = array(
             'post_title'    => $data['display_name'],
-            'post_status'   => self::location_status_to_post_status( $data['status'] ),
-            'post_type'     => self::$location_post_type,
+            'post_status'   => community_directory_enum_status_to_post_status( $data['status'] ),
+            'post_type'     => self::$post_type,
             'post_author'   => isset( $data['user_id' ] ) ? $data['user_id'] : 0,
         );
         
@@ -399,7 +466,7 @@ class ClassLocation {
                     $update_data['post_name'] = $data['slug'];
                     break;
                 case 'status':
-                    $update_data['post_status'] = self::location_status_to_post_status( $data['status'] );
+                    $update_data['post_status'] = community_directory_enum_status_to_post_status( $data['status'] );
                     break;
             }
         }

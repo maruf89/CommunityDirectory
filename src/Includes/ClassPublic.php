@@ -41,13 +41,88 @@ class ClassPublic {
         
     }
 
-    function load_location_template($template) {
+    /**
+     * Add rewrite tags
+     *
+     * @link https://codex.wordpress.org/Rewrite_API/add_rewrite_tag
+     */
+    public static function community_directory_rewrite_tag() {
+        add_rewrite_tag( '%location%', '([^&/]+)' );
+    }
+
+    /**
+     * Add rewrite rules
+     *
+     * @link https://codex.wordpress.org/Rewrite_API/add_rewrite_rule
+     */
+    public static function community_directory_rewrite_rule() {
+        $post_type = ClassEntity::$post_type;
+        $pre = __( 'location', 'community-directory' );
+        
+        add_rewrite_rule(
+            "^$pre/([^/]*)/entity/([^/]*)/?", "index.php?post_type=$post_type&location=\$matches[1]&postname=\$matches[2]", 'top'
+        );
+    }
+
+
+    // public function prefix_register_query_var( $qvars ) {
+    //     $qvars[] = 'location';
+    //     $qvars[] = 'post_name';
+    //     return $qvars;
+    // }
+
+    public static function pre_get_posts( $query ) {
+        // check if the user is requesting an admin page 
+        // or current query is not the main query
+        if ( is_admin() || ! $query->is_main_query() ){
+            return;
+        }
+
+        $type = get_query_var( 'post_type' );
+        $location = get_query_var( ClassLocation::$post_type );
+        $name = get_query_var( 'name' );
+
+        if ( ClassLocation::$post_type == $type && !empty( $location ) && !!strpos( $name, '/' ) ) {
+            global $wpdb;
+            
+            $vars = explode( '/', $name );
+            $location_name = $vars[0];
+            $location_post_id = community_directory_get_row_var( $location_name, 'ID', 'post_name', $wpdb->posts );
+            $post_name = $vars[1];
+            set_query_var( 'post_type', ClassEntity::$post_type );
+            set_query_var( 'name', $post_name );
+            set_query_var( 'post_parent', $location_post_id );
+        }
+    }
+
+    public function prefix_url_rewrite_templates() {
+
+        die(dump(var_dump()));
+ 
+        if ( get_query_var( 'location' ) && is_singular( 'entity' ) ) {
+            add_filter( 'template_include', function() {
+                return get_template_directory() . '/single-movie-image.php';
+            });
+        }
+     
+        if ( get_query_var( 'videos' ) && is_singular( 'movie' ) ) {
+            add_filter( 'template_include', function() {
+                return get_template_directory() . '/single-movie-video.php';
+            });
+        }
+    }
+
+    public function load_location_template( $template ) {
         global $post;
 
-        $post_type = ClassLocation::$location_post_type;
-    
+        $post_types = apply_filters( 'community_directory_get_post_types', array() );
+
+        $index = array_search( $post->post_type, $post_types );
+        
         // Is this a "my-custom-post-type" post?
-        if ( $post->post_type == $post_type ){
+        if ( gettype( $index ) === 'integer' ) {
+
+            $post_type = $post_types[ $index ];
     
             //Your plugin path 
             $plugin_path = COMMUNITY_DIRECTORY_TEMPLATES_PATH;
@@ -56,8 +131,8 @@ class ClassPublic {
             $template_name = "single-$post_type.php";
     
             // A specific single template for my custom post type exists in theme folder? Or it also doesn't exist in my plugin?
-            if($template === get_stylesheet_directory() . '/' . $template_name
-                || !file_exists( $plugin_path . $template_name )) {
+            if ( $template === get_stylesheet_directory() . '/' . $template_name
+                 || !file_exists( $plugin_path . $template_name ) ) {
     
                 //Then return "single.php" or "single-my-custom-post-type.php" from theme directory.
                 return $template;

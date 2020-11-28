@@ -143,7 +143,9 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     }
 
     public function output_location_list( $value ) {
-        $locations = community_directory_get_locations( $value['status'] );
+        $locations = community_directory_get_locations(
+            $value['status'] === COMMUNITY_DIRECTORY_ENUM_ACTIVE, false, false
+        );
 
         ?>
             <tr>
@@ -284,7 +286,6 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
         // Will hold the messages for each kind of change
         $updated_message_arr = array();
-
         
         if ( count( $merged_update_arr ) ) {
             $updated_loc_count = community_directory_update_locations( $merged_update_arr );

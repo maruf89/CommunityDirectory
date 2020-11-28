@@ -164,13 +164,17 @@ class ClassActivator {
             }
 
             // Delete all location post type posts
-            $custom_post_type = ClassLocation::$location_post_type;
-            $sql = "DELETE FROM wp_posts WHERE post_type='$custom_post_type'";
-            $wpdb->query( $sql );
-            $sql = "DELETE FROM wp_postmeta WHERE post_id NOT IN (SELECT id FROM wp_posts)";
-            $wpdb->query( $sql );
-            $sql = "DELETE FROM wp_term_relationships WHERE object_id NOT IN (SELECT id FROM wp_posts)";
-            $wpdb->query( $sql );
+            foreach ( apply_filters( 'community_directory_get_post_types', array() ) as $custom_post_type ) {
+                $sql = "DELETE FROM wp_posts WHERE post_type='$custom_post_type'";
+                $wpdb->query( $sql );
+                $sql = "DELETE FROM wp_postmeta WHERE post_id NOT IN (SELECT id FROM wp_posts)";
+                $wpdb->query( $sql );
+                $sql = "DELETE FROM wp_term_relationships WHERE object_id NOT IN (SELECT id FROM wp_posts)";
+                $wpdb->query( $sql );
+            }
+
+            // Delete the Custom Fields
+            acf_delete_field_group( ClassACF::$form_group_key );
 
             // Delete options
             delete_option( 'community_directory_settings' );

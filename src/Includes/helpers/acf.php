@@ -22,3 +22,8 @@ function community_directory_get_acf_fields( $form_name = '' ) {
     
     return $field_names;
 }
+
+function community_directory_acf_update_entity( $entity_post_id, $entity_data ) {
+    $ACF = ClassACF::get_instance();
+    return $ACF->update_entity( $entity_post_id, $entity_data );
+}

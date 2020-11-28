@@ -63,21 +63,20 @@ class ClassAccount {
         $loc_data = apply_filters( 'community_directory_prepare_location_for_creation', $loc_data );
         
         // Only add new location if the user didn't enter an already existing location
-        if ( !community_directory_location_exists( $location ) ) {
-            $inserted_data = community_directory_create_location( $loc_data );
-            $loc_post_id = $inserted_data['post_id'];
-        } else {
-            $post = get_page_by_path( $loc_data['slug'], OBJECT, ClassLocation::$location_post_type );
+        if ( !( $loc_post_id = community_directory_create_location_if_doesnt_exist( $loc_data ) ) ) {
+            $post = get_page_by_path( $loc_data['slug'], OBJECT, ClassLocation::$post_type );
             $loc_post_id = $post->ID;
         }
 
+        community_directory_add_inhabitant( $loc_post_id, 'post_id', COMMUNITY_DIRECTORY_ENUM_PENDING );
+
         $entity_post_id = community_directory_add_entity_location_data( array(
-            'user_id' => $user_id,
-            'first_name' => $result['first_name'],
-            'last_name' => $result['last_name'],
-            'location_id' => community_directory_get_row_var( $loc_data['slug'], 'id' ),
-            'location_post_id' => $loc_post_id,
-            'slug' => $loc_data['slug'],
+            'user_id'                   => $user_id,
+            'first_name'                => $result['first_name'],
+            'last_name'                 => $result['last_name'],
+            'location_id'               => community_directory_get_row_var( $loc_data['slug'], 'id' ),
+            'location_display_name'     => $loc_data['display_name'],
+            'location_post_id'          => $loc_post_id,
         ) );
 
         // Save user meta to ACF
