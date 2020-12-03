@@ -58,7 +58,7 @@ class ClassAdmin {
      */
     public function enqueue_scripts($hook_suffix) {
 
-        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';// '.min';
 
         wp_enqueue_script(
             'community_directory_admin_js',
