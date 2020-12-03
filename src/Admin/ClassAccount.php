@@ -4,6 +4,7 @@ namespace Maruf89\CommunityDirectory\Admin;
 
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\ClassActivator;
 
 /**
  * The account and registration part of the plugin
@@ -85,6 +86,10 @@ class ClassAccount {
             'first_name' => $result['first_name'],
             'last_name' => $result['last_name'],
         ) );
+
+        // Set the user's role to entity-subscriber
+        $user = new \WP_User( $user_id );
+        $user->set_role( ClassActivator::$role_entity );
 
         return $result;
     }

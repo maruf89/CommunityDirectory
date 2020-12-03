@@ -2,8 +2,9 @@
 
 /**
  * The public-facing functionality of the plugin.
+ * Handles URL rewrites and loading templates
  *
- * @since      0.0.1
+ * @since      2020.11
  *
  * @package    community-directory
  * @subpackage community-directory/includes
@@ -11,17 +12,22 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
+
 class ClassPublic {
 
     public function __construct() {
-        add_action( 'wp_enqueue_scripts', array($this, 'enqueue_styles') );
-        // add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts') );
+
+    }
+
+    public static function on_init() {
+        
     }
     
     /**
      * Register the stylesheets for the public-facing side of the site.
      *
-     * @since    0.0.1
+     * @since      2020.11
      */
     public function enqueue_styles() {
         wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
@@ -30,7 +36,7 @@ class ClassPublic {
     /**
      * Register the JavaScript for the public-facing side of the site.
      *
-     * @since    0.0.1
+     * @since      2020.11
      */
     public function enqueue_scripts() {
 
@@ -41,35 +47,45 @@ class ClassPublic {
         
     }
 
-    /**
-     * Add rewrite tags
-     *
-     * @link https://codex.wordpress.org/Rewrite_API/add_rewrite_tag
-     */
-    public static function community_directory_rewrite_tag() {
-        add_rewrite_tag( '%location%', '([^&/]+)' );
-    }
+    public function custom_nav_menu( $items, $menu ) {
+        $options = get_option( 'community_directory_settings' );
 
-    /**
-     * Add rewrite rules
-     *
-     * @link https://codex.wordpress.org/Rewrite_API/add_rewrite_rule
-     */
-    public static function community_directory_rewrite_rule() {
-        $post_type = ClassEntity::$post_type;
-        $pre = __( 'location', 'community-directory' );
+        // Enable custom menu only if the loaded menu is the one added in the settings
+        if ( !arr_equals_val( $options, 'load_menu_slug', $menu->slug ))
+            return $items;
+
+        if ( arr_equals_val( $options, 'load_locations_nav_menu', 1 ) ) {
+            // TODO Load all locations list
+        }
         
-        add_rewrite_rule(
-            "^$pre/([^/]*)/entity/([^/]*)/?", "index.php?post_type=$post_type&location=\$matches[1]&postname=\$matches[2]", 'top'
-        );
+        if ( ( $Entity = Entity::get_active_entity() ) &&
+             arr_equals_val( $options, 'load_my_location_nav_menu', 1 )
+        ) {
+            $_location = __( 'location', 'community-directory' );
+            $location = $Entity->location;
+            $top = community_directory_custom_nav_menu_item(
+                $location->display_name,
+                "/$_location/$location->slug/" . __( 'single', 'community-directory' ),
+                100
+            );
+            $items[] = $top;
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'My Profile', 'community-directory' ),
+                "/$_location/$location->slug/$Entity->post_name",
+                101,
+                $top->ID
+            );
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'Edit Profile', 'community-directory' ),
+                admin_url("post.php?post=$Entity->post_id&action=edit"),
+                102,
+                $top->ID
+            );
+        }
+
+        return $items;
+        
     }
-
-
-    // public function prefix_register_query_var( $qvars ) {
-    //     $qvars[] = 'location';
-    //     $qvars[] = 'post_name';
-    //     return $qvars;
-    // }
 
     public static function pre_get_posts( $query ) {
         // check if the user is requesting an admin page 
@@ -78,41 +94,31 @@ class ClassPublic {
             return;
         }
 
-        $type = get_query_var( 'post_type' );
-        $location = get_query_var( ClassLocation::$post_type );
-        $name = get_query_var( 'name' );
+        // If we have a url like /location/detroit/ying-p/
+        $type = get_query_var( 'post_type' ); // will be location
+        $location = get_query_var( ClassLocation::$post_type ); // If so, it will have it's own query_var
+        $name = get_query_var( 'name' ); // and this will be 'detroit/ying-p
 
+        // If we have all these, and the name has a '/' in the middle, then do…
         if ( ClassLocation::$post_type == $type && !empty( $location ) && !!strpos( $name, '/' ) ) {
             global $wpdb;
             
-            $vars = explode( '/', $name );
-            $location_name = $vars[0];
+            // Location will be the first part, post_name the second
+            list( $location_name, $post_name ) = explode( '/', $name );
+            // Get the location's post id given the location's post_name
             $location_post_id = community_directory_get_row_var( $location_name, 'ID', 'post_name', $wpdb->posts );
-            $post_name = $vars[1];
+            // Update the query vars to load Entity post type requiring the post parent is the location
             set_query_var( 'post_type', ClassEntity::$post_type );
-            set_query_var( 'name', $post_name );
             set_query_var( 'post_parent', $location_post_id );
+            set_query_var( 'name', $post_name );
         }
     }
 
-    public function prefix_url_rewrite_templates() {
-
-        die(dump(var_dump()));
- 
-        if ( get_query_var( 'location' ) && is_singular( 'entity' ) ) {
-            add_filter( 'template_include', function() {
-                return get_template_directory() . '/single-movie-image.php';
-            });
-        }
-     
-        if ( get_query_var( 'videos' ) && is_singular( 'movie' ) ) {
-            add_filter( 'template_include', function() {
-                return get_template_directory() . '/single-movie-video.php';
-            });
-        }
-    }
-
-    public function load_location_template( $template ) {
+    /**
+     * Depending on the custom post type, loads templates from the plugin if 
+     * they don't exist in the user's theme
+     */
+    public function load_custom_templates( $template ) {
         global $post;
 
         $post_types = apply_filters( 'community_directory_get_post_types', array() );

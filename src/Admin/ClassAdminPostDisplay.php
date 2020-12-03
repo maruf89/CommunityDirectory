@@ -3,6 +3,7 @@
 namespace Maruf89\CommunityDirectory\Admin;
 
 use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 /**
  * Deals with Admin Display
@@ -26,13 +27,14 @@ class ClassAdminPostDisplay {
     }
 
     public function entity_post_column_head( $defaults ) {
-        $defaults[$this->$entity_loc_col_name] = 'Location';
+        $defaults[$this->entity_loc_col_name] = __( 'Location', 'community-directory' );
 
         return $defaults;
     }
 
     public function entity_post_table_content( $column_name, $post_id ) {
-        echo get_post_meta( $post_id, ClassEntity::$post_meta_loc_name, true );
+        $Entity = new Entity( $post_id );
+        echo $Entity->location_name;
     }
     
 }

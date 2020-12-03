@@ -11,6 +11,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 class ClassEntity {
 
     private static $instance;
+    public static $role_entity = 'entity_subscriber';
     public static $post_type = 'cd-entity';
     public static $post_meta_loc_name = '_cd_location_display_name';
     public static $post_meta_loc_id = '_cd_location_id';
@@ -25,6 +26,9 @@ class ClassEntity {
         return self::$instance;
     }
 
+    /**
+     * Register's the Entity post type
+     */
     public static function register_entity_post_type() {
         $loc_prefix = __( 'location', 'community-directory' );
         $post_type = self::$post_type;
@@ -51,8 +55,9 @@ class ClassEntity {
             'description' => __( 'Community Directory Entities', 'community-directory' ), 
             'exclude_from_search' => false,
             'show_ui' => true,
-            'show_in_menu' => COMMUNITY_DIRECTORY_NAME,
+            'show_in_menu' => true,//COMMUNITY_DIRECTORY_NAME,
             'capability_type' => array( 'entity', 'entities' ),
+            'map_meta_cap'        => false,
             'capabilities' => array(
                 'edit_post'          => 'edit_entity', 
                 'read_post'          => 'read_entity', 
@@ -61,8 +66,10 @@ class ClassEntity {
                 'edit_others_posts'  => 'edit_others_entities', 
                 'publish_posts'      => 'publish_entities',       
                 'read_private_posts' => 'read_private_entities', 
-                'create_posts'       => 'edit_entities', 
-                ),
+                'create_posts'       => 'create_entities',
+                'delete_posts'       => 'delete_entities',
+                'delete_others_posts'=> 'delete_others_entities',
+            ),
             'supports' => array(
                 'title',
                 'thumbnail',
@@ -71,7 +78,7 @@ class ClassEntity {
             ),
             'rewrite' => array(
                 // 'slug' => "$loc_prefix/%location%",
-                'slug' => "enteaty",
+                'slug' => __( 'entity', 'community-directory' ),
                 'with_front' => false,
             ),
             'delete_with_user' => true,
@@ -83,24 +90,12 @@ class ClassEntity {
         register_post_type( $post_type, $customPostTypeArgs );
     }
 
+    /**
+     * Filter method to aggregate post types
+     */
     public static function add_post_type( $arr ) {
         $arr[] = self::$post_type;
         return $arr;
-    }
-
-    public static function entity_post_type_link( $permalink, $post, $leavename ) {
-        if ( stripos( $permalink, '%location%' ) == false )
-            return $permalink;
-
-        // if ( is_object( $post ) && self::$post_type == $post->post_type ) {
-        //     dump('permalink');
-        //     die($permalink);
-        //     $loc_post_id = $post->post_parent;
-        //     $loc_slug = community_directory_get_row_var( $loc_post_id, 'slug', 'post_id' );
-        //     $permalink = str_replace( '%location%', $loc_slug, $permalink );
-        // }
-
-        return $permalink;
     }
 
     /**
@@ -149,7 +144,14 @@ class ClassEntity {
         return $row_id;
     }
 
-    public static function get_entities_for_location( $user_arr, $loc_id_or_slug ) {
+    /**
+     * A filter method that can be called on it's own to get all of the entities for a given location
+     * 
+     * @param           $user_arr       array       the array with which to populate the users
+     * @param           $loc_id_or_slug int|string  the location post id's slug or ID
+     * @return                          array       Entity post types
+     */
+    public static function get_entities_for_location( array $user_arr, $loc_id_or_slug ) {
         global $wpdb;
 
         $where_var = gettype( $loc_id_or_slug ) === 'integer' ? 'id' : 'slug';
@@ -161,19 +163,34 @@ class ClassEntity {
             FROM $wpdb->posts AS parent
             JOIN $wpdb->posts AS posts
             ON parent.ID = posts.post_parent
-            WHERE parent.post_name = '$loc_id_or_slug'
+            WHERE parent.post_name = '$loc_id_or_slug' AND posts.post_status = 'publish'
         ");
 
         return array_merge( $user_arr, $users );
     }
 
-    public static function activate_deactivate_entity( $activate, $id, $id_for_what = 'post_id', $status_only = false ) {
+    /**
+     * Activates or deactivates an entity in ACF and the post's status
+     * 
+     * @param           $activate       bool        Whether to activate
+     * @param           $id             int         Either 'post_id' or 'user_id'
+     * @param           $id_for_what    string      If searching user_id, searches on the post_author field, otherwise on the post's ID (optional default: 'post_id')
+     * @param           $status_only    bool        Whether to only update the post's status, and not the ACF field
+     */
+    public static function activate_deactivate_entity(
+        bool $activate,
+        int $id,
+        string $id_for_what = 'post_id',
+        bool $status_only = false
+    ) {
         if ( $id_for_what === 'post_id' ) $entity_post_id = $id;
         else if ( $id_for_what === 'user_id' ) {
             $entity_post_id = community_directory_get_post_var_by_field(
                 'ID', 'post_author', $id, self::$post_type
             );
             if ( !$entity_post_id ) {
+                debug_trace();
+                dump( $id );
                 die( "Error getting entity's post_id for user: $id. Status not updated." );
             }
         } else die( 'Invalid "id_for_what" passed into ClassEntity::activate_deactivate_entity().' );

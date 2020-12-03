@@ -1,6 +1,7 @@
 <?php
 
 namespace Maruf89\CommunityDirectory\Includes;
+
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
 use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
 use Maruf89\CommunityDirectory\Admin\ClassAdminPostDisplay;
@@ -23,12 +24,12 @@ final class ClassCommunityDirectory {
     protected $assets;
     protected $admin;
 
-  private static $instance = null;
+    private static $instance = null;
 
-  public static function init() {
-     if (self::$instance === null) self::$instance = new self;
-     return self::$instance;
-  }
+    public static function init() {
+        if (self::$instance === null) self::$instance = new self;
+        return self::$instance;
+    }
 
     public function __construct() {
         $this->plugin_name = COMMUNITY_DIRECTORY_NAME;
@@ -37,7 +38,9 @@ final class ClassCommunityDirectory {
         $this->load_dependencies();
         $this->init_hooks();
 
-        $this->assets = new ClassPublic();
+
+
+        $this->public = new ClassPublic();
         $this->user = ClassEntity::get_instance();
         $this->menus = new ClassAdminMenus();
         $this->tables = new ClassTables();
@@ -52,10 +55,11 @@ final class ClassCommunityDirectory {
         $this->account = new ClassAccount();
 
         // actions and filters
+        $this->load_assets_actions_and_filters( $this->public );
         $this->load_tables_actions_and_filters( $this->tables );
         $this->load_location_actions_and_filters( $this->location );
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
-        $this->load_public_actions_and_filters( $this->assets );
+        $this->load_public_actions_and_filters( $this->public );
         $this->load_entity_actions_and_filters( $this->user );
         $this->load_acf_actions_and_filters( $this->acf );
 
@@ -107,8 +111,7 @@ final class ClassCommunityDirectory {
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
         add_action( 'init', array( __NAMESPACE__ . '\\ClassLocation', 'register_location_post_type' ) );
         add_action( 'init', array( __NAMESPACE__ . '\\ClassEntity', 'register_entity_post_type' ) );
-        add_action( 'init', array( __NAMESPACE__ . '\\ClassPublic', 'community_directory_rewrite_tag' ), 10, 0 );
-        add_action( 'init', array( __NAMESPACE__ . '\\ClassPublic', 'community_directory_rewrite_rule' ), 10, 0 );
+        add_action( 'init', array( __NAMESPACE__ . '\\ClassPublic', 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
         add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
     }
@@ -166,8 +169,8 @@ final class ClassCommunityDirectory {
     }
 
     public function load_public_actions_and_filters( $instance ) {
-        add_filter( 'single_template', array( $instance, 'load_location_template' ), 99 );
-        // add_filter( 'query_vars', array( $instance, 'prefix_register_query_var' ) );
+        add_filter( 'single_template', array( $instance, 'load_custom_templates' ), 99 );
+        add_filter( 'wp_get_nav_menu_items', array( $instance, 'custom_nav_menu' ), 20, 2 );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
     }
 
@@ -175,7 +178,6 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_get_users_for_location', array( $instance, 'get_entities_for_location' ), 10, 2 );
 
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
-        add_filter( 'post_type_link', array( $instance, 'entity_post_type_link' ), 10, 3 );
     }
 
     public function load_acf_actions_and_filters( $instance ) {

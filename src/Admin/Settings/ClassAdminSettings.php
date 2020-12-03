@@ -46,9 +46,8 @@ class ClassAdminSettings {
         if ( empty( self::$settings ) ) {
             $settings = array();
 
+            $settings[] = new ClassSettingsGeneral();
             $settings[] = new ClassSettingsLocation();
-            // $settings[] = include( 'class-settings-import-export.php' );
-            // $settings[] = include( 'class-settings-addons.php' );
             $settings[] = new ClassSettingsUninstall();
             if ( wp_get_environment_type() !== 'production' ) $settings[] = new ClassSettingsTest();
 

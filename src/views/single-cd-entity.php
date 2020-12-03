@@ -8,24 +8,36 @@ global $post;
 
 $location = $post->post_name;
 
-$users = apply_filters( 'community_directory_get_users_for_location', array(), $location );
-
-$url_pre = '/' . __( 'location', 'community-directory' ) . '/' . $location;
+// dump($post);
 
 ?>
 
     <main id="content" class="container">
-        <div class="row mt-5 mb-5">
-            <h1 class="text-center col-xs-12 col-md-12"><?= $post->post_title ?></h1>
-            <article class="row">
-                <header>
-                    <h2 class="entry-title"><?php echo $post->post_title; ?></h2>
-                </header>
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <div class="card p-3">
+                    <h1><?= $post->post_title ?></h1>
+                    <div class="divider"></div>
+                    <p>
+                        <?= get_post_meta( $post->ID, 'user_about', true ) ?>
+                    </p>
+                </div>
+                
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="card p-3">
+                    <?php the_post_thumbnail( 'medium' ); ?>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="card p-3">
+                    sth.
+                </div>
+            </div>
 
                 
                 
 
-            </article>
         </div>
     </main>
 

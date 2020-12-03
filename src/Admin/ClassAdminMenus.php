@@ -13,8 +13,35 @@ class ClassAdminMenus {
      * Hook in tabs.
      */
     public function __construct() {
-        // Add menus
         add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
+    }
+
+    public function admin_init() {
+        // Add the roles you'd like to administer the custom post types
+		$all_roles = array( 'entity_subscriber', 'editor', 'administrator' );
+		$editor_roles = array( 'editor', 'administrator' );
+		
+		// Loop through each role and assign capabilities
+		foreach( $all_roles as $the_role ) {
+            $role = get_role( $the_role );
+            if ( $role == null ) continue;
+            $role->add_cap( 'read_entity');
+            $role->add_cap( 'edit_entity' );
+            $role->add_cap( 'read_private_entities' );
+            $role->add_cap( 'edit_entities' );
+            $role->add_cap( 'edit_published_entities' );
+        }
+        unset( $the_role );
+		
+		// Loop through each role and assign capabilities
+		foreach( $editor_roles as $the_role ) {
+		    $role = get_role( $the_role );
+            $role->add_cap( 'publish_entities' );
+            $role->add_cap( 'edit_others_entities' );
+            $role->add_cap( 'delete_others_entities' );
+            $role->add_cap( 'delete_private_entities' );
+            $role->add_cap( 'delete_published_entities' );
+		}
     }
 
     /**
@@ -58,7 +85,6 @@ class ClassAdminMenus {
             return;
         }
 
-
         add_menu_page(
             __( 'Community Directory Settings', 'community-directory' ),
             __( 'Community Directory', 'community-directory' ),
@@ -74,7 +100,7 @@ class ClassAdminMenus {
     /**
      * Add Community_Directory setting page link to the WP admin bar.
      *
-     * @since 1.1.2
+     * @since 2020.11
      * @return void
      */
     public function admin_bar_menu($wp_admin_bar){

@@ -23,17 +23,15 @@ function community_directory_get_row_var( $where_val, string $var, string $where
 /**
  * Checks whether a location already exists with a given a locations slug
  * 
- * @param       $name       string      the slug of the location to check against
+ * @param       $slug       string      the slug of the location to check against
  * @return                  bool
  */
-function community_directory_location_exists( $name ) {
+function community_directory_location_exists( $slug ) {
     global $wpdb;
-
-    $display_name = community_directory_format_display_name( $name );
     
     $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
     $row = $wpdb->get_row(
-        $wpdb->prepare( "SELECT display_name FROM $table WHERE display_name = %s", $display_name )
+        $wpdb->prepare( "SELECT slug FROM $table WHERE slug = %s", $slug )
     );
 
     return !!$row;

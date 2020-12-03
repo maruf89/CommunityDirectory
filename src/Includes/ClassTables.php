@@ -2,7 +2,7 @@
 /**
  * Community Directory table related functions
  *
- * @since      0.0.1
+ * @since      2020.11
  * @author     Marius Miliunas <mvmiliunas@gmail.com>
  */
 

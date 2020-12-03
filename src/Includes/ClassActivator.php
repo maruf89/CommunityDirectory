@@ -12,6 +12,9 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassActivator {
 
+    public static $role_entity = 'entity_subscriber';
+    public static $role_location = 'location_manager';
+
     /**
      * This method gets fired during plugin activation.
      *
@@ -61,6 +64,8 @@ class ClassActivator {
 
     public static function install(){
         self::add_default_options();
+
+        self::add_capabilities();
         
         do_action( 'community_directory_create_tables' );
 
@@ -100,6 +105,8 @@ class ClassActivator {
 
         $options = array(
             'uninstall_erase_data' => 0,
+            'load_locations_nav_menu' => 1,
+            'load_my_location_nav_menu' => 1,
         );
 
         foreach ($options as $option => $value){
@@ -109,6 +116,47 @@ class ClassActivator {
         }
 
         update_option( 'community_directory_settings', $settings );
+    }
+
+    public static function add_capabilities() {
+        $entity_caps = [
+            'read' => true,
+            'read_entity' => true,
+            'edit_entity' => true,
+            'delete_entity' => false,
+            'read_private_entities' => true,
+            'edit_entities' => true,
+            'edit_published_entities' => true,
+            'edit_others_entities' => false,
+            'publish_entities' => false,
+            'upload_files' => true,
+            'create_entities' => false,
+        ];
+
+        // $location_caps = [
+        //     //* Meta capabilities
+        //     'read' => true,
+        //     'edit_location' => true,
+        //     'read_location' => true,
+        //     'delete_location' => false,
+        //     'edit_locations' => false,
+        //     'edit_others_locations' => false,
+        //     'publish_locations' => false,
+        //     'read_private_locations' => false,
+        //     'create_locations' => false,
+        // ];
+
+        add_role(
+            self::$role_entity,
+            __( 'Entity Subscriber', 'community-directory' ),
+            $entity_caps
+        );
+
+        // add_role(
+        //     self::$role_location,
+        //     __( 'Location Manager', 'community-directory' ),
+        //     $location_caps
+        // );
     }
 
     public static function deactivate($network_wide = false) {
@@ -151,6 +199,8 @@ class ClassActivator {
 
     public static function uninstall() {
         $options = get_option( 'community_directory_settings' );
+
+        self::remove_roles_and_caps();
     
         if ( isset($options['uninstall_erase_data']) &&
             $options['uninstall_erase_data'] == '1'
@@ -183,6 +233,11 @@ class ClassActivator {
             delete_option( 'community_directory_default_data_installed' );
             delete_option( 'community_directory_db_version' );
         }
+    }
+
+    public static function remove_roles_and_caps() {
+        remove_role( self::$role_entity );
+        remove_role( self::$role_location );
     }
 
 

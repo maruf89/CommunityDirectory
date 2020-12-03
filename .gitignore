@@ -21,3 +21,6 @@ bin
 .DS_Store
 .AppleDouble
 .LSOverride
+
+#IDE
+.vscode

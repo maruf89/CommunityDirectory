@@ -261,3 +261,46 @@ function community_directory_enum_status_to_post_status( $status = '' ) {
     }
 }
 
+/**
+ * Simple helper function for make menu item objects
+ * 
+ * @param $title      - menu item title
+ * @param $url        - menu item url
+ * @param $order      - where the item should appear in the menu
+ * @param int $parent - the item's parent item
+ * @return \stdClass
+ */ 
+function community_directory_custom_nav_menu_item( $title, $url, $order, $parent = 0 ) {
+    $item = (object) null;
+    $item->ID = 1000000 + $order + $parent;
+    $item->db_id = $item->ID;
+    $item->title = $title;
+    $item->url = $url;
+    $item->menu_order = $order;
+    $item->menu_item_parent = $parent;
+    $item->type = '';
+    $item->object = '';
+    $item->object_id = '';
+    $item->classes = array();
+    $item->target = '';
+    $item->attr_title = '';
+    $item->description = '';
+    $item->xfn = '';
+    $item->status = '';
+    return $item;
+  }
+
+  if ( !function_exists( 'arr_val_or_null' ) ) {
+      function arr_val_or_null( $arr, $prop, $null = null ) {
+          if ( isset( $arr[$prop] ) ) return $arr[$prop];
+          return $null;
+      }
+  }
+
+if ( !function_exists( 'arr_equals_val' ) ) {
+        function arr_equals_val( $arr, $prop, $val, $strict = true ):bool {
+            $_val = arr_val_or_null( $arr, $prop );
+            if ( $strict ) return $_val === $val;
+            return $_val == $val;
+      }
+}
