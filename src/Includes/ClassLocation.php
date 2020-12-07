@@ -403,7 +403,7 @@ class ClassLocation {
         self::delete_location_post( $post_id );
 
         if ( $deleted_rows = ClassLocation::delete_location( (int) $_POST['location_id'] ) ) {
-            die( sprintf( __( 'Successfully deleted %s location(s) ', 'community-directory' ), $deleted_rows ) );
+            die( sprintf( __( 'Successfully deleted %s location(s)', 'community-directory' ), $deleted_rows ) );
         } else {
             die( wp_send_json_error( 'Error occurred deleting location' ) );
         }

@@ -10,9 +10,6 @@
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;
 
-// Temp for testing
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }

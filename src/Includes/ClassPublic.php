@@ -61,23 +61,21 @@ class ClassPublic {
         if ( ( $Entity = Entity::get_active_entity() ) &&
              arr_equals_val( $options, 'load_my_location_nav_menu', 1 )
         ) {
-            $_location = __( 'location', 'community-directory' );
-            $location = $Entity->location;
             $top = community_directory_custom_nav_menu_item(
-                $location->display_name,
-                "/$_location/$location->slug/" . __( 'single', 'community-directory' ),
+                $Entity->location_name,
+                Entity::get_location_link(),
                 100
             );
             $items[] = $top;
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'My Profile', 'community-directory' ),
-                "/$_location/$location->slug/$Entity->post_name",
+                Entity::get_display_link(),
                 101,
                 $top->ID
             );
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'Edit Profile', 'community-directory' ),
-                admin_url("post.php?post=$Entity->post_id&action=edit"),
+                Entity::get_edit_link(),
                 102,
                 $top->ID
             );

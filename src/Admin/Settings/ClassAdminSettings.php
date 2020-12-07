@@ -47,6 +47,7 @@ class ClassAdminSettings {
             $settings = array();
 
             $settings[] = new ClassSettingsGeneral();
+            $settings[] = new ClassSettingsEntity();
             $settings[] = new ClassSettingsLocation();
             $settings[] = new ClassSettingsUninstall();
             if ( wp_get_environment_type() !== 'production' ) $settings[] = new ClassSettingsTest();

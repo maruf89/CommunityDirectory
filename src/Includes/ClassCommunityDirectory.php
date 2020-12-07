@@ -175,7 +175,7 @@ final class ClassCommunityDirectory {
     }
 
     public function load_entity_actions_and_filters( $instance ) {
-        add_filter( 'community_directory_get_users_for_location', array( $instance, 'get_entities_for_location' ), 10, 2 );
+        add_filter( 'community_directory_get_entities', array( $instance, 'get_entities' ), 10, 4 );
 
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
     }
@@ -280,3 +280,8 @@ final class ClassCommunityDirectory {
         do_action( 'wpml_register_single_string', $domain, $name, $string );
     }
 }
+
+$translations = [
+    __( 'm/d/y g:i a', 'community-directory' ),
+    __( 'm/d/Y g:i:s a', 'community-directory' )
+];
