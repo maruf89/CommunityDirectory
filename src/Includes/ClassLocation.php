@@ -541,7 +541,7 @@ class ClassLocation extends Routable {
             '/test-loc' => array(
                 'methods'   => 'PUT',
                 'callback'  => $callback,
-                'permission_callback' => function( $request) {
+                'permission_callback' => function( $request ) {
                     // This always returns false
                     return is_user_logged_in();
                 },
@@ -549,7 +549,7 @@ class ClassLocation extends Routable {
             '/get' => array(
                 'methods'   => \WP_REST_Server::READABLE,
                 'callback'  => $callback,
-                'permission_callback' => '__return_true',
+                'permission_callback' => function ( $request ) { return true; },
             )
         );
     }
