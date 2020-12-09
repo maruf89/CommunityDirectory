@@ -8,8 +8,7 @@
 vendor/*
 !vendor/autoload.php
 !vendor/composer
-!vendor/wordpress/wordpress
-!vendor/kylekatarnis
+!vendor/kylekatarnls
 !vendor/.gitkeep
 composer.lock
 composer.phar
