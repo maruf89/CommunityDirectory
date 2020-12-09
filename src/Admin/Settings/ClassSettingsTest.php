@@ -63,7 +63,6 @@ class ClassSettingsTest extends AbstractClassSettingsPage {
         $settings = $this->get_settings( $current_section );
 
         do_action( 'community_directory_settings_save_modify_users', $current_section );
-        // else ClassAdminSettings::save_fields( $settings );
     }
 
     /**
@@ -97,7 +96,7 @@ class ClassSettingsTest extends AbstractClassSettingsPage {
                     ),
                     array(
                         'name' => __( 'Generate New Locations', 'community-directory' ),
-                        'desc'     => __( 'Generate new locations.', 'community-directory' ),
+                        'desc'     => __( 'Generate New Locations', 'community-directory' ),
                         'id'    => 'generate_new_locations',
                         'type'  => 'checkbox',
                         'desc'  => __( 'Check if you would like the new users to be generated to new locations', 'community-directory' ),
@@ -113,7 +112,6 @@ class ClassSettingsTest extends AbstractClassSettingsPage {
                     ),
                     array(
                         'name' => __( 'Subscriber Count', 'community-directory' ),
-                        'desc'     => __( 'Subscriber count.', 'community-directory' ),
                         'id'    => 'new_subscriber_count',
                         'type'  => 'number',
                         'desc'  => __( 'Enter the number of new users you want to generate.', 'community-directory' ),

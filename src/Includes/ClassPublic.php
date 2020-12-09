@@ -12,16 +12,13 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
 
 class ClassPublic {
 
     public function __construct() {
 
-    }
-
-    public static function on_init() {
-        
     }
     
     /**
@@ -40,10 +37,20 @@ class ClassPublic {
      */
     public function enqueue_scripts() {
 
-        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';//'.min';
 
         // Core JS
         wp_enqueue_script( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/js/community-directory' . $suffix . '.js', array( 'jquery' ), COMMUNITY_DIRECTORY_VERSION, false );
+
+        wp_localize_script( 'community_directory_admin_js', 'cdData',
+            array(
+                'restBase' => '/wp-json/wp/v2/',
+                'postType' => array(
+                    'entity' => ClassEntity::$post_type,
+                    'location' => ClassLocation::$post_type,
+                )
+            )
+        );
         
     }
 
@@ -61,23 +68,21 @@ class ClassPublic {
         if ( ( $Entity = Entity::get_active_entity() ) &&
              arr_equals_val( $options, 'load_my_location_nav_menu', 1 )
         ) {
-            $_location = __( 'location', 'community-directory' );
-            $location = $Entity->location;
             $top = community_directory_custom_nav_menu_item(
-                $location->display_name,
-                "/$_location/$location->slug/" . __( 'single', 'community-directory' ),
+                $Entity->location_name,
+                Entity::get_location_link(),
                 100
             );
             $items[] = $top;
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'My Profile', 'community-directory' ),
-                "/$_location/$location->slug/$Entity->post_name",
+                Entity::get_display_link(),
                 101,
                 $top->ID
             );
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'Edit Profile', 'community-directory' ),
-                admin_url("post.php?post=$Entity->post_id&action=edit"),
+                Entity::get_edit_link(),
                 102,
                 $top->ID
             );

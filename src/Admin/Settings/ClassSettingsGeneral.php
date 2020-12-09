@@ -80,7 +80,6 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
             array(
                 'title' => __( 'General Settings', 'community-directory' ),
                 'type'  => 'title',
-                'desc'  => __( 'Options to remove data upon general', 'community-directory' ),
                 'id'    => 'general_options',
             ),
             array(

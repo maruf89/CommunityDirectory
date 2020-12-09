@@ -8,23 +8,28 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-class ClassLocation {
+use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
 
-    private static $instance;
+class ClassLocation extends Routable {
+
+    private static ClassLocation $instance;
 
     public static function get_instance() {
-        if (self::$instance == null) {
+        if ( !isset( self::$instance ) ) {
             self::$instance = new ClassLocation();
         }
  
         return self::$instance;
     }
 
-    public static $post_type = 'cd-location';
+    public static string $post_type = 'cd-location';
+    protected string $router_ns = 'location';
 
     public function __construct() {
         define( 'COMMUNITY_DIRECTORY_DISPLAY_NAME', 'display_name' );
         define( 'COMMUNITY_DIRECTORY_SLUG', 'slug' );
+        
+        parent::__construct( $this );
     }
 
     public static function register_location_post_type() {
@@ -51,6 +56,7 @@ class ClassLocation {
             'show_ui' => true,
             'hierarchical' => true,
             'show_in_menu' => COMMUNITY_DIRECTORY_NAME,
+            'show_in_rest' => true,
             'capability_type' => array( 'location', 'locations' ),
             'capabilities' => array(
                 'edit_post'          => 'edit_location', 
@@ -86,10 +92,35 @@ class ClassLocation {
         return $arr;
     }
 
+    function get(
+        bool $status_active = false,
+        bool $with_inhabitants = false,
+        bool $formatted = false,
+        string $output = OBJECT
+    ) {
+        global $wpdb;
+
+        $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+
+        if ( gettype( $status_active ) === 'boolean' ) {
+            if ( $status_active ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
+        } else
+            $sql .= " WHERE status = '$status_active'";
+        
+        if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
+
+        $results = $wpdb->get_results( $sql, $output );
+
+        if ( !$formatted ) return $results;
+        if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $formatted is a string
+        return self::format_row_locations( $results, $formatted );
+    }
+
     /**
      * Accepts an array of location 'id' values and returns the rows
      * 
-     * @param       $field_values   array           array of location ids
+     * @param       $field_values   array           array of values to get (could be location ids)
      * @param       $field_key      string          the field key to test the values against
      * @param       $formatted      string|bool     if string, will use that as the key to format rows by
      *                                              if true, defaults to default key, if false - returns raw
@@ -403,7 +434,7 @@ class ClassLocation {
         self::delete_location_post( $post_id );
 
         if ( $deleted_rows = ClassLocation::delete_location( (int) $_POST['location_id'] ) ) {
-            die( sprintf( __( 'Successfully deleted %s location(s) ', 'community-directory' ), $deleted_rows ) );
+            die( sprintf( __( 'Successfully deleted %s location(s)', 'community-directory' ), $deleted_rows ) );
         } else {
             die( wp_send_json_error( 'Error occurred deleting location' ) );
         }
@@ -481,5 +512,45 @@ class ClassLocation {
      */
     public static function delete_location_post( $post_id ) {
         return wp_delete_post( $post_id, true );
+    }
+
+    protected array $route_map = [
+        '/test-loc' => array(// Todo 
+            'callback'  => 'create_location',
+            'args'      => array( 'array' => 'data' )
+        ),
+        '/get'      => array(
+            'callback'  => 'get',
+            'args'      => array(
+                'status_active'     => '?bool',
+                'with_inhabitants'  => '?bool',
+                'formatted'         => '?bool',
+            )
+        )
+    ];
+
+    /**
+     * array( '/location/(?P<id>\d+)' => array(
+     *      'methods' => 'GET',
+     *      'callback' => 'my_awesome_func',
+     *    )
+     * )
+     */
+    public static function get_router_end_points( array $callback ):array {
+        return array(
+            '/test-loc' => array(
+                'methods'   => 'PUT',
+                'callback'  => $callback,
+                'permission_callback' => function( $request) {
+                    // This always returns false
+                    return is_user_logged_in();
+                },
+            ),
+            '/get' => array(
+                'methods'   => \WP_REST_Server::READABLE,
+                'callback'  => $callback,
+                'permission_callback' => '__return_true',
+            )
+        );
     }
 }

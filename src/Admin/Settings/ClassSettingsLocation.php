@@ -10,9 +10,6 @@
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;
 
-// Temp for testing
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
@@ -243,6 +240,13 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                       <span class="table-remove dashicons dashicons-remove"></span>
                     </td>
                   </tr>
+            <script type="text/javascript">
+                var onload = document.body.onload;
+                document.body.onload = function () {
+                    if ( onload !== document.body.onload ) onload();
+                    cdData.fn.editLocationTable( jQuery('.edit-locations-table') );
+                }
+            </script>
         <?php
     }
 

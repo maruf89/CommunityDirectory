@@ -108,7 +108,7 @@ class ClassAdminMenus {
             $wp_admin_bar->add_node( array(
                 'parent' => 'appearance',
                 'id'     => 'community-directory',
-                'title'  => __( 'Community_Directory', 'community-directory' ),
+                'title'  => __( 'Community Directory', 'community-directory' ),
                 'href'   => admin_url( 'admin.php?page=community-directory' )
             ) );
         }

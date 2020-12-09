@@ -8,22 +8,33 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-class ClassEntity {
+use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
 
-    private static $instance;
-    public static $role_entity = 'entity_subscriber';
-    public static $post_type = 'cd-entity';
-    public static $post_meta_loc_name = '_cd_location_display_name';
-    public static $post_meta_loc_id = '_cd_location_id';
+class ClassEntity extends Routable {
 
-    public static function get_instance() {
-        if (self::$instance == null) {
+    private static ClassEntity $instance;
+
+    protected string $router_ns = 'entity';
+    
+    public static string $role_entity = 'entity_subscriber';
+    public static string $post_type = 'cd-entity';
+    public static string $post_meta_loc_name = '_cd_location_display_name';
+    public static string $post_meta_loc_id = '_cd_location_id';
+
+    public static function get_instance():ClassEntity {
+        if ( !isset( self::$instance ) ) {
             self::$instance = new ClassEntity();
         }
 
         // flush_rewrite_rules( true );
  
         return self::$instance;
+    }
+
+    public function __construct() {
+        parent::__construct( $this );
     }
 
     /**
@@ -145,28 +156,63 @@ class ClassEntity {
     }
 
     /**
-     * A filter method that can be called on it's own to get all of the entities for a given location
+     * Get's all entities matching a post_id, slug, or returning all
+     * A wp filter method that can be called on it's own to get all of the entities for a given location
      * 
-     * @param           $user_arr       array       the array with which to populate the users
-     * @param           $loc_id_or_slug int|string  the location post id's slug or ID
+     * @param           $entity_arr     array       the array to populate with entities
+     * @param           $where_val      int|string  the location  (optional: if empty returns all entities)
+     * @param           $where_key      string      options: ('location' or any field key)
+     *                                              if 'location' passed, $where_val must be either a location post id's slug or post's ID. Otherwise a post's field key
+     * @param           $status         string      the post's status. If empty, returns all post status types
+     * @param           $sql_only       bool        whether to return only the sql query
      * @return                          array       Entity post types
      */
-    public static function get_entities_for_location( array $user_arr, $loc_id_or_slug ) {
+    public static function get_entities(
+        array $entity_arr,
+        $where_val = false,
+        $where_key = '',
+        string $status = 'publish',
+        bool $sql_only = false
+    ) {
         global $wpdb;
-
-        $where_var = gettype( $loc_id_or_slug ) === 'integer' ? 'id' : 'slug';
-
         $location_name = ClassACF::$field_location_name;
+        $post_type = self::$post_type;
 
-        $users = $wpdb->get_results("
-            SELECT posts.ID, posts.post_name, posts.post_title as $location_name
-            FROM $wpdb->posts AS parent
-            JOIN $wpdb->posts AS posts
-            ON parent.ID = posts.post_parent
-            WHERE parent.post_name = '$loc_id_or_slug' AND posts.post_status = 'publish'
-        ");
+        if ( $where_key === 'location' ) {
+            $where_key = gettype( $where_val ) === 'integer' ? 'entity.ID' : 'location.post_name';
 
-        return array_merge( $user_arr, $users );
+            $where_status = '';
+            if ( !empty( $status ) )
+                $where_status .= "AND entity.post_status = '$status'";
+
+            $sql = "
+                SELECT entity.ID, entity.post_name, entity.post_title as $location_name
+                FROM $wpdb->posts AS location
+                JOIN $wpdb->posts AS entity
+                ON location.ID = entity.post_parent
+                WHERE post_status != 'auto-draft' AND entity.post_type = '$post_type' AND $where_key = '$where_val' $where_status
+            ";
+        } else {
+            $where_match = '';
+            if ( $where_val && !empty( $where_key ) )
+                $where_match .= "AND $where_val = '$where_val'";
+
+            $where_status = '';
+            if ( !empty( $status ) )
+                $where_status .= "AND post_status = '$status'";
+            
+            $sql = "
+                SELECT *
+                FROM $wpdb->posts
+                WHERE post_status != 'auto-draft' AND post_type = '$post_type' $where_match $where_status
+            ";
+        }
+
+        if ( $sql_only ) return $sql;
+        
+        $entities = $wpdb->get_results( $sql );
+
+        return array_merge( $entity_arr, $entities );
     }
 
     /**
@@ -199,7 +245,7 @@ class ClassEntity {
         if ( !$status_only ) {
             // Update the user's active field in ACF
             $acf_updates = array();
-            $acf_updates[ClassACF::$field_is_active_key] = 'true';
+            $acf_updates[ClassACF::$field_is_active_key] = $activate ? 'true' : 'false';
             community_directory_acf_update_entity( $entity_post_id, $acf_updates );
         }
 
@@ -207,6 +253,64 @@ class ClassEntity {
         $status = $activate ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
         community_directory_update_post_status( $entity_post_id, $status );
         return true;
+    }
+
+    public static function get_entities_for_entityless_users( bool $sql_only = false ) {
+        global $wpdb;
+        $post_type = self::$post_type;
+
+        $sql = "
+            SELECT  users.*
+            FROM    $wpdb->users users
+            WHERE   NOT EXISTS
+            (
+                SELECT  post_author
+                FROM    $wpdb->posts posts
+                WHERE   post_type = '$post_type' AND users.ID = posts.post_author
+            )
+        ";
+
+        return $sql_only ? $sql : $wpdb->get_results( $sql );
+    }
+
+    public static function update_entity( int $entity_id, int $location_id ) {
+        $entity = new Entity( $entity_id );
+        return $entity->set_location( new Location( $location_id ) );
+    }
+
+
+
+    protected array $route_map = [
+        '/update-entity' => array(
+            'callback' => 'update_entity',
+            'args' => array(
+                'entity' => 'int', // the user to edit
+                'location_id' => 'int'
+            )
+        )
+    ];
+
+    public static function get_router_end_points( array $callback ):array {
+        return array(
+            '/update-entity' => array(
+                'methods'   => 'POST',
+                'callback'  => $callback,
+                'permission_callback' => function ( $request ):bool {
+                    $params = $request->get_params();
+                    if ( !isset( $params['entity'] ) ) return false;
+                    return current_user_can( 'edit_others_entities' ) || ClassEntity::user_can_edit_entity( $params['entity'] );
+                },
+            )
+        );
+    }
+
+    public static function user_can_edit_entity( int $entity_id, \WP_User $user = null ):bool {
+        if ( !$user ) $user = wp_get_current_user();
+        
+        $me = new Entity( null, $user );
+        if ( !$me->is_valid() ) return false;
+
+        return $me->post_id == $entity_id;
     }
 
 }

@@ -6,6 +6,9 @@
 
 # Vendor (e.g. Composer)
 vendor/*
+!vendor/autoload.php
+!vendor/composer
+!vendor/kylekatarnls
 !vendor/.gitkeep
 composer.lock
 composer.phar

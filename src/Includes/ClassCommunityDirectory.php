@@ -13,18 +13,28 @@ final class ClassCommunityDirectory {
     /**
      * The current version of the plugin.
      *
-     * @since    1.0.0
+     * @since    2020.11
      * @access   protected
      * @var      string    $version    The current version of the plugin.
      */
-    protected $version;
-    protected $i18n;
-    protected $menus;
-    protected $tables;
-    protected $assets;
-    protected $admin;
+    protected string $version;
+    
+    private static ?ClassCommunityDirectory $instance = null;
 
-    private static $instance = null;
+    protected ClassPublic $public;
+    protected ClassAdminMenus $menus;
+    protected ClassTables $tables;
+    protected ClassAdmin $admin;
+    protected ClassLocation $location;
+    protected ClassUWPForms $uwp_forms;
+    protected ClassShortcodes $shortcodes;
+    protected ClassACF $acf;
+    protected ClassRestEndpoints $rest_end_points;
+
+    protected ClassUWPFormBuilder $uwp_form_builder;
+    protected ClassAdminPostDisplay $admin_post_display;
+    protected ClassAccount $account;
+
 
     public static function init() {
         if (self::$instance === null) self::$instance = new self;
@@ -36,16 +46,17 @@ final class ClassCommunityDirectory {
         $this->version = COMMUNITY_DIRECTORY_VERSION;
 
         $this->load_dependencies();
-        $this->init_hooks();
-
-
 
         $this->public = new ClassPublic();
-        $this->user = ClassEntity::get_instance();
+        $this->entity = ClassEntity::get_instance();
+        $this->location = ClassLocation::get_instance();
+        $this->rest_end_points = ClassRestEndpoints::get_instance();
+        
+        $this->init_hooks();
+
         $this->menus = new ClassAdminMenus();
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
-        $this->location = ClassLocation::get_instance();
         $this->uwp_forms = new ClassUWPForms();
         $this->shortcodes = new ClassShortcodes();
         $this->acf = new ClassACF();
@@ -60,7 +71,7 @@ final class ClassCommunityDirectory {
         $this->load_location_actions_and_filters( $this->location );
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
         $this->load_public_actions_and_filters( $this->public );
-        $this->load_entity_actions_and_filters( $this->user );
+        $this->load_entity_actions_and_filters( $this->entity );
         $this->load_acf_actions_and_filters( $this->acf );
 
         // shortcodes
@@ -109,9 +120,9 @@ final class ClassCommunityDirectory {
         add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
-        add_action( 'init', array( __NAMESPACE__ . '\\ClassLocation', 'register_location_post_type' ) );
-        add_action( 'init', array( __NAMESPACE__ . '\\ClassEntity', 'register_entity_post_type' ) );
-        add_action( 'init', array( __NAMESPACE__ . '\\ClassPublic', 'on_init' ) );
+        add_action( 'init', array( $this->location, 'register_location_post_type' ) );
+        add_action( 'init', array( $this->entity, 'register_entity_post_type' ) );
+        add_action( 'rest_api_init', array( $this->rest_end_points, 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
         add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
     }
@@ -175,7 +186,7 @@ final class ClassCommunityDirectory {
     }
 
     public function load_entity_actions_and_filters( $instance ) {
-        add_filter( 'community_directory_get_users_for_location', array( $instance, 'get_entities_for_location' ), 10, 2 );
+        add_filter( 'community_directory_get_entities', array( $instance, 'get_entities' ), 10, 4 );
 
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
     }
@@ -280,3 +291,8 @@ final class ClassCommunityDirectory {
         do_action( 'wpml_register_single_string', $domain, $name, $string );
     }
 }
+
+$translations = [
+    __( 'm/d/y g:i a', 'community-directory' ),
+    __( 'm/d/Y g:i:s a', 'community-directory' )
+];

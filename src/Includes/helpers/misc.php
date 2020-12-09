@@ -248,16 +248,17 @@ function community_directory_update_post_status( $post_id, $status ) {
  * Converts a location status enum to a wp post status type
  * 
  * @param           $status         string      COMMUNITY_DIRECTORY_ENUM_(PENDING|ACTIVE)
+ * @param           $display        bool        Whether to return output as a readable value
  * @return                          string      returns the corresponding wp post status type
  */
-function community_directory_enum_status_to_post_status( $status = '' ) {
+function community_directory_enum_status_to_post_status( $status = '', $display = false ):string {
     switch ( $status ) {
         case COMMUNITY_DIRECTORY_ENUM_PENDING:
-            return 'pending';
+            return $display ? __( 'pending', 'community-directory' ) : 'pending';
         case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
-            return 'publish';
+            return $display ? __( 'publish', 'community-directory' ) : 'publish';
         default:
-            return 'draft';
+            return $display ? __( 'draft', 'community-directory' ) : 'draft';
     }
 }
 

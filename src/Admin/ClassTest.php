@@ -188,7 +188,7 @@ class ClassTest {
      * @return      int         number of deleted users
      */
     public function delete_subscribers() {
-        $subscribers = get_users( array( 'role' => 'subscriber' ) );
+        $subscribers = get_users( array( 'role' => ClassEntity::$role_entity ) );
         
         $deleted = 0;
         
