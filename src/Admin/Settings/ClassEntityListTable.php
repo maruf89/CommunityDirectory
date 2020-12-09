@@ -18,6 +18,8 @@ class ClassEntityListTable extends \WP_List_Table {
     private $section;
     private $display_status = '';
 
+    private $loc_modal_loaded = false;
+
     /**
      * Constructor, we override the parent to pass our own arguments
      * We usually focus on three parameters: singular and plural labels, as well as whether the class supports AJAX.
@@ -29,7 +31,6 @@ class ClassEntityListTable extends \WP_List_Table {
         $this->section = $section;
         if ( !empty( $section ) && ( $section === 'active' || $section === 'inactive' ) )
             $this->display_status = $section === 'active' ? 'publish' : 'pending';
-        
 
         parent::__construct( array(
             'singular'=> 'wp_list_entity', //Singular label
@@ -269,7 +270,28 @@ class ClassEntityListTable extends \WP_List_Table {
     }
 
     public function column_location( Entity $entity ) {
-        return $entity->location_name;
+        if ( $entity->location_name )
+            return $entity->location_name;
+
+        // Load thickbox and modal
+        $id = 'modalLocationSelect';
+        $this->require_location_select( $id );
+        $columnId = 'columnLocation-' . $entity->post_id;
+        
+        // If no location exists for user;
+        ob_start();
+        ?>
+            <div id="<?= $columnId ?>">
+                <a class="button-primary thickbox select-location-modal enable-on-load disabled"
+                data-entity-id="<?= $entity->ID ?>"
+                data-column-id="<?= $columnId ?>"
+                href="#TB_inline?&width=200&height=350&inlineId=<?=$id?>"
+                >
+                        <?= __( 'Select Location', 'community-directory' ) ?>
+                </a>
+            </div>
+        <?php
+        return ob_get_clean();
     }
 
     public function column_status( Entity $entity ) {
@@ -316,14 +338,12 @@ class ClassEntityListTable extends \WP_List_Table {
      *
      * @return string, echo the markup of the rows
      */
-    function display_rows() {
+    public function display_rows() {
         if ( !empty( $this->items ) ) {
             foreach ( $this->items as $record ) {
                 $class = '';// "class='$column_name column-$column_name'";
 
                 $entity = new Entity( null, null, $record );
-
-                // if ( !$entity->is_valid() ) continue;
 
                 ?>
                     <tr class="<?= trim( $class ) ?>">
@@ -334,5 +354,12 @@ class ClassEntityListTable extends \WP_List_Table {
         } else {
             echo $this->no_items();
         }
+    }
+
+    private function require_location_select( $modal_id = '' ) {
+        if ( $this->loc_modal_loaded ) return;
+
+        require_once( COMMUNITY_DIRECTORY_TEMPLATES_PATH . 'modal-location-select.php' );
+        $this->loc_modal_loaded = true;
     }
 }

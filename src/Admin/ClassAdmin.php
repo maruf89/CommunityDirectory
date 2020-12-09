@@ -3,6 +3,9 @@
 namespace Maruf89\CommunityDirectory\Admin;
 
 use Stylus\Stylus;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -67,10 +70,19 @@ class ClassAdmin {
             'all'
         );
 
-        wp_localize_script( 'community_directory_admin_js', 'ajaxObject', array(
-            'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'translations' => array(
-                'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' ) )
+        wp_localize_script( 'community_directory_admin_js', 'cdData',
+            array(
+                'ajax_url' => admin_url( 'admin-ajax.php' ),
+                'translations' => array(
+                    'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' )
+                ),
+                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base, //  '/wp-json/wp/v2/',
+                'postType' => array(
+                    'entity' => Entity::$post_type,
+                    'location' => Location::$type,
+                ),
+                'wp_nonce' => wp_create_nonce( 'wp_rest' ),
+                'edit_others_entities' => current_user_can( 'edit_others_entities' ),
             )
         );
 

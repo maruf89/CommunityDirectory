@@ -279,6 +279,28 @@ class Entity {
         return $entity_post_id;
     }
 
+    public function set_location( Location $location ):bool {
+        if ( !$location->is_valid() ) return false;
+
+        add_post_meta( $this->post_id, ClassEntity::$post_meta_loc_id, $location->location_id );
+        add_post_meta( $this->post_id, ClassEntity::$post_meta_loc_name, $location->display_name );
+
+        global $wpdb;
+
+        $updated =  wp_update_post(
+            array(
+                'ID' => $this->post_id,
+                'post_parent' => $location->post_id,
+            )
+        );
+
+        return !!$updated;
+    }
+
+    //////////////////////////////////
+    //////// Loading from DB /////////
+    //////////////////////////////////
+
     private function load_post_from_db():bool {
         if ( $this->post_loaded ) return true;
         
@@ -330,6 +352,10 @@ class Entity {
 
         return false;
     }
+
+    //////////////////////////////////
+    //////// Static Methods //////////
+    //////////////////////////////////
 
     public static function get_location_link( Location $location = null ):string {
         if ( !$location ) {

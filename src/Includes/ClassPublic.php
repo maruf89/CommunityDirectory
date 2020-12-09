@@ -12,16 +12,13 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
 
 class ClassPublic {
 
     public function __construct() {
 
-    }
-
-    public static function on_init() {
-        
     }
     
     /**
@@ -44,6 +41,16 @@ class ClassPublic {
 
         // Core JS
         wp_enqueue_script( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/js/community-directory' . $suffix . '.js', array( 'jquery' ), COMMUNITY_DIRECTORY_VERSION, false );
+
+        wp_localize_script( 'community_directory_admin_js', 'cdData',
+            array(
+                'restBase' => '/wp-json/wp/v2/',
+                'postType' => array(
+                    'entity' => ClassEntity::$post_type,
+                    'location' => ClassLocation::$post_type,
+                )
+            )
+        );
         
     }
 

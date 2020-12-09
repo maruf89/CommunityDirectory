@@ -240,6 +240,13 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                       <span class="table-remove dashicons dashicons-remove"></span>
                     </td>
                   </tr>
+            <script type="text/javascript">
+                var onload = document.body.onload;
+                document.body.onload = function () {
+                    if ( onload !== document.body.onload ) onload();
+                    cdData.fn.editLocationTable( jQuery('.edit-locations-table') );
+                }
+            </script>
         <?php
     }
 

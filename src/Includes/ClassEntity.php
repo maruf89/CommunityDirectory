@@ -8,22 +8,33 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-class ClassEntity {
+use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
 
-    private static $instance;
-    public static $role_entity = 'entity_subscriber';
-    public static $post_type = 'cd-entity';
-    public static $post_meta_loc_name = '_cd_location_display_name';
-    public static $post_meta_loc_id = '_cd_location_id';
+class ClassEntity extends Routable {
 
-    public static function get_instance() {
-        if (self::$instance == null) {
+    private static ClassEntity $instance;
+
+    protected string $router_ns = 'entity';
+    
+    public static string $role_entity = 'entity_subscriber';
+    public static string $post_type = 'cd-entity';
+    public static string $post_meta_loc_name = '_cd_location_display_name';
+    public static string $post_meta_loc_id = '_cd_location_id';
+
+    public static function get_instance():ClassEntity {
+        if ( !isset( self::$instance ) ) {
             self::$instance = new ClassEntity();
         }
 
         // flush_rewrite_rules( true );
  
         return self::$instance;
+    }
+
+    public function __construct() {
+        parent::__construct( $this );
     }
 
     /**
@@ -260,6 +271,46 @@ class ClassEntity {
         ";
 
         return $sql_only ? $sql : $wpdb->get_results( $sql );
+    }
+
+    public static function update_entity( int $entity_id, int $location_id ) {
+        $entity = new Entity( $entity_id );
+        return $entity->set_location( new Location( $location_id ) );
+    }
+
+
+
+    protected array $route_map = [
+        '/update-entity' => array(
+            'callback' => 'update_entity',
+            'args' => array(
+                'entity' => 'int', // the user to edit
+                'location_id' => 'int'
+            )
+        )
+    ];
+
+    public static function get_router_end_points( array $callback ):array {
+        return array(
+            '/update-entity' => array(
+                'methods'   => 'POST',
+                'callback'  => $callback,
+                'permission_callback' => function ( $request ):bool {
+                    $params = $request->get_params();
+                    if ( !isset( $params['entity'] ) ) return false;
+                    return current_user_can( 'edit_others_entities' ) || ClassEntity::user_can_edit_entity( $params['entity'] );
+                },
+            )
+        );
+    }
+
+    public static function user_can_edit_entity( int $entity_id, \WP_User $user = null ):bool {
+        if ( !$user ) $user = wp_get_current_user();
+        
+        $me = new Entity( null, $user );
+        if ( !$me->is_valid() ) return false;
+
+        return $me->post_id == $entity_id;
     }
 
 }

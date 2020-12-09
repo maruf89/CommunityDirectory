@@ -13,6 +13,7 @@ use Maruf89\CommunityDirectory\Includes\ClassLocation;
 
 class Location extends ClassLocation {
     private static ?Location $active_location = null;
+    public static string $type = 'cd-location';
 
     private bool $has_loaded = false;
 
@@ -53,6 +54,10 @@ class Location extends ClassLocation {
         }
     }
 
+    public function is_valid():bool {
+        return $this->load_from_db();
+    }
+
     private function load_from_db():bool {
         if ( $this->has_loaded ) return true;
         if ( !isset( $this->location_id ) && !isset( $this->post_id ) ) return false;
@@ -60,9 +65,11 @@ class Location extends ClassLocation {
         global $wpdb;
         $loaded = false;
 
-        if ( !isset( $this->location_id ) ) {
+        if ( !isset( $this->location_id ) || !isset( $this->post_id ) ) {
+            $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
+            $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
             $row = $wpdb->get_row( 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS .
-                            " WHERE post_id = $this->post_id"
+                            " WHERE $where_key = $where_val"
             , ARRAY_A);
 
             if ( $row ) {
@@ -88,7 +95,7 @@ class Location extends ClassLocation {
         $this->slug = $data['slug'];
         $this->active_inhabitants = $data['active_inhabitants'];
         $this->inactive_inhabitants = $data['inactive_inhabitants'];
-        $this->post_id= $data['post_id'];
+        $this->post_id = $data['post_id'];
     }
 
 }

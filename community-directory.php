@@ -19,6 +19,10 @@
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION' ) ) {
     define( 'COMMUNITY_DIRECTORY_VERSION', '0.0.1' );
   }
+
+  if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM' ) ) {
+    define( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM', '0' );
+  }
   if ( ! defined( 'COMMUNITY_DIRECTORY_DB_VERSION' ) ) {
     define( 'COMMUNITY_DIRECTORY_DB_VERSION', '0.0.1' );
   }
