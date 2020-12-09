@@ -190,7 +190,7 @@ class ClassEntity extends Routable {
                 FROM $wpdb->posts AS location
                 JOIN $wpdb->posts AS entity
                 ON location.ID = entity.post_parent
-                WHERE post_status != 'auto-draft' AND entity.post_type = '$post_type' AND $where_key = '$where_val' $where_status
+                WHERE entity.post_status != 'auto-draft' AND entity.post_type = '$post_type' AND $where_key = '$where_val' $where_status
             ";
         } else {
             $where_match = '';
