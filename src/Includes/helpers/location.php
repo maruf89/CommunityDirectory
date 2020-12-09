@@ -113,7 +113,7 @@ function community_directory_create_location( $data ) {
 /**
  * See class field for description
  */
-function community_directory_update_locations( $data, $update_by ) {
+function community_directory_update_locations( $data, $update_by = 'id' ) {
     $Location = ClassLocation::get_instance();
     return $Location::update_locations( $data, $update_by );
 }

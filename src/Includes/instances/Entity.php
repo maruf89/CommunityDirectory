@@ -146,11 +146,26 @@ class Entity {
         return false;
     }
 
-    public function display_status():string {
+    /**
+     * Gets the entities status depending on the desired format
+     */
+    public function get_status( $format = 'bool' ) {
         if ( $this->acf_data || $this->load_acf_from_db() ) {
-            return $this->acf_data[ClassACF::$field_is_active] === 'true' ?
-                __( 'Active', 'community-directory' ) : __( 'Inactive', 'community-directory' );
+            $active = $this->acf_data[ClassACF::$field_is_active] === 'true';
+            switch ( $format ) {
+                case 'raw': return $this->acf_data[ClassACF::$field_is_active];
+                case 'bool': return $active;
+                case 'enum': return $active ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
+                case 'display': return $active ?
+                    __( 'Active', 'community-directory' ) : __( 'Inactive', 'community-directory' );
+            }
         }
+        return null;
+    }
+
+    public function display_status():string {
+        if ( $this->acf_data || $this->load_acf_from_db() )
+            return $this->get_status( 'display' );
 
         return __( 'Incomplete Entity (missing entity info)', 'community-directory' );
     }
@@ -163,20 +178,29 @@ class Entity {
         // If we can't load the data, return false
         if ( !$this->load_post_from_db() || !$this->load_acf_from_db() ) return false;
 
-        $current_state = $this->acf_data[ClassACF::$field_is_active];
+        $active_state =& $this->acf_data[ClassACF::$field_is_active];
 
         // If already set, don't do anything
         if ( !$force ) {
-            if ( ( $activate && $current_state === 'true' ) ||
-                 ( !$activate && $current_state === 'false' ) ) return false;
+            if ( ( $activate && $active_state === 'true' ) ||
+                 ( !$activate && $active_state === 'false' ) ) return false;
         }
+
+        // update the local variable
+        $active_state = $activate ? 'true' : 'false';
 
         // In cases where user manually updates the field, we don't need to do it again
         if ( !$status_only ) {
             // Update the user's active field in ACF
             $acf_updates = array();
-            $acf_updates[ClassACF::$field_is_active_key] = $activate ? 'true' : 'false';
+            $acf_updates[ClassACF::$field_is_active_key] = $active_state;
             community_directory_acf_update_entity( $this->post_id, $acf_updates );
+
+            do_action( 'community_directory_shift_inhabitants_count',
+                $this->get_location()->location_id,
+                'id',
+                $this->get_status(),
+            );
         }
 
         // Update the post_status
@@ -284,6 +308,14 @@ class Entity {
 
         add_post_meta( $this->post_id, ClassEntity::$post_meta_loc_id, $location->location_id );
         add_post_meta( $this->post_id, ClassEntity::$post_meta_loc_name, $location->display_name );
+
+        // Update the count
+        do_action( 'community_directory_add_inhabitant',
+                   $location->location_id,
+                   'id',
+                   $this->get_status( 'enum' ),
+                   1
+        );
 
         global $wpdb;
 

@@ -152,7 +152,7 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_location_actions_and_filters( $instance ) {
+    public function load_location_actions_and_filters( ClassLocation $instance ) {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
 
         // Delete location
@@ -165,6 +165,8 @@ final class ClassCommunityDirectory {
 
         // Update values
         add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
+        add_action( 'community_directory_add_inhabitant', array( $instance, 'add_inhabitant' ), 10, 4 );
+        add_action( 'community_directory_shift_inhabitants_count', array( $instance, 'shift_inhabitants_count' ), 10, 3 );
         add_filter( 'acf/update_value/key=' . ClassACF::$field_is_active_key, array( $instance, 'acf_shift_inhabitants_count' ), 10, 3 );
     }
 
