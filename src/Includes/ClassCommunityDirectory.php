@@ -29,7 +29,7 @@ final class ClassCommunityDirectory {
     protected ClassUWPForms $uwp_forms;
     protected ClassShortcodes $shortcodes;
     protected ClassACF $acf;
-    protected ClassRestEndpoints $rest_end_points;
+    protected ClassRestEndPoints $rest_end_points;
 
     protected ClassUWPFormBuilder $uwp_form_builder;
     protected ClassAdminPostDisplay $admin_post_display;
@@ -50,7 +50,7 @@ final class ClassCommunityDirectory {
         $this->public = new ClassPublic();
         $this->entity = ClassEntity::get_instance();
         $this->location = ClassLocation::get_instance();
-        $this->rest_end_points = ClassRestEndpoints::get_instance();
+        $this->rest_end_points = ClassRestEndPoints::get_instance();
         
         $this->init_hooks();
 
