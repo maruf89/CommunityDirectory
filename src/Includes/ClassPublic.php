@@ -14,6 +14,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\ClassEntity;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 class ClassPublic {
 
