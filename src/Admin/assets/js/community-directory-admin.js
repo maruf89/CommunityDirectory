@@ -59,7 +59,7 @@ window.cdData.fn = {};
         e.originalEvent.preventDefault();
 
         // Detach all unchanged fields
-        $table.find('.edit-field:not(.changed)').detach()
+        $table.find('.edit-field:not(.changed)').detach();
 
         $form.off('submit', submit).trigger('submit');
         }
