@@ -131,6 +131,17 @@ class ClassActivator {
             'publish_entities' => false,
             'upload_files' => true,
             'create_entities' => false,
+            'edit_offer_need' => true, 
+            'read_offer_need' => true, 
+            'delete_offer_need' => true, 
+            'edit_offers_needs' => true, 
+            'edit_others_offers_needs' => false, 
+            'publish_offers_needs' => true,       
+            'read_private_offers_needs' => false, 
+            'create_offers_needs' => true,
+            'delete_offers_needs' => true,
+            'delete_others_offers_needs' => false,
+            'assign_product_service_type' => true,
         ];
 
         // $location_caps = [
@@ -224,7 +235,7 @@ class ClassActivator {
             }
 
             // Delete the Custom Fields
-            acf_delete_field_group( ClassACF::$form_group_key );
+            acf_delete_field_group( ClassACF::$entity_form_group_key );
 
             // Delete options
             delete_option( 'community_directory_settings' );

@@ -3,10 +3,13 @@
 namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Admin\ClassAdmin;
-use Maruf89\CommunityDirectory\Admin\ClassAdminMenus;
+use Maruf89\CommunityDirectory\Admin\Menus\ClassAdminMenus;
+use Maruf89\CommunityDirectory\Admin\Menus\ClassMenuItems;
 use Maruf89\CommunityDirectory\Admin\ClassAdminPostDisplay;
 use Maruf89\CommunityDirectory\Admin\ClassAccount;
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
+use Maruf89\CommunityDirectory\Admin\Widgets\ClassLocationsWidget;
+use Maruf89\CommunityDirectory\Admin\Widgets\ClassOffersNeedsHashTagWidget;
 
 final class ClassCommunityDirectory {
 
@@ -22,10 +25,12 @@ final class ClassCommunityDirectory {
     private static ?ClassCommunityDirectory $instance = null;
 
     protected ClassPublic $public;
-    protected ClassAdminMenus $menus;
+    protected ClassAdminMenus $admin_menus;
+    protected ClassMenuItems $menu_items;
     protected ClassTables $tables;
     protected ClassAdmin $admin;
     protected ClassLocation $location;
+    protected ClassOffersNeeds $offers_needs;
     protected ClassUWPForms $uwp_forms;
     protected ClassShortcodes $shortcodes;
     protected ClassACF $acf;
@@ -35,6 +40,7 @@ final class ClassCommunityDirectory {
     protected ClassAdminPostDisplay $admin_post_display;
     protected ClassAccount $account;
 
+    protected ClassLocationsWidget $locations_widget;
 
     public static function init() {
         if (self::$instance === null) self::$instance = new self;
@@ -50,11 +56,13 @@ final class ClassCommunityDirectory {
         $this->public = new ClassPublic();
         $this->entity = ClassEntity::get_instance();
         $this->location = ClassLocation::get_instance();
+        $this->offers_needs = ClassOffersNeeds::get_instance();
         $this->rest_end_points = ClassRestEndPoints::get_instance();
         
         $this->init_hooks();
 
-        $this->menus = new ClassAdminMenus();
+        $this->admin_menus = new ClassAdminMenus();
+        $this->menu_items = new ClassMenuItems();
         $this->tables = new ClassTables();
         $this->admin = new ClassAdmin();
         $this->uwp_forms = new ClassUWPForms();
@@ -71,15 +79,20 @@ final class ClassCommunityDirectory {
         $this->load_location_actions_and_filters( $this->location );
         $this->load_uwp_forms_actions_and_filters( $this->uwp_forms );
         $this->load_public_actions_and_filters( $this->public );
+        $this->load_template_actions_and_filters( $this->public );
         $this->load_entity_actions_and_filters( $this->entity );
         $this->load_acf_actions_and_filters( $this->acf );
+        $this->load_offers_needs_actions_and_filters( $this->offers_needs );
+
+        $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
+        $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
 
-        //admin
+        // admin
         $this->load_account_actions_and_filters( $this->account );
-        $this->load_menus_actions_and_filters( $this->menus );
+        $this->load_menus_actions_and_filters( $this->admin_menus );
         $this->load_uwp_form_hooks_and_filters( $this->admin_uwpform_builder );
         $this->load_admin_post_display_hooks_and_filters( $this->admin_post_display );
     }
@@ -120,11 +133,14 @@ final class ClassCommunityDirectory {
         add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
-        add_action( 'init', array( $this->location, 'register_location_post_type' ) );
-        add_action( 'init', array( $this->entity, 'register_entity_post_type' ) );
+        add_action( 'init', array( $this->location, 'register_post_type' ) );
+        add_action( 'init', array( $this->entity, 'register_post_type' ) );
+        add_action( 'init', array( $this->offers_needs, 'register_post_type' ) );
+        add_action( 'after_setup_theme', array( $this->offers_needs, 'register_taxonomy_terms' ) );
         add_action( 'rest_api_init', array( $this->rest_end_points, 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
         add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
+        add_action( 'widgets_init', array( $this, 'load_widgets' ) );
     }
 
     /**
@@ -167,7 +183,6 @@ final class ClassCommunityDirectory {
         add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
         add_action( 'community_directory_add_inhabitant', array( $instance, 'add_inhabitant' ), 10, 4 );
         add_action( 'community_directory_shift_inhabitants_count', array( $instance, 'shift_inhabitants_count' ), 10, 3 );
-        add_filter( 'acf/update_value/key=' . ClassACF::$field_is_active_key, array( $instance, 'acf_shift_inhabitants_count' ), 10, 3 );
     }
 
     /**
@@ -178,13 +193,24 @@ final class ClassCommunityDirectory {
     }
 
     public function load_shortcodes( $instance ) {
-        add_shortcode( 'community_directory_list_locations', array( $instance, 'list_locations' ) );
+        add_shortcode( 'community_directory_list_offers_needs', array( $instance, 'list_offers_needs' ) );
+        
     }
 
-    public function load_public_actions_and_filters( $instance ) {
+    public function load_public_actions_and_filters( ClassPublic $instance ) {
         add_filter( 'single_template', array( $instance, 'load_custom_templates' ), 99 );
         add_filter( 'wp_get_nav_menu_items', array( $instance, 'custom_nav_menu' ), 20, 2 );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
+    }
+
+    public function load_template_actions_and_filters( ClassPublic $instance ) {
+        $prefix = $instance->get_template_hook_prefix();
+        add_filter( "${prefix}location-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}elements/location-single-no-photo.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}elements/location-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-and-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-and-needs-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers_needs_hashtag_list.php", array( $instance, 'load_template' ), 10, 1 );
     }
 
     public function load_entity_actions_and_filters( $instance ) {
@@ -193,13 +219,46 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
     }
 
-    public function load_acf_actions_and_filters( $instance ) {
+    public function load_acf_actions_and_filters( ClassACF $instance ) {
         add_action( 'acf/init', array( $instance, 'initiate_plugin' ) );
         add_action( 'community_directory_acf_initiate_entity', array( $instance, 'initiate_entity' ) );
 
-        add_filter( 'community_directory_required_acf_fields', array( $instance, 'generate_required_fields' ), 10, 1 );
+        add_filter( 'community_directory_required_acf_entity_fields', array( $instance, 'generate_required_entity_fields' ), 10, 1 );
+        add_filter( 'community_directory_required_acf_offers_needs_fields', array( $instance, 'generate_required_offers_needs_fields' ), 10, 1 );
     }
 
+    public function load_offers_needs_actions_and_filters( ClassOffersNeeds $instance ) {
+        add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
+        add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
+        add_filter(
+            'community_directory_get_latest_offers_and_needs',
+            array( $instance, 'get_latest' ), 10, 5 );
+    }
+
+    public function load_instance_offers_needs_actions_and_filters( string $class_name ) {
+        // On saving the type (if offer/need)
+        add_filter(
+            'acf/update_value/key=' . ClassACF::$offers_needs_type_key,
+            array( $class_name, 'update_post_excerpt_with_type' ), 10, 3 );
+
+        $post_type = ClassOffersNeeds::$post_type;
+        add_action( "save_post_$post_type", array( $class_name, 'set_post_parent_on_save' ), 10, 3 );
+    }
+
+    public function load_instance_entity_actions_and_filters( string $class_name ) {
+        add_filter(
+            'acf/update_value/key=' . ClassACF::$field_entity_active_key,
+            array( $class_name, 'acf_shift_inhabitants_count' ), 10, 3 );
+        add_filter(
+            'acf/update_value/key=' . ClassACF::$field_location_name_key,
+            array( $class_name, 'acf_update_title_with_loc_name' ), 10, 3 );
+
+        add_filter( 'community_directory_get_entity', array( $class_name, 'get_instance' ), 10, 3 );
+
+        add_action(
+            'community_directory_activate_deactivate_entity',
+            array( $class_name, 'activate_deactivate_entity' ), 10, 3 );
+    }
     
 
     /**
@@ -215,9 +274,16 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_menus_actions_and_filters($instance) {
+    public function load_menus_actions_and_filters() {
         // add_action( 'load-nav-menus.php', array($instance, 'users_wp_admin_menu_metabox') );
-        add_action( 'admin_bar_menu', array($instance, 'admin_bar_menu'), 51 );
+        add_action( 'admin_bar_menu', array( $this->admin_menus, 'admin_bar_menu'), 51 );
+        add_action( 'admin_menu', array( $this->admin_menus, 'admin_menu' ), 9 );
+
+        add_action( 'admin_bar_menu', array( $this->admin_menus, 'modify_toolbar' ), 75);
+        add_action( 'admin_menu', array( $this->admin_menus, 'modify_entity_subscriber_menu' ), 75);
+
+
+        add_action( 'load-nav-menus.php', array( $this->menu_items, 'customize_menu_metaboxes') );
     }
 
     public function load_uwp_form_hooks_and_filters( $instance ) {
@@ -291,6 +357,11 @@ final class ClassCommunityDirectory {
      */
     public static function register_string( $string, $domain = 'community-directory', $name = '' ) {
         do_action( 'wpml_register_single_string', $domain, $name, $string );
+    }
+
+    public function load_widgets() {
+        register_widget( $this->locations_widget = new ClassLocationsWidget() );
+        register_widget( $this->offers_needs_hashtag_widget = new ClassOffersNeedsHashTagWidget() );
     }
 }
 

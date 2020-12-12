@@ -11,5 +11,6 @@ return array(
     '1481b72c329acf5de8b3f207d3b6ba08' => $baseDir . '/src/Includes/helpers/tables.php',
     'f9eb4b4acb7f91d97e54bf27e080b32d' => $baseDir . '/src/Includes/helpers/acf.php',
     'b08159b16777d4f753967a5a4eacbb94' => $baseDir . '/src/Includes/helpers/entity.php',
+    'f60ab2cc7c10ac57d11bafab11454ff5' => $baseDir . '/src/Includes/helpers/offer_need.php',
     '0d41c7458226fbf9deab09c9e821626a' => $baseDir . '/src/Admin/Settings/functions.php',
 );

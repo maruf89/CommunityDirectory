@@ -43,7 +43,7 @@ class ClassRestEndPoints {
         
         foreach ( $routes as $ns => $route ) {
             foreach ( $route as $location => $end_point ) {
-                $base = "$this->rest_base${ns}/";
+                $base = "$this->rest_base${ns}";
                 register_rest_route(
                     $base,
                     $location,

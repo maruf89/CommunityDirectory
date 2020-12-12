@@ -35,3 +35,9 @@
 /** * .table-add:hover, /** * base-font-size .table-add:hover, /** */ .table-add:hover {
 	color: #0b0;
 }
+/** * #cd-product-service-type-adder, /** * base-font-size #cd-product-service-type-adder, /** */ #cd-product-service-type-adder {
+	display: none;
+}
+/** * #cd-product-service-type-all, /** * base-font-size #cd-product-service-type-all, /** */ #cd-product-service-type-all {
+	max-height: 1400px;
+}

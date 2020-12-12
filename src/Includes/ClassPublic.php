@@ -18,8 +18,11 @@ use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 class ClassPublic {
 
-    public function __construct() {
+    private string $_template_hook_prefix = 'community_directory_template_';
+    private int $_template_hook_prefix_len;
 
+    public function __construct() {
+        $this->_template_hook_prefix_len = strlen( $this->_template_hook_prefix );
     }
     
     /**
@@ -55,6 +58,9 @@ class ClassPublic {
         
     }
 
+    /**
+     * Client facing menu for logged in users with entities
+     */
     public function custom_nav_menu( $items, $menu ) {
         $options = get_option( 'community_directory_settings' );
 
@@ -69,6 +75,9 @@ class ClassPublic {
         if ( ( $Entity = Entity::get_active_entity() ) &&
              arr_equals_val( $options, 'load_my_location_nav_menu', 1 )
         ) {
+            // skip if invalid entity
+            if ( !$Entity->is_valid() ) return $items;
+            
             $top = community_directory_custom_nav_menu_item(
                 $Entity->location_name,
                 Entity::get_location_link(),
@@ -93,6 +102,10 @@ class ClassPublic {
         
     }
 
+    /**
+     * Does URL routing magic to turn /location/person from a location cpt
+     * to an entity cpt
+     */
     public static function pre_get_posts( $query ) {
         // check if the user is requesting an admin page 
         // or current query is not the main query
@@ -156,6 +169,20 @@ class ClassPublic {
     
         //This is not my custom post type, do nothing with $template
         return $template;
+    }
+
+    public function get_template_hook_prefix():string { return $this->_template_hook_prefix; }
+
+    /**
+     * Is loaded via a filter call
+     */
+    public function load_template( string $src ):string {
+        // get name of current filter
+        // Will look something like: "community_directory_template_location-list.php"
+        $current = current_filter();
+        $file = substr( $current, $this->_template_hook_prefix_len );
+
+        return COMMUNITY_DIRECTORY_TEMPLATES_PATH . $file;
     }
     
 

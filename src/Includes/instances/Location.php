@@ -10,56 +10,39 @@
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
-class Location extends ClassLocation {
-    private static ?Location $active_location = null;
-    public static string $type = 'cd-location';
+class Location extends Instance {
+    public static string $post_type = 'cd-location';
 
-    private bool $has_loaded = false;
+    protected bool $cd_loaded = false;
 
-    private int $location_id;
-    private string $display_name;
-    private string $slug;
-    private int $post_id;
-    private int $active_inhabitants;
-    private int $inactive_inhabitants;
-    private string $status;
-
-    private ?\WP_Post $post = null;
-
-    public static function get_active_location( int $location_post_id = null ):?Location {
-        if ( Location::$active_location != null ) return Location::$active_location;
-
-        if ( $location_post_id ) return Location::$active_location = new Location( null, $location_post_id );
-
-        return new Location();
-    }
+    protected int $location_id;
+    protected string $display_name;
+    protected string $slug;
+    protected int $active_inhabitants;
+    protected int $inactive_inhabitants;
+    protected string $status;
 
     public function __construct( $location_id = null, $post_id = null ) {
         if ( $location_id ) $this->location_id = $location_id;
         if ( $post_id ) $this->post_id = $post_id;
     }
 
-    public function __get( $property ) {
-        if ( property_exists( $this, $property ) ) {
-            if ( !isset( $this->$property ) && !$this->has_loaded ) $this->load_from_db();
-            if ( isset( $this->$property ) )
-                return $this->$property;
-        }
-
-        // check the post obj
-        if ( ( !$this->has_loaded && $this->load_from_db() ) || $this->has_loaded ) {
-            if ( property_exists( $this->post, $property ) )
-                return $this->post->$property;
-        }
-    }
-
     public function is_valid():bool {
         return $this->load_from_db();
     }
 
-    private function load_from_db():bool {
-        if ( $this->has_loaded ) return true;
+    public function get_featured( $size = 'medium' ):string {
+        return get_the_post_thumbnail_url( $this->post_id, $size );
+    }
+
+    //////////////////////////////////
+    //////// Loading from DB /////////
+    //////////////////////////////////
+
+    protected function load_from_db():bool {
+        if ( $this->_has_loaded ) return true;
         if ( !isset( $this->location_id ) && !isset( $this->post_id ) ) return false;
         
         global $wpdb;
@@ -69,33 +52,26 @@ class Location extends ClassLocation {
             $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
             $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
             $row = $wpdb->get_row( 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS .
-                            " WHERE $where_key = $where_val"
-            , ARRAY_A);
+                            " WHERE $where_key = $where_val" );
 
             if ( $row ) {
                 $this->fill_with_data( $row );
-                $loaded = true;
+                $this->cd_loaded = true;
             }
         }
 
-        if ( !isset( $this->post ) ) {
-            $this->post = \WP_Post::get_instance( $this->post_id );
-            if ( $this->post ) {
-                $this->has_loaded = true;
-                $loaded = true;
-            }
-        }
+        $this->load_post_from_db();
 
-        return $loaded;
+        return $this->_has_loaded = $this->cd_loaded && $this->_post_loaded;
     }
 
-    public function fill_with_data( $data ) {
-        $this->location_id = $data['id'];
-        $this->display_name = $data['display_name'];
-        $this->slug = $data['slug'];
-        $this->active_inhabitants = $data['active_inhabitants'];
-        $this->inactive_inhabitants = $data['inactive_inhabitants'];
-        $this->post_id = $data['post_id'];
+    public function fill_with_data( object $data ) {
+        $this->location_id = $data->id;
+        $this->display_name = $data->display_name;
+        $this->slug = $data->slug;
+        $this->active_inhabitants = $data->active_inhabitants;
+        $this->inactive_inhabitants = $data->inactive_inhabitants;
+        $this->post_id = $data->post_id;
     }
 
 }

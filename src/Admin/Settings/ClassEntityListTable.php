@@ -166,7 +166,7 @@ class ClassEntityListTable extends \WP_List_Table {
             case 'activate':
                 foreach ( $all_entities as $entity_post_id ) {
                     $entity = new Entity( $entity_post_id );
-                    if ( $entity->activate_deactivate( true ) ) $count++;
+                    if ( $entity->is_valid() && $entity->activate_deactivate( true ) ) $count++;
                 }
 
                 add_settings_error(
@@ -295,7 +295,7 @@ class ClassEntityListTable extends \WP_List_Table {
     }
 
     public function column_status( Entity $entity ) {
-        return $entity->display_status();
+        return $entity->get_status( 'display' );
     }
 
     public function column_author( Entity $entity ) {

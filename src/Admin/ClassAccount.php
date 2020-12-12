@@ -4,6 +4,7 @@ namespace Maruf89\CommunityDirectory\Admin;
 
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
 use Maruf89\CommunityDirectory\Includes\ClassActivator;
 
 /**
@@ -56,11 +57,23 @@ class ClassAccount {
         if ( $validation_type !== 'register' ||
              !isset( $result[ClassUWPFormBuilder::$community_directory_location_name] ) )
                 return $result;
+        
+        $location_name = $data[ClassUWPFormBuilder::$community_directory_location_name];
+        self::create_loc_and_entity( $location_name, $result, $user_id );
 
-        // Get the location's display name
-        $location = $result[ClassUWPFormBuilder::$community_directory_location_name];
+        return $result;
+    }
 
-        $loc_data = array( 'display_name' => $location, 'user_id' => $user_id );
+    /**
+     * Given a location display_name and a user_id creates an entity
+     * 
+     * @param       $location_name      string       
+     * @param       $user_data          array       must contain: 'first_name', 'last_name'
+     * @param       $user_id            int
+     */
+    public static function create_loc_and_entity( string $location_name, array $data, int $user_id ) {
+        $loc_data = array( 'display_name' => $location_name, 'user_id' => $user_id );
+        if ( isset( $data[ 'status' ] ) ) $loc_data[ 'status' ] = $data[ 'status' ];
         $loc_data = apply_filters( 'community_directory_prepare_location_for_creation', $loc_data );
         
         // Only add new location if the user didn't enter an already existing location
@@ -69,29 +82,21 @@ class ClassAccount {
             $loc_post_id = $post->ID;
         }
 
-        community_directory_add_inhabitant( $loc_post_id, 'post_id', COMMUNITY_DIRECTORY_ENUM_PENDING );
-
-        $entity_post_id = community_directory_add_entity_location_data( array(
+        $entity = new Entity( null, $user_id );
+        
+        $entity_post_id = $entity->insert_into_db( array(
             'user_id'                   => $user_id,
-            'first_name'                => $result['first_name'],
-            'last_name'                 => $result['last_name'],
+            'first_name'                => $data['first_name'],
+            'last_name'                 => $data['last_name'],
             'location_id'               => community_directory_get_row_var( $loc_data['slug'], 'id' ),
             'location_display_name'     => $loc_data['display_name'],
             'location_post_id'          => $loc_post_id,
-        ) );
-
-        // Save user meta to ACF
-        do_action( 'community_directory_acf_initiate_entity', array(
-            'entity_id' => $entity_post_id,
-            'first_name' => $result['first_name'],
-            'last_name' => $result['last_name'],
+            'status'                    => $loc_data[ 'status' ],
         ) );
 
         // Set the user's role to entity-subscriber
         $user = new \WP_User( $user_id );
         $user->set_role( ClassActivator::$role_entity );
-
-        return $result;
     }
     
 }

@@ -9,6 +9,7 @@
 namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
 
 class ClassLocation extends Routable {
 
@@ -26,14 +27,11 @@ class ClassLocation extends Routable {
     protected string $router_ns = 'location';
 
     public function __construct() {
-        define( 'COMMUNITY_DIRECTORY_DISPLAY_NAME', 'display_name' );
-        define( 'COMMUNITY_DIRECTORY_SLUG', 'slug' );
-        
         parent::__construct( $this );
     }
 
-    public static function register_location_post_type() {
-        $customPostTypeArgs = array(
+    public static function register_post_type() {
+        $custom_post_type_args = array(
             'label' => __( 'Locations', 'community-directory' ),
             'labels' =>
                 array(
@@ -80,11 +78,10 @@ class ClassLocation extends Routable {
                 'slug' => __( 'location', 'community-directory' ),
                 'with_front' => false,
             )
-            // 'taxonomies' => array('category','post_tag')
         );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( self::$post_type, $customPostTypeArgs );
+        register_post_type( self::$post_type, $custom_post_type_args );
     }
 
     public static function add_post_type( $arr ) {
@@ -170,6 +167,15 @@ class ClassLocation extends Routable {
         return $formatted;
     }
 
+    public function format_to_instances( $rows ) {
+        foreach ( (object) $rows as $key => $loc_data ) {
+            $rows[ $key ] = new Location();
+            $rows[ $key ]->fill_with_data( $loc_data );
+        }
+
+        return $rows;
+    }
+
     /**
      * A method to sanitize or fill out any fields for a location before adding it to the DB
      * 
@@ -178,8 +184,8 @@ class ClassLocation extends Routable {
      */
     public static function prepare_location_for_creation( $data ) {
         
-        $data['display_name'] = community_directory_format_display_name( $data['display_name'] );
-        $data['slug'] = community_directory_location_name_to_slug( $data['display_name'] );
+        $data['display_name'] = community_directory_format_uc_first( $data['display_name'] );
+        $data['slug'] = community_directory_string_to_slug( $data['display_name'] );
         // If status isn't set, default is PENDING
         $data['status'] = isset( $data['status'] ) ?
             community_directory_status_to_enum( $data['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
@@ -297,10 +303,10 @@ class ClassLocation extends Routable {
             
             // Check if the display_name needs changing
             if ( isset( $row['display_name'] ) ) {
-                $display_name = community_directory_format_display_name( $row['display_name'] );
+                $display_name = community_directory_format_uc_first( $row['display_name'] );
                 if ( community_directory_values_differ( $display_name, $db_row['display_name'] )) {
                     $data['display_name'] = $display_name;
-                    $data['slug'] = community_directory_location_name_to_slug( $display_name );
+                    $data['slug'] = community_directory_string_to_slug( $display_name );
                 }
                 
             }
@@ -369,34 +375,6 @@ class ClassLocation extends Routable {
             $field = $field + $count
             WHERE $which = $loc_or_post_id"
         );
-    }
-
-    /**
-     * An ACF hook that gets notified when the profile_active field gets changed
-     * Updates the count and updates the post's status to reflect it
-     * 
-     * Do not call directly!
-     */
-    public static function acf_shift_inhabitants_count( $value, $entity_post_id, $field ) {
-        if ( !isset( $_POST['acf'][ClassACF::$field_is_active_key] ) ) return $value;
-        
-        global $post;
-        
-        // get the old (saved) value
-        $was_active = get_field( ClassACF::$field_is_active, $entity_post_id ) === 'true';
-
-        $is_active = $_POST['acf'][ClassACF::$field_is_active_key] === 'true';
-        
-        if ( $was_active == $is_active ) return $value;
-
-        $post_parent = $post->post_parent;
-
-        self::shift_inhabitants_count( $post_parent, 'post_id', $is_active );
-
-        // Update the post's status
-        community_directory_activate_deactivate_entity( $is_active, $entity_post_id, 'post_id', true );
-        
-        return $value;
     }
 
     /**

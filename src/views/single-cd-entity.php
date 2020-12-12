@@ -1,44 +1,27 @@
 <?php
 
-use Maruf89\CommunityDirectory\Includes\ClassACF;
-
 get_header();
-
-global $post;
-
-$location = $post->post_name;
-
-// dump($post);
 
 ?>
 
     <main id="content" class="container">
-        <div class="row">
-            <div class="col-xs-12 col-md-6">
-                <div class="card p-3">
-                    <h1><?= $post->post_title ?></h1>
-                    <div class="divider"></div>
-                    <p>
-                        <?= get_post_meta( $post->ID, 'user_about', true ) ?>
-                    </p>
-                </div>
-                
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="card p-3">
-                    <?php the_post_thumbnail( 'medium' ); ?>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="card p-3">
-                    sth.
-                </div>
-            </div>
-
-                
-                
-
-        </div>
+        <h2>Create a template</h2>
+        <p>
+            Create a file in your theme's folder named <code>single-cd-entity.php</code> to render an entity.<br /> <br />
+            To get started with the essential entity fields, include this in the head of your file:
+        </p>
+        <code>
+            use Maruf89\CommunityDirectory\Includes\ClassACF;<br />
+            <br />
+            get_header();<br />
+            <br />
+            global $post;<br />
+            <br />
+            $entity = apply_filters( 'community_directory_get_entity', $post->ID, $post->post_author, $post );<br />
+            <br />
+            // Next you can get fields like the profile photo via<br />
+            $photo = $entity->get_featured();
+        </code>
     </main>
 
 <?php get_footer(); ?>

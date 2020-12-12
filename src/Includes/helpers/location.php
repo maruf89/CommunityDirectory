@@ -146,17 +146,3 @@ function community_directory_status_to_enum( $status = 'active' ) {
             break;
     }
 }
-
-/**
- * Prepares a location for slug
- */
-function community_directory_location_name_to_slug( $location ) {
-    $formatted = strtolower( transliterate_string( $location ) );
-    $formatted = sanitize_title_with_dashes( $formatted );
-    return $formatted;
-}
-
-// Capitalizes first letter of location name
-function community_directory_format_display_name( $location ) {
-    return ucwords( strtolower( $location ) );
-}

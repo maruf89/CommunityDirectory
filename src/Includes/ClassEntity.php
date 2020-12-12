@@ -20,6 +20,7 @@ class ClassEntity extends Routable {
     
     public static string $role_entity = 'entity_subscriber';
     public static string $post_type = 'cd-entity';
+    public static int $post_type_menu_position = 28;
     public static string $post_meta_loc_name = '_cd_location_display_name';
     public static string $post_meta_loc_id = '_cd_location_id';
 
@@ -40,12 +41,12 @@ class ClassEntity extends Routable {
     /**
      * Register's the Entity post type
      */
-    public static function register_entity_post_type() {
+    public static function register_post_type() {
         $loc_prefix = __( 'location', 'community-directory' );
         $post_type = self::$post_type;
 
         
-        $customPostTypeArgs = array(
+        $custom_post_type_args = array(
             'label' => __( 'Entities', 'community-directory' ),
             'labels' =>
                 array(
@@ -69,6 +70,7 @@ class ClassEntity extends Routable {
             'show_in_menu' => true,//COMMUNITY_DIRECTORY_NAME,
             'capability_type' => array( 'entity', 'entities' ),
             'map_meta_cap'        => false,
+            'menu_position' => self::$post_type_menu_position,
             'capabilities' => array(
                 'edit_post'          => 'edit_entity', 
                 'read_post'          => 'read_entity', 
@@ -82,23 +84,18 @@ class ClassEntity extends Routable {
                 'delete_others_posts'=> 'delete_others_entities',
             ),
             'supports' => array(
-                'title',
-                'thumbnail',
                 'custom_fields',
-                'page-attributes'
             ),
             'rewrite' => array(
-                // 'slug' => "$loc_prefix/%location%",
                 'slug' => __( 'entity', 'community-directory' ),
                 'with_front' => false,
             ),
             'delete_with_user' => true,
             'show_in_rest' => true,
-            'taxonomies' => array('category','post_tag')
         );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( $post_type, $customPostTypeArgs );
+        register_post_type( $post_type, $custom_post_type_args );
     }
 
     /**
@@ -107,52 +104,6 @@ class ClassEntity extends Routable {
     public static function add_post_type( $arr ) {
         $arr[] = self::$post_type;
         return $arr;
-    }
-
-    /**
-     * Creates a new Entity post with the user's info
-     * 
-     * @param       $data       ARRAY_A         required fields
-     *                              array(
-     *                                  'user_id' => ...,
-     *                                  'first_name' => ...,
-     *                                  'last_name' => ...,
-     *                                  'location_id' => $location['id'],
-     *                                  'location_display_name' => $location['display_name'],
-     *                                  'location_post_id' => $location['post_id'],
-     *                              )
-     * return                   int|WP_Error    either the returned row id or error
-     */
-    public static function add_entity_location_data( $data ) {
-        if ( !isset( $data['user_id'] ) ||
-             !isset( $data['first_name'] ) ||
-             !isset( $data['last_name'] ) ||
-             !isset( $data['location_id'] ) ||
-             !isset( $data['location_display_name'] ) ||
-             !isset( $data['location_post_id'] )
-        ) {
-            dump($data);
-            die( 'ClassEntity->add_entity_location_data requires user_id, first_name, last_name, location_id, location_display_name location_post_id' );
-        }
-        
-        $title = community_directory_generate_display_name_from_user_name( $data['first_name'], $data['last_name'] );
-        
-        $meta = array();
-        $meta[self::$post_meta_loc_id] = $data['location_id'];
-        $meta[self::$post_meta_loc_name] = $data['location_display_name'];
-        
-        $row_id = wp_insert_post(
-            array(
-                'post_author'   => $data['user_id'],
-                'post_title'    => $title,
-                'post_name'     => strtolower( $title ),
-                'post_parent'   => $data['location_post_id'],
-                'post_type'     => self::$post_type,
-                'meta_input'    => $meta,
-            ),
-        );
-
-        return $row_id;
     }
 
     /**
@@ -216,45 +167,11 @@ class ClassEntity extends Routable {
     }
 
     /**
-     * Activates or deactivates an entity in ACF and the post's status
+     * Returns all of the users without entities
      * 
-     * @param           $activate       bool        Whether to activate
-     * @param           $id             int         Either 'post_id' or 'user_id'
-     * @param           $id_for_what    string      If searching user_id, searches on the post_author field, otherwise on the post's ID (optional default: 'post_id')
-     * @param           $status_only    bool        Whether to only update the post's status, and not the ACF field
+     * @param       $sql_only   bool            Whether to only return the sql
+     * @return                  object|string   
      */
-    public static function activate_deactivate_entity(
-        bool $activate,
-        int $id,
-        string $id_for_what = 'post_id',
-        bool $status_only = false
-    ) {
-        if ( $id_for_what === 'post_id' ) $entity_post_id = $id;
-        else if ( $id_for_what === 'user_id' ) {
-            $entity_post_id = community_directory_get_post_var_by_field(
-                'ID', 'post_author', $id, self::$post_type
-            );
-            if ( !$entity_post_id ) {
-                debug_trace();
-                dump( $id );
-                die( "Error getting entity's post_id for user: $id. Status not updated." );
-            }
-        } else die( 'Invalid "id_for_what" passed into ClassEntity::activate_deactivate_entity().' );
-
-        // In cases where user manually updates the field, we don't need to do it again
-        if ( !$status_only ) {
-            // Update the user's active field in ACF
-            $acf_updates = array();
-            $acf_updates[ClassACF::$field_is_active_key] = $activate ? 'true' : 'false';
-            community_directory_acf_update_entity( $entity_post_id, $acf_updates );
-        }
-
-        // Update the post_status
-        $status = $activate ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        community_directory_update_post_status( $entity_post_id, $status );
-        return true;
-    }
-
     public static function get_entities_for_entityless_users( bool $sql_only = false ) {
         global $wpdb;
         $post_type = self::$post_type;
@@ -273,12 +190,14 @@ class ClassEntity extends Routable {
         return $sql_only ? $sql : $wpdb->get_results( $sql );
     }
 
+    //////////////////////////////
+    //////// Rest Methods/////////
+    //////////////////////////////
+
     public static function update_entity( int $entity_id, int $location_id ) {
         $entity = new Entity( $entity_id );
         return $entity->set_location( new Location( $location_id ) );
     }
-
-
 
     protected array $route_map = [
         '/update-entity' => array(

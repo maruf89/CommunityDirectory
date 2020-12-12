@@ -3,7 +3,7 @@
 use Maruf89\CommunityDirectory\Includes\ClassACF;
 
 function community_directory_get_acf_fields( $form_name = '' ) {
-    if ( empty( $form_name ) ) $form_name = ClassACF::$form_group_key;
+    if ( empty( $form_name ) ) $form_name = ClassACF::$entity_form_group_key;
 
     global $wpdb;
 

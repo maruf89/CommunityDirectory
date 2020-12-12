@@ -3,8 +3,9 @@
 namespace Maruf89\CommunityDirectory\Admin;
 
 use Stylus\Stylus;
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
-use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\ClassOffersNeeds;
 use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
 
 /**
@@ -78,8 +79,9 @@ class ClassAdmin {
                 ),
                 'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base, //  '/wp-json/wp/v2/',
                 'postType' => array(
-                    'entity' => Entity::$post_type,
-                    'location' => Location::$type,
+                    'entity' => ClassEntity::$post_type,
+                    'location' => ClassLocation::$post_type,
+                    'offersNeeds' => ClassOffersNeeds::$post_type
                 ),
                 'wp_nonce' => wp_create_nonce( 'wp_rest' ),
                 'edit_others_entities' => current_user_can( 'edit_others_entities' ),

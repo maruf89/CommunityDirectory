@@ -116,7 +116,7 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
 
         $sections = array(
             ''      => __( 'Active Locations', 'community-directory' ),
-            'pending'      => __( 'Pending Locations', 'community-directory' ),
+            // 'pending'      => __( 'Pending Locations', 'community-directory' ), // Todo, fix loading inactive places
             'edit'      => __( 'Edit Locations', 'community-directory' ),
         );
 
