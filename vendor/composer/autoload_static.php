@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitce3d645f93a8805dd942ee803dedd972
+class ComposerStaticInit11acec11c5c60ffc225236804a0a2776
 {
     public static $files = array (
         'e6a76feb9d19e56b39885ed751517890' => __DIR__ . '/../..' . '/src/Includes/helpers/location.php',
@@ -162,6 +162,7 @@ class ComposerStaticInitce3d645f93a8805dd942ee803dedd972
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsUninstall' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassSettingsUninstall.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassUWPFormBuilder' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassUWPFormBuilder.php',
         'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassLocationsWidget' => __DIR__ . '/../..' . '/src/Admin/Widgets/ClassLocationsWidget.php',
+        'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassOffersNeedsHashTagWidget' => __DIR__ . '/../..' . '/src/Admin/Widgets/ClassOffersNeedsHashTagWidget.php',
         'Maruf89\\CommunityDirectory\\Includes\\Abstracts\\Instance' => __DIR__ . '/../..' . '/src/Includes/Abstracts/Instance.php',
         'Maruf89\\CommunityDirectory\\Includes\\Abstracts\\Routable' => __DIR__ . '/../..' . '/src/Includes/Abstracts/Routable.php',
         'Maruf89\\CommunityDirectory\\Includes\\ClassACF' => __DIR__ . '/../..' . '/src/Includes/ClassACF.php',
@@ -187,10 +188,10 @@ class ComposerStaticInitce3d645f93a8805dd942ee803dedd972
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitce3d645f93a8805dd942ee803dedd972::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitce3d645f93a8805dd942ee803dedd972::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitce3d645f93a8805dd942ee803dedd972::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitce3d645f93a8805dd942ee803dedd972::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$classMap;
 
         }, null, ClassLoader::class);
     }

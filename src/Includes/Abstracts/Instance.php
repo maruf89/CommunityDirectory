@@ -35,13 +35,6 @@ abstract class Instance {
         }
     }
 
-    /**
-     * array( '/location/(?P<id>\d+)' => array(
-     *      'methods' => 'GET',
-     *      'callback' => 'my_awesome_func',
-     *    )
-     * )
-     */
     protected static function _get_instance( int $post_id = null, \WP_Post $post = null ):?Instance {
         if ( $post_id || ( $post && ( $post_id = $post->ID ) ) )
             if ( isset( self::$_post_id_cache[ $post_id ] ) )
@@ -80,10 +73,9 @@ abstract class Instance {
         }
 
         if ( $this->post_id &&
-             ( $loaded = $this->from_post( \WP_Post::get_instance( $this->post_id ) ) )
-        ) {
-            $this->_save_to_cache();    
-        }
+             ( $post = \WP_Post::get_instance( $this->post_id ) ) &&
+             ( $loaded = $this->from_post( $post ) ) // _post_loaded gets set here
+        ) $this->_save_to_cache(); 
             
         return $loaded;
     }

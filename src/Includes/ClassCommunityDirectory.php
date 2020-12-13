@@ -247,10 +247,10 @@ final class ClassCommunityDirectory {
 
     public function load_instance_entity_actions_and_filters( string $class_name ) {
         add_filter(
-            'acf/update_value/key=' . ClassACF::$field_entity_active_key,
+            'acf/update_value/key=' . ClassACF::$entity_active_key,
             array( $class_name, 'acf_shift_inhabitants_count' ), 10, 3 );
         add_filter(
-            'acf/update_value/key=' . ClassACF::$field_location_name_key,
+            'acf/update_value/key=' . ClassACF::$entity_location_name_key,
             array( $class_name, 'acf_update_title_with_loc_name' ), 10, 3 );
 
         add_filter( 'community_directory_get_entity', array( $class_name, 'get_instance' ), 10, 3 );

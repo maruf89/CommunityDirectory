@@ -27,6 +27,15 @@ class OfferNeed extends Instance {
         if ( $post ) $this->from_post( $post );
     }
 
+    public function __get( $property ) {
+        if ( $property === 'entity_post_id' && !isset( $this->entity_post_id ) ) {
+            $this->entity_post_id = community_directory_get_post_var_by_field( 'post_parent', 'ID', $this->post_id );
+            return $this->entity_post_id;
+        }
+        
+        if ( $prop = parent::__get( $property ) ) return $prop;
+    }
+
     public function get_description():string {
         if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$offers_needs_description] ) )
             return '';
@@ -39,6 +48,14 @@ class OfferNeed extends Instance {
             return '';
 
         return $this->acf_data[ClassACF::$offers_needs_hashtag_title];
+    }
+
+    public function get_link():string {
+        return Entity::get_display_link( $this->get_entity() );
+    }
+
+    public function get_entity():?Entity {
+        return Entity::get_instance( $this->entity_post_id );
     }
 
     //////////////////////////////////
@@ -83,6 +100,8 @@ class OfferNeed extends Instance {
         int $entity_id = null,
         \WP_Post $post = null
     ):OfferNeed {
+        if ( !$post_id && !$post ) return null;
+        
         $instance = parent::_get_instance( $post_id, $post );
 
         return $instance ? $instance : new OfferNeed( $post_id, $entity_id, $post );

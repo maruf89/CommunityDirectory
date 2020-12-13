@@ -34,7 +34,8 @@ class Entity extends Instance {
     public function __construct( int $post_id = null, int $author_id = null, object $post = null ) {
         if ( $post && $this->from_post_obj( $post ) ) return;
         
-        if ( !$post_id && !$author_id ) die( 'Entity construct requires atleast a post_id, or author_id at minimum' );
+        if ( !$post_id && !$author_id )
+            die( 'Entity construct requires atleast a post_id, or author_id at minimum' );
         if ( $post_id ) $this->post_id = $post_id;
         if ( $author_id ) {
             $this->author_id = $author_id;
@@ -136,7 +137,7 @@ class Entity extends Instance {
     public function is_status( string $enum_status, bool $is_acf = false ):bool {
         if ( $is_acf ) {
             if ( $this->acf_data || $this->load_acf_from_db() ) {
-                $active = $this->acf_data[ClassACF::$field_entity_active] === 'true';
+                $active = $this->acf_data[ClassACF::$entity_active] === 'true';
                 switch ( $enum_status ) {
                     case COMMUNITY_DIRECTORY_ENUM_INACTIVE:
                         return !$active;
@@ -162,9 +163,9 @@ class Entity extends Instance {
      */
     public function get_status( $format = 'bool' ) {
         if ( $this->acf_data || $this->load_acf_from_db() ) {
-            $active = $this->acf_data[ClassACF::$field_entity_active] === 'true';
+            $active = $this->acf_data[ClassACF::$entity_active] === 'true';
             switch ( $format ) {
-                case 'raw': return $this->acf_data[ClassACF::$field_entity_active];
+                case 'raw': return $this->acf_data[ClassACF::$entity_active];
                 case 'bool': return $active;
                 case 'enum': return $active ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
                 case 'display': return $active ?
@@ -192,7 +193,7 @@ class Entity extends Instance {
     private function get_location():?Location {
         if ( $this->location ) return $this->location;
 
-        if ( !$this->post_parent ) {
+        if ( $this->load_post_from_db() && !$this->post_parent ) {
             $this->_is_valid = false;
             return null;
         }
@@ -204,9 +205,9 @@ class Entity extends Instance {
      * Returns the featured image
      */
     public function get_featured( string $type = 'src' ) {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$field_entity_picture] ) ) return '';
+        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$entity_picture] ) ) return '';
 
-        $img_arr = $this->acf_data[ClassACF::$field_entity_picture];
+        $img_arr = $this->acf_data[ClassACF::$entity_picture];
         switch ( $type ) {
             case 'src': return $img_arr['url'];
             case 'raw':
@@ -214,10 +215,17 @@ class Entity extends Instance {
         }
     }
 
-    public function get_about():string {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$field_entity_about] ) ) return '';
+    private static string $_get_acf = 'get_acf_';
+    private static int $_get_acf_len = 8; // Must equal strlen of $_get_acf
+    public function __call( $name, $arguments ) {
+        if ( substr( $name, 0, self::$_get_acf_len ) !== self::$_get_acf ) die( "Invalid method called Entity::$name" );
 
-        return $this->acf_data[ClassACF::$field_entity_about];
+        $field = substr( $name, self::$_get_acf_len );
+        $acf_field = "entity_$field";
+
+        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::${$acf_field}] ) ) return '';
+
+        return $this->acf_data[ClassACF::${$acf_field}];
     }
 
     /////////////////////////////////////
@@ -232,7 +240,7 @@ class Entity extends Instance {
         // If we can't load the data, return false
         if ( !$this->load_post_from_db() || !$this->load_acf_from_db() ) return false;
 
-        $active_state =& $this->acf_data[ClassACF::$field_entity_active];
+        $active_state =& $this->acf_data[ClassACF::$entity_active];
 
         // If already set, don't do anything
         if ( !$force ) {
@@ -247,7 +255,7 @@ class Entity extends Instance {
         if ( !$status_only ) {
             // Update the user's active field in ACF
             $acf_updates = array();
-            $acf_updates[ClassACF::$field_entity_active_key] = $active_state;
+            $acf_updates[ClassACF::$entity_active_key] = $active_state;
             community_directory_acf_update_entity( $this->post_id, $acf_updates );
 
             do_action( 'community_directory_shift_inhabitants_count',
@@ -419,7 +427,9 @@ class Entity extends Instance {
         int $post_id = null,
         int $author_id = null,
         \WP_Post $post = null
-    ):Entity {
+    ):?Entity {
+        if ( !$post_id && !$author_id && !$post ) return null;
+        
         $instance = parent::_get_instance( $post_id, $post );
 
         if ( $instance ) return $instance;
@@ -447,6 +457,10 @@ class Entity extends Instance {
             else return '';
         }
 
+        $location = $entity->get_location();
+
+        if ( !$location ) return '';
+
         $_location = __( 'location', 'community-directory' );
         $slug = $entity->location->slug;
 
@@ -469,14 +483,14 @@ class Entity extends Instance {
      * Do not call directly!
      */
     public static function acf_shift_inhabitants_count( $value, $entity_post_id, $field ) {
-        if ( !isset( $_POST['acf'][ClassACF::$field_entity_active_key] ) ) return $value;
+        if ( !isset( $_POST['acf'][ClassACF::$entity_active_key] ) ) return $value;
         
         global $post;
         
         // get the old (saved) value
-        $was_active = get_field( ClassACF::$field_entity_active, $entity_post_id ) === 'true';
+        $was_active = get_field( ClassACF::$entity_active, $entity_post_id ) === 'true';
 
-        $is_active = $_POST['acf'][ClassACF::$field_entity_active_key] === 'true';
+        $is_active = $_POST['acf'][ClassACF::$entity_active_key] === 'true';
         
         if ( $was_active == $is_active ) return $value;
 

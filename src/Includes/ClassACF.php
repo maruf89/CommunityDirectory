@@ -13,22 +13,28 @@ class ClassACF {
 
     /////// Entity field keys and field names
     public static $entity_form_group_key = 'group_community_directory_entity';
-    public static $field_location_name_key = 'field_cd_entity_location_name';
-    public static $field_location_name = 'entity_location_name';
-    public static $field_entity_active_key = 'field_cd_entity_active';
-    public static $field_entity_active = 'entity_active';
-    public static $field_entity_picture_key = 'field_cd_entity_picture';
-    public static $field_entity_picture = 'entity_picture';
-    public static $field_entity_about_key = 'field_cd_entity_about';
-    public static $field_entity_about = 'entity_about';
-    public static $field_entity_email_key = 'field_cd_entity_email';
-    public static $field_entity_email = 'entity_email';
-    public static $field_entity_tel_key = 'field_cd_entity_tel';
-    public static $field_entity_tel = 'entity_tel';
-    public static $field_entity_share_loc_key = 'field_cd_entity_share_loc';
-    public static $field_entity_share_loc = 'entity_share_loc';
-    public static $field_entity_gmap_loc_key = 'field_cd_entity_gmap_loc';
-    public static $field_entity_gmap_loc = 'entity_gmap_loc';
+    public static $entity_location_name_key = 'field_cd_entity_location_name';
+    public static $entity_location_name = 'entity_location_name';
+    public static $entity_active_key = 'field_cd_entity_active';
+    public static $entity_active = 'entity_active';
+    public static $entity_picture_key = 'field_cd_entity_picture';
+    public static $entity_picture = 'entity_picture';
+    public static $entity_about_key = 'field_cd_entity_about';
+    public static $entity_about = 'entity_about';
+    public static $entity_contact_method_key = 'field_cd_entity_contact_method';
+    public static $entity_contact_method = 'entity_contact_method';
+    public static $entity_email_key = 'field_cd_entity_email';
+    public static $entity_email = 'entity_email';
+    public static $entity_tel_key = 'field_cd_entity_tel';
+    public static $entity_tel = 'entity_tel';
+    public static $entity_website_key = 'field_cd_entity_website';
+    public static $entity_website = 'entity_website';
+    public static $entity_facebook_key = 'field_cd_entity_facebook';
+    public static $entity_facebook = 'entity_facebook';
+    public static $entity_share_loc_key = 'field_cd_entity_share_loc';
+    public static $entity_share_loc = 'entity_share_loc';
+    public static $entity_gmap_loc_key = 'field_cd_entity_gmap_loc';
+    public static $entity_gmap_loc = 'entity_gmap_loc';
 
     /////// Offers & Needs field keys and field names
     public static $offers_needs_form_group_key = 'group_community_directory_offers_needs';
@@ -122,9 +128,9 @@ class ClassACF {
 
     public static function generate_required_entity_fields( $fields_arr ) {
         $fields_arr[] = array(
-            'key'       => self::$field_entity_active_key,
+            'key'       => self::$entity_active_key,
 			'label'     => __( 'Profile Active', 'community-directory' ),
-			'name'      => self::$field_entity_active,
+			'name'      => self::$entity_active,
 			'type'      => 'radio',
 			'instructions' => __( 'Select \'Active\' to make your profile visible. If \'Inactive\', your profile will not be visible to others.', 'community-directory' ),
 			'required' => 1,
@@ -139,23 +145,20 @@ class ClassACF {
         );
 
         $fields_arr[] = array(
-            'key' => self::$field_location_name_key,
+            'key' => self::$entity_location_name_key,
 			'label' => __( 'Location Name', 'community-directory' ),
-			'name' => self::$field_location_name,
+			'name' => self::$entity_location_name,
 			'type' => 'text',
 			'instructions' => __( 'Does your place have a name? If not, your first name will be shown.', 'community-directory' ),
 			'required' => 1,
-			'wrapper' => array(
-				'class' => 'cd-text',
-			),
 			'placeholder' => __( 'Hillsdale Farms', 'community-directory' ),
 			'maxlength' => '50',
         );
 
         $fields_arr[] = array(
-			'key' => self::$field_entity_picture_key,
+			'key' => self::$entity_picture_key,
 			'label' => __( 'Picture', 'community-directory' ),
-			'name' => self::$field_entity_picture,
+			'name' => self::$entity_picture,
 			'type' => 'image',
 			'instructions' => __( 'Upload a picture of yourselves', 'community-directory' ),
 			'return_format' => 'array',
@@ -168,61 +171,80 @@ class ClassACF {
 		);
 
         $fields_arr[] = array(
-            'key' => self::$field_entity_about_key,
+            'key' => self::$entity_about_key,
 			'label' => __( 'Bio', 'community-directory' ),
-			'name' => self::$field_entity_about,
+			'name' => self::$entity_about,
 			'type' => 'textarea',
 			'instructions' => __( 'Write something about yourself or about your place. Don\'t know what to write about? Write about what you do, the history of your place, or what you would like to see more of around you.', 'community-directory' ),
 			'required' => 0,
-			'wrapper' => array(
-				'class' => 'cd-text-area',
-			),
 			'maxlength' => '2000',
         );
 
         $fields_arr[] = array(
-            'key' => self::$field_entity_email_key,
+			'key' => self::$entity_contact_method_key,
+			'label' => __( 'Contact Method', 'community-directory' ),
+			'name' => self::$entity_contact_method,
+			'type' => 'text',
+			'instructions' => __( 'What is the best way to get in contact with you?', 'community-directory' ),
+			'required' => 1,
+		);
+
+        $fields_arr[] = array(
+            'key' => self::$entity_email_key,
 			'label' => __( 'Contact Email', 'community-directory' ),
-			'name' => self::$field_entity_email,
+			'name' => self::$entity_email,
 			'type' => 'email',
 			'instructions' => __( 'Add an e-mail by which others can reach you.', 'community-directory' ),
-			'wrapper' => array(
-				'class' => 'cd-email cd-text',
-			),
 			'placeholder' => __( 'email@example.com', 'community-directory' ),
         );
 
         $fields_arr[] = array(
-            'key' => self::$field_entity_tel_key,
+            'key' => self::$entity_tel_key,
 			'label' => __( 'Contact Telephone', 'community-directory' ),
-			'name' => self::$field_entity_tel,
+			'name' => self::$entity_tel,
 			'type' => 'number',
 			'instructions' => __( 'Add a phone number by which you can be reached.', 'community-directory' ),
-			'wrapper' => array(
-				'class' => 'cd-number cd-text',
-			),
 			'placeholder' => __( '248-851-6979', 'community-directory' ),
         );
 
+        $fields_arr[] = array(
+            'key' => self::$entity_website_key,
+			'label' => __( 'Website', 'community-directory' ),
+			'name' => self::$entity_website,
+			'type' => 'url',
+			'instructions' => __( 'Do you have a website?', 'community-directory' ),
+			'placeholder' => __( 'www.website.com', 'community-directory' ),
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$entity_facebook_key,
+			'label' => __( 'Facebook', 'community-directory' ),
+			'name' => self::$entity_facebook,
+			'type' => 'url',
+			'instructions' => __( 'Are you reachable by Facebook?', 'community-directory' ),
+            'placeholder' => __( 'https://www.facebook.com/182837282', 'community-directory' ),
+            'prepend' => 'https://www.facebook.com/',
+        );
+
 		$fields_arr[] = array(
-			'key' => self::$field_entity_share_loc_key,
+			'key' => self::$entity_share_loc_key,
 			'label' => __( 'Share My Location', 'community-directory' ),
-			'name' => self::$field_entity_share_loc_key,
+			'name' => self::$entity_share_loc_key,
 			'type' => 'true_false',
 			'instructions' => __( 'Do you want to share your location with others?', 'community-directory' ),
         );
 
 		$fields_arr[] = array(
-			'key' => self::$field_entity_gmap_loc_key,
+			'key' => self::$entity_gmap_loc_key,
 			'label' => __( 'Your Location', 'community-directory' ),
-			'name' => self::$field_entity_gmap_loc,
+			'name' => self::$entity_gmap_loc,
 			'type' => 'google_map',
 			'instructions' => '',
 			'required' => 1,
 			'conditional_logic' => array(
 				array(
 					array(
-						'field' => self::$field_entity_share_loc_key,
+						'field' => self::$entity_share_loc_key,
 						'operator' => '==',
 						'value' => '1',
 					),
@@ -353,9 +375,9 @@ class ClassACF {
         extract( $entity_data );
 
         $update_values = array();
-        $update_values[self::$field_location_name_key] =
+        $update_values[self::$entity_location_name_key] =
             community_directory_generate_display_name_from_user_name( $first_name, $last_name );
-        $update_values[self::$field_entity_active_key] = isset( $status ) && $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'true' :'false';
+        $update_values[self::$entity_active_key] = isset( $status ) && $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'true' :'false';
 
         acf_update_values( $update_values, $entity_id );
     }

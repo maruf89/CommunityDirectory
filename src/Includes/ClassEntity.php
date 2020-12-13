@@ -126,7 +126,7 @@ class ClassEntity extends Routable {
         bool $sql_only = false
     ) {
         global $wpdb;
-        $location_name = ClassACF::$field_location_name;
+        $location_name = ClassACF::$entity_location_name;
         $post_type = self::$post_type;
 
         if ( $where_key === 'location' ) {

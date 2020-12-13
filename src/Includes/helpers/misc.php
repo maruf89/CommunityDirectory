@@ -214,19 +214,20 @@ function community_directory_get_post_types() {
  * Returns a variable from a post based on the passed in args
  * 
  * @param       $var_to_get     string          the field to get
- * @param       $field_key      string          the field key to check
- * @param       $field_value    string          the value to check with
+ * @param       $where_key      string          the field key to check
+ * @param       $where_val      string          the value to check with
  * @return                      any
  */
-function community_directory_get_post_var_by_field( $var_to_get, $field_key, $field_value, $post_type ) {
+function community_directory_get_post_var_by_field( $var_to_get, $where_key, $where_val, $post_type = '' ) {
     global $wpdb;
 
+    $p_type = '';
+    if ( !empty( $post_type ) ) $p_type = "AND post_type = '$post_type'";
+
     $post = $wpdb->get_var(
-        $wpdb->prepare( "SELECT $var_to_get
-                         FROM $wpdb->posts
-                         WHERE $field_key = %s AND post_type = %s"
-            , $field_value, $post_type
-        )
+        "SELECT $var_to_get
+        FROM $wpdb->posts
+        WHERE $where_key = '$where_val' $p_type"
     );
     
     return $post;

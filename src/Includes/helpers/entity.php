@@ -1,6 +1,7 @@
 <?php
 
 use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 /**
  * Creates a new Entity post with the user's info
@@ -12,4 +13,8 @@ function community_directory_add_entity_location_data( $data ) {
     $Entity = ClassEntity::get_instance();
     
     return $Entity::add_entity_location_data( $data );
+}
+
+function is_entity_user():bool {
+    return !!Entity::get_active_entity();
 }

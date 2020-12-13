@@ -21,7 +21,7 @@ $url_pre = '/' . __( 'location', 'community-directory' ) . '/' . $location;
                 <div class="col-xs-12 col-md-4 p-3 mb-3">
                     <a href="<?= "$url_pre/$entity->post_name" ?>">
                     <div class="card p-3">
-                        <h4 class="m-0"><?= $entity->{ClassACF::$field_location_name} ?>
+                        <h4 class="m-0"><?= $entity->{ClassACF::$entity_location_name} ?>
                     </div>
                     </a>
                 </div>
