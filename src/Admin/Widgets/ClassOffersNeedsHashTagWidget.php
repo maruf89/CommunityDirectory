@@ -27,7 +27,7 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
     // Creating widget front-end
     public function widget( $args, $instance ) {
         $class_offers_needs = ClassOffersNeeds::get_instance();
-        $type = isset( $args[ 'type' ] ) ? $args[ 'type' ] : 'need';
+        $type = isset( $instance[ 'type' ] ) ? $instance[ 'type' ] : 'need';
         $offers_and_needs = $class_offers_needs->format_to_instances( $class_offers_needs->get_latest(
             array(), $type
         ) );
@@ -43,10 +43,7 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
             
     // Creating widget Backend 
     public function form( $instance ) {
-        $defaults = array(
-            'type' => 'offer'
-        );
-        $type = $instance[ 'type' ];
+        $type = isset( $instance[ 'type' ] ) ? $instance[ 'type' ] : 'offer';
          
         // markup for form ?>
         <fieldset>
@@ -55,8 +52,8 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
                 <input type="radio"
                        value="offer"
                        id="cdOffer<?= self::$idIncrement ?>"
-                       name="<?= $this->get_field_id( 'type' ) ?>"
-                       <?php if ( $type === 'offer' ) echo 'selected' ?>
+                       name="<?= $this->get_field_name( 'type' ) ?>"
+                       <?php if ( $type === 'offer' ) echo 'checked' ?>
                        />
                 <label for="cdOffer<?= self::$idIncrement++ ?>"><?= __( 'Offer', 'community-directory' ) ?></label>
             </div>
@@ -64,8 +61,8 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
                 <input type="radio"
                        value="need"
                        id="cdNeed<?= self::$idIncrement ?>"
-                       name="<?= $this->get_field_id( 'type' ) ?>"
-                       <?php if ( $type === 'need' ) echo 'selected' ?>
+                       name="<?= $this->get_field_name( 'type' ) ?>"
+                       <?php if ( $type === 'need' ) echo 'checked' ?>
                        />
                 <label for="cdNeed<?= self::$idIncrement++ ?>"><?= __( 'Need', 'community-directory' ) ?></label>
             </div>
@@ -77,7 +74,11 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
     // Updating widget replacing old instances with new
     public function update( $new_instance, $old_instance ) {
         $instance = $old_instance;
-        $instance[ 'type' ] = $new_instance[ 'type' ];
+
+        if ( isset( $new_instance[ 'type' ] ) ) {
+            $instance[ 'type' ] = $new_instance[ 'type' ];
+        }
+
         return $instance;
     }
 }

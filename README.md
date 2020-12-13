@@ -22,6 +22,8 @@ Menu button which links to the user's backend where nearby offers/needs are show
 
 
 # Offers & Needs
+- Inactive entities can post offer/needs as drafts
+- Activating/deactivating entities publishes/pends their offers/needs
 - Allow uploading galleries
 - Create a widget accepting: ( string $offer_or_need, ?coord $location, ?bool $around_location, int $max_display ) Which would show the offer/need, for given location if $around location === false, otherwise for around a location, and how many to display at most
 

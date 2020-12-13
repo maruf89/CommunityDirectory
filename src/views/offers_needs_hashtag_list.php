@@ -4,10 +4,13 @@ $offers_needs = $args[ 'offers_and_needs' ];
 
 $type = $args[ 'attrs' ][ 'type' ];
 
+if ( $type === 'offer' ) $title = __( 'Latest Offers', 'community-directory' );
+else $title = __( 'Latest Needs', 'community-directory' );
+
 ?>
 
 <section class="offers-needs-hashtags">
-    <h3>Latest Needs</h3>
+    <h3><?= $title ?></h3>
     <ul class="cd-<?= $type ?>-list list-inline">
         <?php foreach ( $offers_needs as $num => $offer_need ): ?>
             <?php
