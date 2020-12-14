@@ -12,8 +12,9 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassActivator {
 
-    public static $role_entity = 'entity_subscriber';
-    public static $role_location = 'location_manager';
+    
+    public static string $role_entity = 'entity_subscriber';
+    public static string $role_location = 'location_manager';
 
     /**
      * This method gets fired during plugin activation.
@@ -66,6 +67,8 @@ class ClassActivator {
         self::add_default_options();
 
         self::add_capabilities();
+
+        self::register_post_status();
         
         do_action( 'community_directory_create_tables' );
 

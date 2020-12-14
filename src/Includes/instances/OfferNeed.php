@@ -16,8 +16,10 @@ use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 class OfferNeed extends Instance {
     public static string $post_type = 'cd-offers-needs';
     protected bool $_acf_loaded = false;
+    protected static string $entity_loc_separator = '1100';
 
     protected int $entity_post_id;
+    protected int $location_post_id;
 
     protected ?array $acf_data = null;
 
@@ -27,31 +29,38 @@ class OfferNeed extends Instance {
         if ( $post ) $this->from_post( $post );
     }
 
-    public function __get( $property ) {
-        if ( $property === 'entity_post_id' && !isset( $this->entity_post_id ) ) {
-            $this->entity_post_id = community_directory_get_post_var_by_field( 'post_parent', 'ID', $this->post_id );
-            return $this->entity_post_id;
-        }
+    private static string $_get_acf = 'get_acf_';
+    private static int $_get_acf_len = 8; // Must equal strlen of $_get_acf
+    public function __call( $name, $arguments ) {
+        if ( substr( $name, 0, self::$_get_acf_len ) !== self::$_get_acf )
+            die( 'Invalid method called ' . __CLASS__ . '::' . $name );
+
+        $field = substr( $name, self::$_get_acf_len );
+        $acf_field = "offers_needs_$field";
+
+        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::${$acf_field}] ) ) return '';
+
+        return $this->acf_data[ClassACF::${$acf_field}];
+    }
+
+    public function get_acf_hashtag_title() {
+        $title = $this->__call( 'get_acf_hashtag_title', array() );
         
-        if ( $prop = parent::__get( $property ) ) return $prop;
-    }
-
-    public function get_description():string {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$offers_needs_description] ) )
-            return '';
-
-        return $this->acf_data[ClassACF::$offers_needs_description];
-    }
-
-    public function get_hashtag_title( bool $link = true ):string {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$offers_needs_hashtag_title] ) )
-            return '';
-
-        return $this->acf_data[ClassACF::$offers_needs_hashtag_title];
+        if ( substr( $title, 0, 1 ) !== '#' ) $title = "#$title";
+        $title = mb_convert_case( $title, MB_CASE_TITLE, 'UTF-8');
+        $title = implode( explode( ' ', $title ) );
+        
+        return $title;
     }
 
     public function get_link():string {
-        return Entity::get_display_link( $this->get_entity() );
+        $link = Entity::get_display_link( $this->get_entity() );
+        return empty( $link ) ? '' : "$link/#" . $this->get_id();
+    }
+
+    public function get_id():string {
+        $type = $this->get_acf_type();
+        return "$type-$this->post_id";
     }
 
     public function get_entity():?Entity {
@@ -68,7 +77,9 @@ class OfferNeed extends Instance {
 
     protected function from_post( \WP_Post $post ):bool {
         if ( parent::from_post( $post ) ) {
-            $this->entity_post_id = $post->post_parent;
+            list( $entity_id, $location_id ) = self::get_entity_loc_id( $post->post_parent );
+            $this->entity_post_id = $entity_id;
+            $this->location_post_id = $location_id;
             return true;
         }
         return false;
@@ -140,13 +151,52 @@ class OfferNeed extends Instance {
         return $value;
     }
 
-    public static function set_post_parent_on_save( int $post_id, \WP_Post $post, bool $update ) {
-        if ( $update ) return;
+    /**
+     * Generates an id from an entity_id and a location_id (if given) by adding a separator
+     */
+    protected static function generate_entity_loc_id( int $entity_id, int $location_id = 0 ):int {
+        $loc_id = $location_id ? $location_id : '';
+        $separator = self::$entity_loc_separator;
 
-        $parent_entity = Entity::get_instance( null, $post->post_author );
-        // $parent_entity->is_valid();
-        $instance = self::get_instance( $post_id, $parent_entity->post_id, $post );
-        $instance->update_post( array( 'post_parent' => $parent_entity->post_id ) );
+        return (int) "$entity_id${separator}$loc_id";
+    }
+
+    protected static function get_entity_loc_id( int $id ):array {
+        // Since locations are less numerous than entities and they can't begin with a zero
+        // we reverse the id and search from behind
+        $separator_rev = strrev( (string) self::$entity_loc_separator );
+        // 9661100952 -> 25090011669
+        $str_id = strrev( (string) $id );
+        // find where the separator is
+        $separator_pos = strpos( $str_id, $separator_rev, 1 );
+        // extract the id's, reverse them, and convert to ints
+        $loc_id = (int) strrev( substr( $str_id, 0, $separator_pos ) );
+        $entity_id = (int) strrev( substr( $str_id, ( $separator_pos + strlen( $separator_rev ) ) ) );
+        return array( $entity_id, $loc_id );
+    }
+
+    /**
+     * Upon publishing an OfferNeed updates the 'post_parent' with the "${entity_post_id}1100${location_post_id},
+     * and set's the 'post_parent' to the location's post id
+     */
+    public static function set_post_props_on_save( array $sanitized, array $unsanitized, array $unprocessed ) {
+        $status = [ 'publish', 'inactive' ];
+        if ( !in_array( $sanitized[ 'post_status' ], $status ) || $sanitized[ 'post_type' ] !== self::$post_type )
+            return $sanitized;
+
+        $Entity = Entity::get_instance( null, $sanitized[ 'post_author' ] );
+
+        // If the entity is inactive
+        if ( $Entity->get_acf_active() === 'false' ) {
+            $sanitized[ 'post_status' ] = 'inactive';
+        }
+        
+        // Get location, and if set, set the post parent to it's post id
+        $Location = $Entity->get_location();
+        $loc_id = $Location ? $Location->post_id : 0;
+        $sanitized[ 'post_parent' ] = self::generate_entity_loc_id( $Entity->post_id, $loc_id );
+
+        return $sanitized;
     }
 
 }

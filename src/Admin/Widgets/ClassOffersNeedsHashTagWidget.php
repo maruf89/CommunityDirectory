@@ -28,14 +28,20 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
     public function widget( $args, $instance ) {
         $class_offers_needs = ClassOffersNeeds::get_instance();
         $type = isset( $instance[ 'type' ] ) ? $instance[ 'type' ] : 'need';
-        $offers_and_needs = $class_offers_needs->format_to_instances( $class_offers_needs->get_latest(
-            array(), $type
-        ) );
+
+        $offers_and_needs = apply_filters(
+            'community_directory_get_latest_offers_and_needs',
+            array(),
+            $type,
+        );
+
+        $offers_and_needs = ClassOffersNeeds::format_to_instances( $offers_and_needs );
 
         $template_file = apply_filters( 'community_directory_template_offers_needs_hashtag_list.php', '' );
         load_template( $template_file, false, array(
             'offers_and_needs' => $offers_and_needs,
             'attrs' => array( 'type' => $type ),
+            'show_title' => true,
         ) );
     }
 

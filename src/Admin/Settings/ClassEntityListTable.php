@@ -166,7 +166,7 @@ class ClassEntityListTable extends \WP_List_Table {
             case 'activate':
                 foreach ( $all_entities as $entity_post_id ) {
                     $entity = new Entity( $entity_post_id );
-                    if ( $entity->is_valid() && $entity->activate_deactivate( true ) ) $count++;
+                    if ( $entity->is_valid() && $entity->activate_deactivate( true, false, true ) ) $count++;
                 }
 
                 add_settings_error(
@@ -180,7 +180,7 @@ class ClassEntityListTable extends \WP_List_Table {
             case 'deactivate':
                 foreach ( $all_entities as $entity_post_id ) {
                     $entity = new Entity( $entity_post_id );
-                    if ( $entity->activate_deactivate( false ) ) $count++;
+                    if ( $entity->activate_deactivate( false, false, true ) ) $count++;
                 }
 
                 add_settings_error(
@@ -204,7 +204,7 @@ class ClassEntityListTable extends \WP_List_Table {
 
         switch ( $action ) {
             case 'activate':
-                if ( $entity->activate_deactivate( true ) ) {
+                if ( $entity->activate_deactivate( true, false, true ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',
@@ -215,7 +215,7 @@ class ClassEntityListTable extends \WP_List_Table {
                 }
                 break;
             case 'deactivate':
-                if ( $entity->activate_deactivate( false ) ) {
+                if ( $entity->activate_deactivate( false, false, true ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',

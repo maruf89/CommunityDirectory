@@ -6,26 +6,32 @@ get_header();
 
 global $post;
 
-$location = $post->post_name;
-
-$entities = apply_filters( 'community_directory_get_entities', array(), $location, 'location', 'publish' );
-
-$url_pre = '/' . __( 'location', 'community-directory' ) . '/' . $location;
+$location_name = $post->post_name;
 
 ?>
 
     <main id="content" class="container">
-        <div class="row mt-5 mb-5">
-            <h1 class="text-center col-xs-12 col-md-12"><?= $post->post_title ?></h1>
-            <?php foreach ( $entities as $entity ): ?>
-                <div class="col-xs-12 col-md-4 p-3 mb-3">
-                    <a href="<?= "$url_pre/$entity->post_name" ?>">
-                    <div class="card p-3">
-                        <h4 class="m-0"><?= $entity->{ClassACF::$entity_location_name} ?>
-                    </div>
-                    </a>
-                </div>
-            <?php endforeach; ?>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 mb-5">
+                <h1 class="text-center col-xs-12 col-md-12"><?= $post->post_title ?></h1>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-xs-12 col-sm-6">
+                <h4 class="text-center mb-4"><?= sprintf( __( 'Offers in %s', 'community-directory' ), $post->post_title ) ?></h4>
+                <?php do_shortcode( "[community_directory_list_offers_needs_hashtag_list location_id='$post->ID' type='offer' ]" ); ?>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <h4 class="text-center mb-4"><?= sprintf( __( 'Needs in %s', 'community-directory' ), $post->post_title ) ?></h4>
+                <?php do_shortcode( "[community_directory_list_offers_needs_hashtag_list location_id='$post->ID' type='need' ]" ); ?>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <h2 class="text-center col-xs-12 col-sm-12 mb-4"><?= sprintf( __( 'Entities in %s', 'community-directory' ), $post->post_title ) ?></h2>
+            <?php do_shortcode( "[community_directory_list_entities location_id='$post->ID' ]" ); ?>
         </div>
     </main>
 

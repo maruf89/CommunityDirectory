@@ -52,16 +52,16 @@ class ClassAccount {
      * @param           $user_id            int         
      * @return                              a_array     $result
      */
-    public static function save_data_to_user_meta( $result, $validation_type, $user_id ) {
+    public static function save_data_to_user_meta( $data, $validation_type, $user_id ) {
         // return if validating something else
         if ( $validation_type !== 'register' ||
-             !isset( $result[ClassUWPFormBuilder::$community_directory_location_name] ) )
-                return $result;
+             !isset( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
+                return $data;
         
         $location_name = $data[ClassUWPFormBuilder::$community_directory_location_name];
-        self::create_loc_and_entity( $location_name, $result, $user_id );
+        self::create_loc_and_entity( $location_name, $data, $user_id );
 
-        return $result;
+        return $data;
     }
 
     /**

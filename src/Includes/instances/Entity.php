@@ -190,7 +190,7 @@ class Entity extends Instance {
         return '';
     }
 
-    private function get_location():?Location {
+    public function get_location():?Location {
         if ( $this->location ) return $this->location;
 
         if ( $this->load_post_from_db() && !$this->post_parent ) {
@@ -218,7 +218,8 @@ class Entity extends Instance {
     private static string $_get_acf = 'get_acf_';
     private static int $_get_acf_len = 8; // Must equal strlen of $_get_acf
     public function __call( $name, $arguments ) {
-        if ( substr( $name, 0, self::$_get_acf_len ) !== self::$_get_acf ) die( "Invalid method called Entity::$name" );
+        if ( substr( $name, 0, self::$_get_acf_len ) !== self::$_get_acf )
+            die( 'Invalid method called ' . __CLASS__ . '::' . $name );
 
         $field = substr( $name, self::$_get_acf_len );
         $acf_field = "entity_$field";
@@ -448,7 +449,7 @@ class Entity extends Instance {
 
         $_location = __( 'location', 'community-directory' );
 
-        return "/$_location/$location->slug/" . __( 'single', 'community-directory' );
+        return "/$_location/$location->slug/";
     }
 
     public static function get_display_link( Entity $entity = null ):string {
@@ -500,7 +501,7 @@ class Entity extends Instance {
 
         // Update the post's status
         $instance = self::get_instance( $entity_post_id );
-        $instance->activate_deactivate( $is_active, false, true );
+        $instance->activate_deactivate( $is_active, true, false );
         
         return $value;
     }

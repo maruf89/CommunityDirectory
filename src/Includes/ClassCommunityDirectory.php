@@ -21,6 +21,7 @@ final class ClassCommunityDirectory {
      * @var      string    $version    The current version of the plugin.
      */
     protected string $version;
+    public static string $inactive_post_status = 'inactive';
     
     private static ?ClassCommunityDirectory $instance = null;
 
@@ -136,6 +137,7 @@ final class ClassCommunityDirectory {
         add_action( 'init', array( $this->location, 'register_post_type' ) );
         add_action( 'init', array( $this->entity, 'register_post_type' ) );
         add_action( 'init', array( $this->offers_needs, 'register_post_type' ) );
+        add_action( 'init', array( $this, 'register_post_status' ) );
         add_action( 'after_setup_theme', array( $this->offers_needs, 'register_taxonomy_terms' ) );
         add_action( 'rest_api_init', array( $this->rest_end_points, 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
@@ -194,7 +196,8 @@ final class ClassCommunityDirectory {
 
     public function load_shortcodes( $instance ) {
         add_shortcode( 'community_directory_list_offers_needs', array( $instance, 'list_offers_needs' ) );
-        
+        add_shortcode( 'community_directory_list_offers_needs_hashtag_list', array( $instance, 'list_offers_needs_hashtag' ) );
+        add_shortcode( 'community_directory_list_entities', array( $instance, 'list_entities' ) );
     }
 
     public function load_public_actions_and_filters( ClassPublic $instance ) {
@@ -211,9 +214,12 @@ final class ClassCommunityDirectory {
         add_filter( "${prefix}offers-and-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-and-needs-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers_needs_hashtag_list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}elements/offer-need-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}elements/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}entity-list.php", array( $instance, 'load_template' ), 10, 1 );
     }
 
-    public function load_entity_actions_and_filters( $instance ) {
+    public function load_entity_actions_and_filters( ClassEntity $instance ) {
         add_filter( 'community_directory_get_entities', array( $instance, 'get_entities' ), 10, 4 );
 
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
@@ -230,6 +236,7 @@ final class ClassCommunityDirectory {
     public function load_offers_needs_actions_and_filters( ClassOffersNeeds $instance ) {
         add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
         add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
+        add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
         add_filter(
             'community_directory_get_latest_offers_and_needs',
             array( $instance, 'get_latest' ), 10, 5 );
@@ -241,8 +248,7 @@ final class ClassCommunityDirectory {
             'acf/update_value/key=' . ClassACF::$offers_needs_type_key,
             array( $class_name, 'update_post_excerpt_with_type' ), 10, 3 );
 
-        $post_type = ClassOffersNeeds::$post_type;
-        add_action( "save_post_$post_type", array( $class_name, 'set_post_parent_on_save' ), 10, 3 );
+        add_action( 'wp_insert_post_data', array( $class_name, 'set_post_props_on_save' ), 10, 3 );
     }
 
     public function load_instance_entity_actions_and_filters( string $class_name ) {
@@ -357,6 +363,21 @@ final class ClassCommunityDirectory {
      */
     public static function register_string( $string, $domain = 'community-directory', $name = '' ) {
         do_action( 'wpml_register_single_string', $domain, $name, $string );
+    }
+
+    public static function register_post_status() {
+        register_post_status(
+            self::$inactive_post_status,
+            array(
+                'label' => __( 'Inactive', 'community-directory' ),
+                'internal'                  => false,
+                'public'                    => false,
+                'exclude_from_search'       => true,
+                'show_in_admin_all_list'    => true,
+                'show_in_admin_status_list' => true,
+                'label_count'               => _n_noop( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', 'community-directory' ),
+            )
+        );
     }
 
     public function load_widgets() {

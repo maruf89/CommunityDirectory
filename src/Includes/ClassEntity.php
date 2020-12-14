@@ -126,36 +126,50 @@ class ClassEntity extends Routable {
         bool $sql_only = false
     ) {
         global $wpdb;
-        $location_name = ClassACF::$entity_location_name;
         $post_type = self::$post_type;
 
+        $where_status = "post_status != 'auto-draft'";
+        if ( !empty( $status ) )
+            $where_status = "post_status = '$status'";
+
         if ( $where_key === 'location' ) {
-            $where_key = gettype( $where_val ) === 'integer' ? 'entity.ID' : 'location.post_name';
+            switch ( gettype( $where_val ) ) {
+                case 'integer':
+                    $sql = "
+                        SELECT *
+                        FROM $wpdb->posts
+                        WHERE $where_status
+                          AND post_type = '$post_type'
+                          AND post_parent = '$where_val'
+                    ";
+                    break;
+                case 'string':
 
-            $where_status = '';
-            if ( !empty( $status ) )
-                $where_status .= "AND entity.post_status = '$status'";
-
-            $sql = "
-                SELECT entity.ID, entity.post_name, entity.post_title as $location_name
-                FROM $wpdb->posts AS location
-                JOIN $wpdb->posts AS entity
-                ON location.ID = entity.post_parent
-                WHERE entity.post_status != 'auto-draft' AND entity.post_type = '$post_type' AND $where_key = '$where_val' $where_status
-            ";
+                    if ( empty( $status ) )
+                        $where_status = "entity.post_status != 'auto-draft";
+                    else
+                        $where_status = "entity.post_status = '$status'";
+                        
+                    $sql = "
+                        SELECT entity.*
+                        FROM $wpdb->posts AS location
+                        JOIN $wpdb->posts AS entity
+                        ON location.ID = entity.post_parent
+                        WHERE $where_status
+                          AND entity.post_type = '$post_type'
+                          AND location.post_name = '$where_val'
+                    ";
+                    break;
+            }
         } else {
             $where_match = '';
             if ( $where_val && !empty( $where_key ) )
-                $where_match .= "AND $where_val = '$where_val'";
+                $where_match = "AND $where_val = '$where_val'";
 
-            $where_status = '';
-            if ( !empty( $status ) )
-                $where_status .= "AND post_status = '$status'";
-            
             $sql = "
                 SELECT *
                 FROM $wpdb->posts
-                WHERE post_status != 'auto-draft' AND post_type = '$post_type' $where_match $where_status
+                WHERE $where_status AND post_type = '$post_type' $where_match
             ";
         }
 
@@ -188,6 +202,14 @@ class ClassEntity extends Routable {
         ";
 
         return $sql_only ? $sql : $wpdb->get_results( $sql );
+    }
+
+    public static function format_to_instances( $rows ) {
+        foreach ( (object) $rows as $key => $post ) {
+            $rows[ $key ] = new Entity( $post->ID, null, \WP_Post::get_instance( $post->ID ) );
+        }
+
+        return $rows;
     }
 
     //////////////////////////////
