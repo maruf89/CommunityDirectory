@@ -57,7 +57,7 @@ class ClassAccount {
         if ( $validation_type !== 'register' ||
              !isset( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
                 return $data;
-        
+                
         $location_name = $data[ClassUWPFormBuilder::$community_directory_location_name];
         self::create_loc_and_entity( $location_name, $data, $user_id );
 

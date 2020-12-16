@@ -150,8 +150,9 @@ class ClassTest {
             $wp_user = $this->generate_new_wp_user();
             $user_id = wp_insert_user( $wp_user );
 
-            $wp_user[ 'status' ] = $status;
-            ClassAccount::create_loc_and_entity( $rand_loc_name, $wp_user, $user_id );
+            $loc_data = $wp_user;
+            $loc_data[ 'status' ] = $status;
+            ClassAccount::create_loc_and_entity( $rand_loc_name, $loc_data, $user_id );
 
             $generated_count++;
         }

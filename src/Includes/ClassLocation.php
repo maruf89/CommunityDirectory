@@ -157,9 +157,9 @@ class ClassLocation extends Routable {
         if ( !count( $results ) ) return $results;
         
         if ( $format === 'instance' ) return self::format_to_instances( $results );
-        if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
-        // Otherwise $formatted is a string
-        return self::format_row_locations( $results, $formatted );
+        if ( gettype( $format ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $format is a string
+        return self::format_row_locations( $results, $format );
     }
 
     /**
