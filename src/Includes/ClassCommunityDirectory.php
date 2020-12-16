@@ -87,6 +87,7 @@ final class ClassCommunityDirectory {
 
         $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
         $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
+        $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -150,7 +151,7 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_assets_actions_and_filters($instance) {
+    public function load_assets_actions_and_filters( ClassPublic $instance) {
         add_action( 'wp_enqueue_scripts', array($instance, 'enqueue_styles') );
         add_action( 'wp_enqueue_scripts', array($instance, 'enqueue_scripts') );
     }
@@ -160,7 +161,7 @@ final class ClassCommunityDirectory {
      *
      * @param $instance
      */
-    public function load_tables_actions_and_filters( $instance ) {
+    public function load_tables_actions_and_filters( ClassTables $instance ) {
         add_action( 'community_directory_create_tables', array( $instance, 'create_tables' ), 10, 0 );
         add_filter( 'wpmu_drop_tables', array( $instance, 'drop_tables_on_delete_blog' ) );
     }
@@ -173,12 +174,14 @@ final class ClassCommunityDirectory {
     public function load_location_actions_and_filters( ClassLocation $instance ) {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
 
+        add_filter( 'community_directory_get_locations', array( $instance, 'get' ), 10, 4 );
+        add_filter( 'community_directory_format_locations', array( $instance, 'get' ), 10, 2 );
+
         // Delete location
         add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
         add_action( 'community_directory_delete_location', array( $instance, 'delete_location' ), 10, 1 );
 
         // Create location
-        add_filter( 'community_directory_prepare_location_for_creation', array( $instance, 'prepare_location_for_creation' ) );
         add_action( 'community_directory_create_locations', array( $instance, 'create_locations' ), 10, 1 );
 
         // Update values
@@ -190,11 +193,11 @@ final class ClassCommunityDirectory {
     /**
      * Actions & Filters for rendering UsersWP forms relating to this plugin
      */
-    public function load_uwp_forms_actions_and_filters( $instance ) {
+    public function load_uwp_forms_actions_and_filters( ClassUWPForms $instance ) {
         add_filter( 'uwp_form_input_html_locationselect', array( $instance, 'builder_extra_fields_locationselect' ), 10, 4 );
     }
 
-    public function load_shortcodes( $instance ) {
+    public function load_shortcodes( ClassShortcodes $instance ) {
         add_shortcode( 'community_directory_list_offers_needs', array( $instance, 'list_offers_needs' ) );
         add_shortcode( 'community_directory_list_offers_needs_hashtag_list', array( $instance, 'list_offers_needs_hashtag' ) );
         add_shortcode( 'community_directory_list_entities', array( $instance, 'list_entities' ) );
@@ -264,6 +267,10 @@ final class ClassCommunityDirectory {
         add_action(
             'community_directory_activate_deactivate_entity',
             array( $class_name, 'activate_deactivate_entity' ), 10, 3 );
+    }
+
+    public function load_instance_location_actions_and_filters( string $class_name ) {
+        add_filter( 'community_directory_prepare_location_for_creation', array( $instance, 'prepare_for_creation' ) );
     }
     
 

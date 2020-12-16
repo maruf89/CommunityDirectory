@@ -309,6 +309,13 @@ function community_directory_format_uc_first( $location ) {
     return mb_convert_case( mb_convert_case( $location , MB_CASE_LOWER, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
 }
 
+function community_directory_settings_get( string $key = '', string $default_value = '' ) {
+    $settings = get_option( 'community_directory_settings', array());
+
+    return empty( $key ) ? $settings :
+        isset( $settings[ $key ] ) ? $settings[ $key ] : $default_value;
+}
+
 if ( !function_exists( 'arr_val_or_null' ) ) {
     function arr_val_or_null( $arr, $prop, $null = null ) {
         if ( isset( $arr[$prop] ) ) return $arr[$prop];
