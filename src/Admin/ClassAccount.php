@@ -65,7 +65,8 @@ class ClassAccount {
     }
 
     /**
-     * Given a location display_name and a user_id creates an entity
+     * Given a location display_name and a user_id creates a location if it doesn't exist, then an entity, and 
+     * then updates the user's roles to entity_subscriber
      * 
      * @param       $location_name      string       
      * @param       $user_data          array       must contain: 'first_name', 'last_name'
@@ -74,24 +75,19 @@ class ClassAccount {
     public static function create_loc_and_entity( string $location_name, array $data, int $user_id ) {
         $loc_data = array( 'display_name' => $location_name, 'user_id' => $user_id );
         if ( isset( $data[ 'status' ] ) ) $loc_data[ 'status' ] = $data[ 'status' ];
-        $loc_data = apply_filters( 'community_directory_prepare_location_for_creation', $loc_data );
         
-        // Only add new location if the user didn't enter an already existing location
-        if ( !( $loc_post_id = community_directory_create_location_if_doesnt_exist( $loc_data ) ) ) {
-            $post = get_page_by_path( $loc_data['slug'], OBJECT, ClassLocation::$post_type );
-            $loc_post_id = $post->ID;
-        }
+        // Create a location if it doesn't exist
+        $Location = apply_filters( 'community_directory_create_location_if_doesnt_exist', $loc_data );
 
-        $entity = new Entity( null, $user_id );
-        
-        $entity_post_id = $entity->insert_into_db( array(
+        $Entity = new Entity( null, $user_id );
+        $Entity->insert_into_db( array(
             'user_id'                   => $user_id,
             'first_name'                => $data['first_name'],
             'last_name'                 => $data['last_name'],
-            'location_id'               => community_directory_get_row_var( $loc_data['slug'], 'id' ),
-            'location_display_name'     => $loc_data['display_name'],
-            'location_post_id'          => $loc_post_id,
-            'status'                    => $loc_data[ 'status' ],
+            'location_id'               => $Location->location_id,
+            'location_display_name'     => $Location->display_name,
+            'location_post_id'          => $Location->post_id,
+            'status'                    => $Location->status,
         ) );
 
         // Set the user's role to entity-subscriber

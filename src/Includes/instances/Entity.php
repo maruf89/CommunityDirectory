@@ -385,7 +385,6 @@ class Entity extends Instance {
 
         return false;
     }
-
     
     protected static array $_author_id_cache = [];
 

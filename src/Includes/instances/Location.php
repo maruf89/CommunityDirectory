@@ -79,18 +79,10 @@ class Location extends Instance {
     /////////////////////////////////////
 
     /**
-     * Creates a new Entity post with the user's info
+     * Creates a new Location post
      * 
      * @param       $data       ARRAY_A         fields:
-     *                              array(
-     *                                  'display_name' => ...,
-     *                                  '?slug' => ...,
-     *                                  'last_name' => ...,
-     *                                  'location_id' => $location['id'],
-     *                                  'location_display_name' => $location['display_name'],
-     *                                  'location_post_id' => $location['post_id'],
-     *                                  'status' => ENUM status
-     *                              )
+     *     (string display_name|?string slug|?string status|?int active_inhabitants|?int inactive_inhabitants|?string coords)
      * @return                   int|WP_Error    either the returned row id or error
      */
     public function insert_into_db( array $data ):int {
@@ -101,29 +93,56 @@ class Location extends Instance {
         global $wpdb;
 
         if ( !isset( $data['slug'] ) )
-            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
+            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data, $this );
 
-        $post_id = self::create_new_post( $data );
-        
-        $wpdb->insert( 
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array(
-                'display_name'          => $data['display_name'],
-                'slug'                  => $data['slug'],
-                'status'                => $data['status'],
-                'post_id'               => $post_id,
-                'active_inhabitants'    => $data['active_inhabitants'],
-                'inactive_inhabitants'  => $data['inactive_inhabitants'],
-            ),
-            array(
-                '%s',
-                '%s',
-                '%s',
-                '%d',
-            )
+        // If the loc doesn't have a post_id insert into db
+        if ( !isset( $this->post_id ) || !$this->post_id )
+            $this->create_new_post( $data );
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = $wpdb->prepare(
+            "
+                INSERT INTO TABLE $table
+                ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords )
+                VALUES( %s, %s, %s, %d, %d, %d, ST_PointFromText(Point (%s)))
+            ",
+            $this->display_name,
+            $this->slug,
+            $this->status,
+            $this->post_id,
+            $this->active_inhabitants,
+            $this->inactive_inhabitants,
+            $this->coords
         );
 
-        return $post_id;
+        $x;
+
+        return $wpdb->query( $sql );
+    }
+    
+    /**
+     * Creates a new wp post for the location and set's the post_id to the newly inserted row
+     * 
+     * @param       $data       array       an associative array with 'display_name', and 'slug' required
+     */
+    public function create_new_post( int $optional_user_id = 0 ) {
+        // Create post object
+        $my_post = array(
+            'post_title'    => $this->display_name,
+            'post_status'   => $this->status,
+            'post_type'     => self::$post_type,
+            'post_author'   => $optional_user_id,
+        );
+        
+        // Insert the post into the database
+        $this->post_id = wp_insert_post( $my_post );
+
+        // For some reason the post_name doesn't save upon insertion so we update it afterwards
+        $this->update_post( array(
+            'post_name' => $this->slug
+        ) );
+
+        return $this->post_id;
     }
 
     //////////////////////////////////
@@ -155,12 +174,25 @@ class Location extends Instance {
     }
 
     public function fill_with_data( object $data ) {
-        $this->location_id = $data->id;
         $this->display_name = $data->display_name;
         $this->slug = $data->slug;
         $this->active_inhabitants = $data->active_inhabitants;
         $this->inactive_inhabitants = $data->inactive_inhabitants;
-        $this->post_id = $data->post_id;
+
+        if ( isset( $data->id ) )
+            $this->location_id = $data->id;
+        else if ( isset( $data->location_id ) )
+            $this->location_id = $data->location_id;
+            
+        if ( isset( $data->post_id ) )
+            $this->post_id = $data->post_id;
+    }
+    
+    protected static array $_location_id_cache = [];
+
+    protected function _save_to_cache() {
+        parent::_save_to_cache();
+        self::$_location_id_cache[ $this->location_id ] = $this;
     }
 
     /////////////////////////////////////
@@ -168,12 +200,31 @@ class Location extends Instance {
     /////////////////////////////////////
 
     /**
+     * If a cached version exists, gets an entity, otherwise creates a new one
+     */
+    public static function get_instance(
+        int $post_id = null,
+        int $location_id = null,
+        \WP_Post $post = null
+    ):?Entity {
+        if ( !$post_id && !$location_id && !$post ) return null;
+        
+        $instance = parent::_get_instance( $post_id, $post );
+
+        if ( $instance ) return $instance;
+        else if ( $location_id && isset( self::$_location_id_cache[ $location_id ] ) )
+            return self::$_location_id_cache[ $location_id ];
+
+        return new Entity( $location_id, $post_id, $post );
+    }
+
+    /**
      * A method to sanitize or fill out any fields for a location before adding it to the DB
      * 
      * @param           a_array         $data       must contain ('display_name' => string)
      * @return                          a_array
      */
-    public static function prepare_for_creation( array $data ):array {
+    public static function prepare_for_creation( array $data, Location $instance = null ):array {
         if ( !isset( $data[ 'display_name' ] ) ) die( 'Invalid call to Location::prepare_location_for_creation. Argument 1 (array) requires (string) key \'display_name\'' );
 
         $default_loc = community_directory_settings_get( 'default_location', '0,0' );
@@ -187,7 +238,11 @@ class Location extends Instance {
             'coords'                => $default_loc,
         );
 
-        return wp_parse_args( $data, $default_args );
+        $prepared = wp_parse_args( $data, $default_args );
+
+        if ( $instance ) $instance->fill_with_data( (object) $prepared );
+        
+        return $prepared;
     }
 
 }

@@ -126,7 +126,8 @@ class ClassTest {
 
         // If we're not generating locations, get the existing ones
         if ( !$generate_locations ) {
-            $db_locations = community_directory_get_locations( true, false, 'display_name', ARRAY_A );
+            $db_locations = apply_filters( 'community_directory_get_locations', [], null, ARRAY_A );
+            $db_locations = apply_filters( 'community_directory_format_locations', $db_locations, 'display_name' );
             $locations = array_keys( $db_locations );
         } else
             // Otherwise get from our own test location names
@@ -142,7 +143,7 @@ class ClassTest {
                 $rand_loc = apply_filters( 'community_directory_prepare_location_for_creation', array(
                     'display_name'  => $rand_loc_name,
                     'status'        => $status,
-                ) );
+                ), null );
             else
                 $rand_loc = $db_locations[$rand_loc_name];
             

@@ -140,9 +140,9 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     }
 
     public function output_location_list( $value ) {
-        $locations = community_directory_get_locations(
-            $value['status'] === COMMUNITY_DIRECTORY_ENUM_ACTIVE, false, false
-        );
+        // $locations = community_directory_get_locations(
+        //     $value['status'] === COMMUNITY_DIRECTORY_ENUM_ACTIVE, false, false
+        // );
 
         ?>
             <tr>

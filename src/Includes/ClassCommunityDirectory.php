@@ -87,7 +87,7 @@ final class ClassCommunityDirectory {
 
         $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
         $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
-        $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
+        $this->load_instance_location_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -175,7 +175,7 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
 
         add_filter( 'community_directory_get_locations', array( $instance, 'get' ), 10, 4 );
-        add_filter( 'community_directory_format_locations', array( $instance, 'get' ), 10, 2 );
+        add_filter( 'community_directory_format_locations', array( $instance, 'format_locations' ), 10, 2 );
 
         // Delete location
         add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
@@ -183,6 +183,7 @@ final class ClassCommunityDirectory {
 
         // Create location
         add_action( 'community_directory_create_locations', array( $instance, 'create_locations' ), 10, 1 );
+        add_filter( 'community_directory_create_location_if_doesnt_exist', array( $instance, 'create_if_doesnt_exist' ), 10, 1 );
 
         // Update values
         add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
@@ -270,7 +271,8 @@ final class ClassCommunityDirectory {
     }
 
     public function load_instance_location_actions_and_filters( string $class_name ) {
-        add_filter( 'community_directory_prepare_location_for_creation', array( $instance, 'prepare_for_creation' ) );
+        add_filter( 'community_directory_get_location', array( $class_name, 'get_instance' ), 10, 3 );
+        add_filter( 'community_directory_prepare_location_for_creation', array( $class_name, 'prepare_for_creation' ), 10, 2 );
     }
     
 

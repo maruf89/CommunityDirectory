@@ -101,21 +101,22 @@ class ClassLocation extends Routable {
         if ( null === $with_inhabitants ) $with_inhabitants = false;
         if ( null === $output ) $output = OBJECT;
 
-        $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-
+        $where_status = '';
         if ( !empty( $status_type ) )
+            $where_status = "AND status = '$status_type'";
 
+        $where_inhabitants = '';
+        if ( $with_inhabitants ) $where_inhabitants = ' AND active_inhabitants > 0';
 
-        if ( gettype( $status_type ) === 'boolean' ) {
-            if ( $status_type ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
-        } else
-            $sql .= " WHERE status = '$status_type'";
+        $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
+                WHERE 1=1
+                $where_status
+                $where_inhabitants
+                ";
         
-        if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
-
         if ( $output === 'sql' ) return $sql;
         
-        $results = $wpdb->get_results( $sql, $output );
+        return array_merge( $wpdb->get_results( $sql, $output ), $results );
     }
 
     /**
@@ -155,7 +156,7 @@ class ClassLocation extends Routable {
     public static function format_locations( array $results, string $format = 'id' ) {
         if ( !count( $results ) ) return $results;
         
-        if ( !$formatted ) return $results;
+        if ( $format === 'instance' ) return self::format_to_instances( $results );
         if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
         // Otherwise $formatted is a string
         return self::format_row_locations( $results, $formatted );
@@ -190,43 +191,34 @@ class ClassLocation extends Routable {
     }
 
     /**
-     * Creates a new location in the db
-     * 
-     * @param           $data       ARRAY_A         Must contain 'display_name'
-     * @return                      int             Returns the wp_post id upon create or WP_Error
+     * Creates a new location if it doesn't already exist in the DB, and returns it
      */
-    public static function create_location ( $data ) {
+    public static function create_if_doesnt_exist( array $data ):Location {
+        if ( !isset( $data[ 'display_name' ] ) )
+            die( 'Cannot call ClassLocation::create_if_doesnt_exist without providing array argument containing (string) display_name' );
 
-        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
-            die( 'display_name must be set and cannot be empty' );
+        $slug = isset( $data[ 'slug' ] ) ? $data[ 'slug' ] : '';
+        $Location = new Location();
+            
+        if ( $data = self::get_by_name( $data[ 'display_name' ], $slug ) ) {
+            $Location->fill_with_data( $data );
+        } else {
+            $Location->insert_into_db( $data );
         }
 
+        return $Location;
+    }
+
+    /**
+     * Get's a location row from the DB by its slug or display_name if not set
+     */
+    public static function get_by_name( string $display_name, string $slug = '' ) {
         global $wpdb;
 
-        if ( !isset( $data['slug'] ) )
-            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
-
-        $post_id = self::create_new_post( $data );
-        
-        $wpdb->insert( 
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array(
-                'display_name'          => $data['display_name'],
-                'slug'                  => $data['slug'],
-                'status'                => $data['status'],
-                'post_id'               => $post_id,
-                'active_inhabitants'    => $data['active_inhabitants'],
-                'inactive_inhabitants'  => $data['inactive_inhabitants'],
-            ),
-            array(
-                '%s',
-                '%s',
-                '%s',
-                '%d',
-            )
-        );
-
-        return $post_id;
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $slug = empty( $slug ) ? community_directory_string_to_slug( $display_name ) : $slug;
+    
+        return $wpdb->get_row( "SELECT * FROM $table WHERE slug = '$slug'" );
     }
 
     /**
@@ -252,7 +244,7 @@ class ClassLocation extends Routable {
             if ( empty( $row['display_name'] ) ) continue;
 
             if ( !isset( $row['slug'] ) )
-                $row = apply_filters( 'community_directory_prepare_location_for_creation', $row );
+                $row = apply_filters( 'community_directory_prepare_location_for_creation', $row, null );
 
             $row['post_id'] = self::create_new_post( $row );
             $create_array[] = $row;
@@ -430,29 +422,7 @@ class ClassLocation extends Routable {
 
 /////////// Wordpress Methods //////////
 
-    /**
-     * Creates a new wp post for the location
-     * 
-     * @param       $data       array       an associative array with 'display_name', and 'slug' required
-     */
-    public static function create_new_post( $data ) {
-        // Create post object
-        $my_post = array(
-            'post_title'    => $data['display_name'],
-            'post_status'   => community_directory_enum_status_to_post_status( $data['status'] ),
-            'post_type'     => self::$post_type,
-            'post_author'   => isset( $data['user_id' ] ) ? $data['user_id'] : 0,
-        );
-        
-        // Insert the post into the database
-        $post_id = wp_insert_post( $my_post );
-
-        // For some reason the post_name doesn't save upon insertion so we update it afterwards
-        global $wpdb;
-        $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET post_name = %s where ID = $post_id", $data['slug'] ) );
-
-        return $post_id;
-    }
+    
 
     /**
      * Updates the data of a wp post
@@ -488,10 +458,6 @@ class ClassLocation extends Routable {
     }
 
     protected array $route_map = [
-        '/test-loc' => array(// Todo 
-            'callback'  => 'create_location',
-            'args'      => array( 'array' => 'data' )
-        ),
         '/get'      => array(
             'callback'  => 'get',
             'args'      => array(

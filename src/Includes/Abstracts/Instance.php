@@ -84,7 +84,8 @@ abstract class Instance {
      * Fills the entity object from a passed in post object
      */
     protected function from_post_obj( object $post ):bool {
-        return $this->from_post( new \WP_Post( $post ) );
+        $wp_post = $post instanceof \WP_Post ? $post : new \WP_Post( $post );
+        return $this->from_post( $post );
     }
 
     /**
