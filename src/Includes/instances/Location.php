@@ -118,6 +118,7 @@ class Location extends Instance {
 
         $result = $wpdb->query( $sql );
         
+        $this->load_from_db();
         $this->_save_to_cache();
 
         return !!$result;
