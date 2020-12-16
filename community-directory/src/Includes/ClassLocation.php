@@ -90,28 +90,32 @@ class ClassLocation extends Routable {
     }
 
     function get(
-        bool $status_active = false,
-        bool $with_inhabitants = false,
-        bool $formatted = false,
-        string $output = OBJECT
+        $results = [],
+        string $status_type = null,
+        bool $with_inhabitants = null,
+        string $output = null
     ) {
         global $wpdb;
 
+        if ( null === $status_type ) $status_type = COMMUNITY_DIRECTORY_ENUM_ACTIVE;
+        if ( null === $with_inhabitants ) $with_inhabitants = false;
+        if ( null === $output ) $output = OBJECT;
+
         $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
 
-        if ( gettype( $status_active ) === 'boolean' ) {
-            if ( $status_active ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
+        if ( !empty( $status_type ) )
+
+
+        if ( gettype( $status_type ) === 'boolean' ) {
+            if ( $status_type ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
         } else
-            $sql .= " WHERE status = '$status_active'";
+            $sql .= " WHERE status = '$status_type'";
         
         if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
 
+        if ( $output === 'sql' ) return $sql;
+        
         $results = $wpdb->get_results( $sql, $output );
-
-        if ( !$formatted ) return $results;
-        if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
-        // Otherwise $formatted is a string
-        return self::format_row_locations( $results, $formatted );
     }
 
     /**
@@ -148,6 +152,15 @@ class ClassLocation extends Routable {
         } else return false;
     }
 
+    public static function format_locations( array $results, string $format = 'id' ) {
+        if ( !count( $results ) ) return $results;
+        
+        if ( !$formatted ) return $results;
+        if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $formatted is a string
+        return self::format_row_locations( $results, $formatted );
+    }
+
     /**
      * Formats location rows based on the second parameter
      * 
@@ -167,31 +180,13 @@ class ClassLocation extends Routable {
         return $formatted;
     }
 
-    public function format_to_instances( $rows ) {
+    public static function format_to_instances( $rows ) {
         foreach ( (object) $rows as $key => $loc_data ) {
             $rows[ $key ] = new Location();
             $rows[ $key ]->fill_with_data( $loc_data );
         }
 
         return $rows;
-    }
-
-    /**
-     * A method to sanitize or fill out any fields for a location before adding it to the DB
-     * 
-     * @param           a_array         $data       must contain ('display_name' => string)
-     * @return                          a_array
-     */
-    public static function prepare_location_for_creation( $data ) {
-        
-        $data['display_name'] = community_directory_format_uc_first( $data['display_name'] );
-        $data['slug'] = community_directory_string_to_slug( $data['display_name'] );
-        // If status isn't set, default is PENDING
-        $data['status'] = isset( $data['status'] ) ?
-            community_directory_status_to_enum( $data['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        $data['active_inhabitants'] = isset( $data['active_inhabitants'] ) ? $data['active_inhabitants'] : 0;
-        $data['inactive_inhabitants'] = isset( $data['inactive_inhabitants'] ) ? $data['inactive_inhabitants'] : 0;
-        return $data;
     }
 
     /**
@@ -500,7 +495,8 @@ class ClassLocation extends Routable {
         '/get'      => array(
             'callback'  => 'get',
             'args'      => array(
-                'status_active'     => '?bool',
+                'results'           => '?array',
+                'status_type'       => '?string',
                 'with_inhabitants'  => '?bool',
                 'formatted'         => '?bool',
             )

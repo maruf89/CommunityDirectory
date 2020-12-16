@@ -173,10 +173,10 @@ class Location extends Instance {
      * @param           a_array         $data       must contain ('display_name' => string)
      * @return                          a_array
      */
-    public static function prepare_location_for_creation( array $data ):array {
+    public static function prepare_for_creation( array $data ):array {
         if ( !isset( $data[ 'display_name' ] ) ) die( 'Invalid call to Location::prepare_location_for_creation. Argument 1 (array) requires (string) key \'display_name\'' );
 
-        $default_loc =
+        $default_loc = community_directory_settings_get( 'default_location', '0,0' );
 
         $default_args = array(
             'display_name'          => community_directory_format_uc_first( $data['display_name'] ),
@@ -184,22 +184,10 @@ class Location extends Instance {
             'status'                => COMMUNITY_DIRECTORY_ENUM_PENDING,
             'active_inhabitants'    => 0,
             'inactive_inhabitants'  => 0,
-            'coords'                => 
+            'coords'                => $default_loc,
         );
 
         return wp_parse_args( $data, $default_args );
-        
-        $data['display_name'] = ;
-        $data['slug'] = isset( $data[ 'slug' ] ) ?
-            $data[ 'slug' ] : ;
-
-        // If status isn't set, default is PENDING
-        $data['status'] = isset( $data['status'] ) ?
-            community_directory_status_to_enum( $data['status'] ) : ;
-        $data['active_inhabitants'] = isset( $data['active_inhabitants'] ) ? $data['active_inhabitants'] : 0;
-        $data['inactive_inhabitants'] = isset( $data['inactive_inhabitants'] ) ? $data['inactive_inhabitants'] : 0;
-
-        return $data;
     }
 
 }
