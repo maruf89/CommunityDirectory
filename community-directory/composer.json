@@ -1,0 +1,61 @@
+{
+    "name": "maruf89/community-directory",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-only",
+    "description": "Wordpress plugin for an in-person community directory.",
+    "homepage": "https://github.com/maruf89/CommunityDirectory",
+    "authors": [
+        {
+            "name": "Marius V Miliunas",
+            "email": "mvmiliunas@gmail.com.com",
+            "homepage": "https://github.com/maruf89"
+        }
+    ],
+    "keywords": [
+        "wordpress",
+        "community-directory"
+    ],
+    "config": {
+        "platform": {
+            "php": "7.3"
+        },
+        "optimize-autoloader": true
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/wordpress/wordpress-develop"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "composer/installers": "~1.0",
+        "kylekatarnls/stylus": "1.0.8"
+    },
+    "require-dev": {
+        "php": ">=7.3",
+        "squizlabs/php_codesniffer": "^3.3",
+        "wp-coding-standards/wpcs": "^2.2",
+        "phpcompatibility/php-compatibility": "^9.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpmd/phpmd": "^2.6",
+        "phpunit/phpunit": "^7",
+        "phpstan/phpstan": "*",
+        "wordpress/wordpress": "~5.4.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "~0.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Maruf89\\CommunityDirectory\\": "src/"
+        },
+        "files": [
+            "src/Includes/helpers/location.php",
+            "src/Includes/helpers/misc.php",
+            "src/Includes/helpers/tables.php",
+            "src/Includes/helpers/acf.php",
+            "src/Includes/helpers/entity.php",
+            "src/Includes/helpers/offer_need.php",
+            "src/Admin/Settings/functions.php"
+        ]
+    }
+}

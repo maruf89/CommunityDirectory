@@ -1,0 +1,43 @@
+/** {
+	*: Predefined vars;
+}
+/** * #wpbody-content, /** * base-font-size #wpbody-content, /** */ #wpbody-content {
+	font-size: 14px;
+	line-height: 1.5;
+}
+/** * .hide, /** * base-font-size .hide, /** */ .hide {
+	display: none;
+}
+/** * .table-editable, /** * base-font-size .table-editable, /** */ .table-editable {
+	position: relative;
+}
+/** * .table-editable .dashicons, /** * base-font-size .table-editable .dashicons, /** */ .table-editable .dashicons {
+	font-size: 1.5em;
+}
+/** * .table-remove, /** * base-font-size .table-remove, /** */ .table-remove {
+	color: #brown;
+	cursor: pointer;
+}
+/** * .table-remove:hover, /** * base-font-size .table-remove:hover, /** */ .table-remove:hover {
+	color: #f00;
+}
+/** * .table-up, /** * base-font-size .table-up, /** */ .table-up, /** * .table-down, /** * base-font-size .table-down, /** */ .table-down {
+	color: #007;
+	cursor: pointer;
+}
+/** * .table-up:hover, /** * base-font-size .table-up:hover, /** */ .table-up:hover, /** * .table-down:hover, /** * base-font-size .table-down:hover, /** */ .table-down:hover {
+	color: #00f;
+}
+/** * .table-add, /** * base-font-size .table-add, /** */ .table-add {
+	color: #070;
+	cursor: pointer;
+}
+/** * .table-add:hover, /** * base-font-size .table-add:hover, /** */ .table-add:hover {
+	color: #0b0;
+}
+/** * #cd-product-service-type-adder, /** * base-font-size #cd-product-service-type-adder, /** */ #cd-product-service-type-adder {
+	display: none;
+}
+/** * #cd-product-service-type-all, /** * base-font-size #cd-product-service-type-all, /** */ #cd-product-service-type-all {
+	max-height: 1400px;
+}
