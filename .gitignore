@@ -1,0 +1,29 @@
+# Dotenv
+.env
+.env.*
+!.env.example
+.htaccess
+
+# Vendor (e.g. Composer)
+vendor/*
+!vendor/autoload.php
+!vendor/composer
+!vendor/kylekatarnls
+!vendor/.gitkeep
+composer.lock
+composer.phar
+
+# Node Package Manager
+node_modules
+
+# Vagrant
+bin
+.vagrant
+
+# MacOs
+.DS_Store
+.AppleDouble
+.LSOverride
+
+#IDE
+.vscode

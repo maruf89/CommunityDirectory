@@ -1,0 +1,1227 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2020-12-11 20:50+0200\n"
+"PO-Revision-Date: 2020-12-11 21:34+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: lt_LT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && (n%100<11 || n%100>19) ? 0 : n"
+"%10>=2 && n%10<=9 && (n%100<11 || n%100>19) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+
+#: src/Admin/ClassAccount.php:36
+msgid "You must select your village, town, or city from the options"
+msgstr "Iš variantų turite pasirinkti savo kaimą, miestelį ar miestą"
+
+#: src/Admin/ClassAccount.php:39
+msgid "Your location field cannot be left blank."
+msgstr "Vietos laukas negali būti tuščias."
+
+#: src/Admin/ClassAdmin.php:77
+msgid "Are you sure you want to delete this row?"
+msgstr "Ar tikrai norite ištrinti šią eilutę?"
+
+#: src/Admin/ClassAdminPostDisplay.php:30
+#: src/Admin/Settings/ClassEntityListTable.php:112
+#: src/Admin/Settings/ClassSettingsLocation.php:149
+#: src/Admin/Settings/ClassSettingsLocation.php:172
+#: src/Includes/ClassLocation.php:39
+msgid "Location"
+msgstr "Vieta"
+
+#: src/Admin/Menus/ClassAdminMenus.php:89
+msgid "Community Directory Settings"
+msgstr "Bendruomenės Katalogo Nustatymai"
+
+#: src/Admin/Menus/ClassAdminMenus.php:90
+#: src/Admin/Menus/ClassAdminMenus.php:158
+msgid "Community Directory"
+msgstr "Bendrijos Katalogas"
+
+#: src/Admin/Menus/ClassAdminMenus.php:112
+msgid "Around Me"
+msgstr "Aplink Mane"
+
+#: src/Admin/Menus/ClassAdminMenus.php:115
+msgid "Edit My Entity"
+msgstr "Redaguokite Savo Narystės Profilį"
+
+#: src/Admin/Menus/ClassAdminMenus.php:119
+msgid "Profile Settings"
+msgstr "Profilio Nustatymai"
+
+#: src/Admin/Menus/ClassMenuItems.php:38
+msgid "Common"
+msgstr "Bendra"
+
+#: src/Admin/Menus/ClassMenuItems.php:41
+msgid "Logged-In"
+msgstr "Prisijungę"
+
+#: src/Admin/Menus/ClassMenuItems.php:44
+msgid "Logged-Out"
+msgstr "Atsijungę"
+
+#: src/Admin/Settings/ClassAdminSettings.php:68
+msgid "Action failed. Please refresh the page and retry."
+msgstr "Nepavyko atlikti veiksmo. Atnaujinkite puslapį ir bandykite dar kartą."
+
+#: src/Admin/Settings/ClassAdminSettings.php:76
+msgid "Your settings have been saved."
+msgstr "Jūsų nustatymai išsaugoti."
+
+#: src/Admin/Settings/ClassAdminSettings.php:724
+msgid "Documentation"
+msgstr "Dokumentacija"
+
+#: src/Admin/Settings/ClassEntityListTable.php:111
+#: src/Includes/ClassEntity.php:54
+msgid "Entity"
+msgstr "Narys"
+
+#: src/Admin/Settings/ClassEntityListTable.php:113
+msgid "Status"
+msgstr "Statusas"
+
+#: src/Admin/Settings/ClassEntityListTable.php:114
+msgid "Author"
+msgstr "Autorius"
+
+#: src/Admin/Settings/ClassEntityListTable.php:115
+msgid "Last Edit"
+msgstr "Paskutinis Redagavimas"
+
+#: src/Admin/Settings/ClassEntityListTable.php:116
+msgid "Join Date"
+msgstr "Prisijungimo Data"
+
+#: src/Admin/Settings/ClassEntityListTable.php:146
+msgid "Activate Entities"
+msgstr "Aktyvuokite Narius"
+
+#: src/Admin/Settings/ClassEntityListTable.php:147
+msgid "Deactivate Entities"
+msgstr "Deaktyvuokite Narius"
+
+#: src/Admin/Settings/ClassEntityListTable.php:212
+#: src/Admin/Settings/ClassEntitylessUserListTable.php:196
+msgid "Activated entity"
+msgstr "Aktyvūs Nariai"
+
+#: src/Admin/Settings/ClassEntityListTable.php:223
+#: src/Admin/Settings/ClassEntitylessUserListTable.php:207
+msgid "Deactivated Entity"
+msgstr "Neaktyvūs Nariai"
+
+#: src/Admin/Settings/ClassEntityListTable.php:236
+msgid "No entities found."
+msgstr "Nerasta Narių."
+
+#: src/Admin/Settings/ClassEntityListTable.php:254
+msgid "Activate"
+msgstr "Aktyvuokite"
+
+#: src/Admin/Settings/ClassEntityListTable.php:255
+msgid "Deactivate"
+msgstr "Deaktyvuokite"
+
+#: src/Admin/Settings/ClassEntityListTable.php:256
+msgid "Edit"
+msgstr "Redaguokite"
+
+#: src/Admin/Settings/ClassEntityListTable.php:290
+msgid "Select Location"
+msgstr "Pasirinkite Vietą"
+
+#: src/Admin/Settings/ClassEntityListTable.php:313
+#: src/Includes/ClassCommunityDirectory.php:335
+msgid "m/d/y g:i a"
+msgstr "d.m.y G:i"
+
+#: src/Admin/Settings/ClassEntityListTable.php:317
+msgid "m/d/y g:i:s a"
+msgstr "d.m.Y G:i:s"
+
+#: src/Admin/Settings/ClassEntitylessUserListTable.php:148
+msgid "Generate Entities"
+msgstr "Sugeneruokite Narius"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:35
+#: src/Includes/ClassEntity.php:50 src/Includes/ClassEntity.php:53
+#: src/Includes/ClassEntity.php:63 src/Includes/ClassEntity.php:64
+msgid "Entities"
+msgstr "Nariai"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:86
+#: src/Admin/Settings/ClassSettingsEntity.php:124
+msgid "Entityless Users"
+msgstr "Vartotojai be Nario Profilio"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:87
+msgid "These are all of the users without entities"
+msgstr "Čia visi vartotojai be esybės"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:98
+#: src/Admin/Settings/ClassSettingsEntity.php:121
+msgid "All Entities"
+msgstr "Visi Nariai"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:99
+msgid "These are all of the entities"
+msgstr "Čia visos esybės"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:122
+msgid "Active Entities"
+msgstr "Aktyvūs Nariai"
+
+#: src/Admin/Settings/ClassSettingsEntity.php:123
+msgid "Inactive Entities"
+msgstr "Neaktyvūs Nariai"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:28
+msgid "General"
+msgstr "Bendra"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:66
+#: src/Admin/Settings/ClassSettingsGeneral.php:81
+msgid "General Settings"
+msgstr "Bendrieji Nustatymai"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:86
+msgid "Add 'Locations' to the nav menu"
+msgstr "Prie naršymo meniu pridėkite „Vietos“"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:87
+msgid ""
+"Check this box if you would like Community Directory to add a link for the "
+"locations to the menu."
+msgstr ""
+"Pažymėkite šį laukelį, jei norite, kad ištrinsite papildomą, bendruomenės "
+"katalogą visiškai pašalinsite visus jo duomenis."
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:92
+msgid "Add My Location to the nav menu"
+msgstr "Prie naršymo meniu pridėkite „Mano vieta“"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:93
+msgid ""
+"Check this box if you would like Community Directory to add a link for "
+"user's location to the menu."
+msgstr ""
+"Pažymėkite šį laukelį, jei norite, kad bendruomenės katalogas į meniu "
+"pridėtų vartotojo vietos nuorodą."
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:98
+msgid "Menu Name Slug"
+msgstr "Meniu pavadinimo raktažodis (slug)"
+
+#: src/Admin/Settings/ClassSettingsGeneral.php:99
+msgid "If menus active, enter the slug name of the menu to add these links to."
+msgstr ""
+"Jei meniu yra aktyvus, įveskite meniu šliužo pavadinimą, prie kurio norite "
+"pridėti šias nuorodas."
+
+#: src/Admin/Settings/ClassSettingsLocation.php:32
+#: src/Admin/Settings/ClassSettingsLocation.php:95
+#: src/Includes/ClassLocation.php:35 src/Includes/ClassLocation.php:38
+#: src/Includes/ClassLocation.php:48 src/Includes/ClassLocation.php:49
+msgid "Locations"
+msgstr "Vietos"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:72
+msgid "Edit existing locations or add new ones"
+msgstr "Redaguokite esamas vietas arba pridėkite naujų"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:76
+#: src/Admin/Settings/ClassSettingsLocation.php:120
+msgid "Edit Locations"
+msgstr "Redaguokite vietas"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:77
+#: src/Admin/Settings/ClassSettingsLocation.php:96
+msgid "These are the locations currently active and selectable"
+msgstr "Tai yra šiuo metu aktyvios ir pasirenkamos vietos"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:80
+msgid "temp"
+msgstr "laikina"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:118
+msgid "Active Locations"
+msgstr "Aktyvios Vietos"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:119
+msgid "Pending Locations"
+msgstr "Neaktykuotos Vietos"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:150
+#: src/Admin/Settings/ClassSettingsLocation.php:173
+msgid "Slug"
+msgstr "Raktažodis"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:151
+#: src/Admin/Settings/ClassSettingsLocation.php:175
+msgid "Active Inhabitants"
+msgstr "Aktyvūs Gyventojai"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:174
+#: src/Admin/Settings/ClassSettingsLocation.php:203
+#: src/Admin/Settings/ClassSettingsLocation.php:234
+#: src/Includes/ClassACF.php:121 src/Includes/instances/Entity.php:160
+msgid "Active"
+msgstr "Aktyvu"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:178
+msgid "Insert Location"
+msgstr "Įterpkite Vietą"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:207
+#: src/Admin/Settings/ClassSettingsLocation.php:235
+msgid "Pending"
+msgstr "Neaktyvuota"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:228
+msgid "New Place"
+msgstr "Nauja Vieta"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:296
+#, php-format
+msgid "Updated %d location(s)"
+msgstr "Atnaujinta %d vieta(-os)"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:302
+#, php-format
+msgid "Created %d location(s)"
+msgstr "Sukurta %d vieta(-os)"
+
+#: src/Admin/Settings/ClassSettingsLocation.php:306
+msgid " and "
+msgstr " ir "
+
+#: src/Admin/Settings/ClassSettingsTest.php:34
+msgid "Testing"
+msgstr "Testavimas"
+
+#: src/Admin/Settings/ClassSettingsTest.php:76
+#: src/Admin/Settings/ClassSettingsTest.php:94
+msgid "Generate Subscribers"
+msgstr "Sugeneruokit Prenumeratorius"
+
+#: src/Admin/Settings/ClassSettingsTest.php:77
+#: src/Admin/Settings/ClassSettingsTest.php:128
+#: src/Admin/Settings/ClassSettingsTest.php:132
+msgid "Delete Subscribers"
+msgstr "Ištrinkite Prenumeratorius"
+
+#: src/Admin/Settings/ClassSettingsTest.php:98
+#: src/Admin/Settings/ClassSettingsTest.php:99
+msgid "Generate New Locations"
+msgstr "Sugeneruokite Naujas Vietas"
+
+#: src/Admin/Settings/ClassSettingsTest.php:102
+msgid "Check if you would like the new users to be generated to new locations"
+msgstr ""
+"Spustelėkite, jei norite, kad nauji vartotojai būtų sugeneruoti naujose "
+"vietose"
+
+#: src/Admin/Settings/ClassSettingsTest.php:106
+msgid "New Subscribers Inactive"
+msgstr "Nauji Prenumeratoriai Neaktyvūs"
+
+#: src/Admin/Settings/ClassSettingsTest.php:107
+msgid "Whether to set the new users as inactive"
+msgstr "Ar nustatyti naujus vartotojus kaip neaktyvius"
+
+#: src/Admin/Settings/ClassSettingsTest.php:110
+msgid "Check this if you want the news users to be inactive (default: active)"
+msgstr ""
+"Pažymėkite tai, jei norite, kad naujienų vartotojai būtų neaktyvūs "
+"(numatytasis: aktyvus)"
+
+#: src/Admin/Settings/ClassSettingsTest.php:114
+msgid "Subscriber Count"
+msgstr "Abonentų Skaičius"
+
+#: src/Admin/Settings/ClassSettingsTest.php:117
+msgid "Enter the number of new users you want to generate."
+msgstr "Įveskite norimų sugeneruoti naujų vartotojų skaičių."
+
+#: src/Admin/Settings/ClassSettingsTest.php:133
+msgid "Delete all subscribers."
+msgstr "Ištrinti visus prenumeratorius."
+
+#: src/Admin/Settings/ClassSettingsTest.php:136
+msgid "By checking this box and saving, all subscribers will be cleansed"
+msgstr "Pažymėjus šį laukelį ir išsaugant, visi abonentai bus išvalyti"
+
+#: src/Admin/Settings/ClassSettingsTest.php:163
+#, php-format
+msgid "Deleted %d subscribers."
+msgstr "%d prenumeratoriai buvo ištrinti."
+
+#: src/Admin/Settings/ClassSettingsTest.php:172
+msgid ""
+"There are no locations to generate users to. Either create some locations or "
+"check the 'Generate New Locations' checkbox."
+msgstr ""
+"Nėra vietų, kur generuoti vartotojus. Arba sukurkite kai kurias vietas arba "
+"pažymėkite žymimąjį laukelį „Sugeneruokite Naujas Vietas“."
+
+#: src/Admin/Settings/ClassSettingsTest.php:184
+#, php-format
+msgid "Generated %d subscribers."
+msgstr "Sukūrė %d prenumeratorių."
+
+#: src/Admin/Settings/ClassSettingsUninstall.php:28
+msgid "Uninstall"
+msgstr "Pašalinimas"
+
+#: src/Admin/Settings/ClassSettingsUninstall.php:66
+#: src/Admin/Settings/ClassSettingsUninstall.php:81
+msgid "Uninstall Settings"
+msgstr "Pašalinimo Nuostatos"
+
+#: src/Admin/Settings/ClassSettingsUninstall.php:83
+msgid "Options to remove data upon uninstall"
+msgstr "Parinktys, kaip pašalinti duomenis pašalinus"
+
+#: src/Admin/Settings/ClassSettingsUninstall.php:88
+msgid "Remove Data on Uninstall?"
+msgstr "Pašalinti duomenis pašalinus?"
+
+#: src/Admin/Settings/ClassSettingsUninstall.php:89
+msgid ""
+"Check this box if you would like Community Directory to completely remove "
+"all of its data when the plugin is deleted."
+msgstr ""
+"Pažymėkite šį laukelį, jei norite, kad ištrynus papildinį, bendruomenės "
+"katalogas visiškai pašalintų visus jo duomenis."
+
+#: src/Admin/Settings/ClassUWPFormBuilder.php:26
+msgid "Community Directory Location"
+msgstr "Bendruomenės Katalogo Vieta"
+
+#: src/Admin/Settings/ClassUWPFormBuilder.php:27
+msgid "Adds an input for Location field."
+msgstr "Prideda įvestį laukui Vieta."
+
+#: src/Admin/Settings/ClassUWPFormBuilder.php:35
+msgid "Options will be generated automatically"
+msgstr "Parinktys bus sugeneruotos automatiškai"
+
+#: src/Admin/Widgets/ClassLocationsWidget.php:19
+#: src/Includes/ClassLocation.php:52
+msgid "Community Directory Locations"
+msgstr "Bendruomenių katalogų vietos"
+
+#: src/Admin/Widgets/ClassLocationsWidget.php:22
+msgid "Displays locations"
+msgstr "Rodo vietas"
+
+#: src/Includes/Abstracts/Routable.php:88
+#, php-format
+msgid "Error: a required argument %s of type %s is missing argument"
+msgstr "Klaida: reikalaujančio argumento %s tipo %s trūksta"
+
+#: src/Includes/ClassACF.php:73
+msgid "Community Directory Form"
+msgstr "Bendrijos Katalogo Forma"
+
+#: src/Includes/ClassACF.php:104
+msgid "The Community Directory generated form."
+msgstr "Bendruomenės Katalogo sugeneruota forma."
+
+#: src/Includes/ClassACF.php:115
+msgid "Profile Active"
+msgstr "Aktyvus Profilis"
+
+#: src/Includes/ClassACF.php:118
+msgid ""
+"Select 'Active' to make your profile visible. If 'Inactive', your profile "
+"will not be visible to others."
+msgstr ""
+"Pasirinkite „Aktyvus“, kad jūsų profilis būtų matomas. Jei „Neaktyvus“, jūsų "
+"profilis nebus viešintas."
+
+#: src/Includes/ClassACF.php:122 src/Includes/instances/Entity.php:160
+msgid "Inactive"
+msgstr "Neaktyvu"
+
+#: src/Includes/ClassACF.php:132
+msgid "Location Name"
+msgstr "Vietos Vardas"
+
+#: src/Includes/ClassACF.php:135
+msgid "Does your place have a name? If not, your first name will be shown."
+msgstr ""
+"Ar jūsų vieta turi pavadinimą? Jei ne, bus sugeneruotas vardas iš jūsų vardo "
+"ir iš pirmos raidės pavardės."
+
+#: src/Includes/ClassACF.php:140
+msgid "Hillsdale Farms"
+msgstr "Jono Ūkis"
+
+#: src/Includes/ClassACF.php:146
+#, fuzzy
+#| msgid "furniture"
+msgid "Picture"
+msgstr "baldai"
+
+#: src/Includes/ClassACF.php:149
+msgid "Upload a picture of yourselves"
+msgstr ""
+
+#: src/Includes/ClassACF.php:161
+msgid "Bio"
+msgstr "Apie"
+
+#: src/Includes/ClassACF.php:164
+msgid ""
+"Write something about yourself or about your place. Don't know what to write "
+"about? Write about what you do, the history of your place, or what you would "
+"like to see more of around you."
+msgstr ""
+"Parašykite ką nors apie save ar apie savo vietą. Nežinai apie ką rašyti? "
+"Parašykite apie tai, ką darote, savo vietos istoriją ar ką norėtumėte "
+"pamatyti daugiau aplink save."
+
+#: src/Includes/ClassACF.php:174
+msgid "Contact Email"
+msgstr "Kontaktinis Elektroninis Paštas"
+
+#: src/Includes/ClassACF.php:177
+msgid "Add an e-mail by which others can reach you."
+msgstr "Pridėkite el. paštą, kuriuo kiti galėtų su jumis susisiekti."
+
+#: src/Includes/ClassACF.php:181
+msgid "email@example.com"
+msgstr "pavyzdys@gmail.lt"
+
+#: src/Includes/ClassACF.php:186
+msgid "Contact Telephone"
+msgstr "Kontaktinis Telefonas"
+
+#: src/Includes/ClassACF.php:189
+msgid "Add a phone number by which you can be reached."
+msgstr "Pridėkite telefono numerį, kuriuo kiti galėtū su jumis susisiekti."
+
+#: src/Includes/ClassACF.php:193
+msgid "248-851-6979"
+msgstr "8622-75624"
+
+#: src/Includes/ClassACF.php:198
+msgid "Share My Location"
+msgstr "Viešinti Mano Vietą"
+
+#: src/Includes/ClassACF.php:201
+msgid "Do you want to share your location with others?"
+msgstr "Ar norite pasidalinti savo buvimo vietą su kitais?"
+
+#: src/Includes/ClassACF.php:206
+msgid "Your Location"
+msgstr "Jūsų vieta"
+
+#: src/Includes/ClassACF.php:220
+msgid "40.730610"
+msgstr "54.948047"
+
+#: src/Includes/ClassACF.php:221
+msgid "-73.935242"
+msgstr "24.842121"
+
+#: src/Includes/ClassACF.php:233 src/Includes/ClassOffersNeeds.php:64
+msgid "Community Directory Offers & Needs"
+msgstr "Bendrijos Katalogo Pasiūlymai ir Poreikiai"
+
+#: src/Includes/ClassACF.php:237
+msgid "Hash Tag Title"
+msgstr "#Hashtag Pavadinimas"
+
+#: src/Includes/ClassACF.php:240
+msgid ""
+"Enter the hash tag title that sums up your offer or need in 49 characters or "
+"less. Example: #FreshlySqueezedAppleJuice"
+msgstr ""
+"Įveskite #hashtag pavadinimą, kuris apibudina jūsų pasiūlymą ar poreikį iki "
+"49 simbolių. Pavyzdys: #ŠviežiosSultys"
+
+#: src/Includes/ClassACF.php:245
+msgid "Product or Service"
+msgstr "Produktas ar Paslauga"
+
+#: src/Includes/ClassACF.php:248
+msgid "Is it a service or a product?"
+msgstr "Ar tai paslauga, ar produktas?"
+
+#: src/Includes/ClassACF.php:251
+msgid "Service"
+msgstr "Paslauga"
+
+#: src/Includes/ClassACF.php:252
+msgid "Product"
+msgstr "Produktas"
+
+#: src/Includes/ClassACF.php:260
+msgid "Type"
+msgstr "Tipas"
+
+#: src/Includes/ClassACF.php:263
+msgid "Is this something you are offering or you're looking for?"
+msgstr "Ar tai yra kažkas, ką siūlote ar ieškote?"
+
+#: src/Includes/ClassACF.php:266
+msgid "Offer"
+msgstr "Pasiūlymas"
+
+#: src/Includes/ClassACF.php:267
+msgid "Need"
+msgstr "Poreikis"
+
+#: src/Includes/ClassACF.php:275
+msgid "Description"
+msgstr "Apibūdinimas"
+
+#: src/Includes/ClassACF.php:278
+msgid "Describe what it is you're offering or seeking."
+msgstr "Apibūdinkite, ką siūlote ar ieškote."
+
+#: src/Includes/ClassACF.php:287
+msgid "Urgency"
+msgstr "Skubumas"
+
+#: src/Includes/ClassACF.php:290
+msgid ""
+"Is it time sensitive? Is it an urgent or very limited time offer, is it "
+"seasonal, or on-going?"
+msgstr ""
+"Ar tai jautriai reaguoja į laiką? Ar tai skubus ar labai riboto laiko "
+"pasiūlymas, ar jis yra sezoninis, ar tęsiasi?"
+
+#: src/Includes/ClassACF.php:292
+msgid "Urgent/Limited Time"
+msgstr "Skubus / Ribotas Laikas"
+
+#: src/Includes/ClassACF.php:293
+msgid "Seasonal"
+msgstr "Sezoninis"
+
+#: src/Includes/ClassACF.php:294
+msgid "Ongoing"
+msgstr "Tęsiantis"
+
+#: src/Includes/ClassACF.php:301
+msgid "Image"
+msgstr "Nuotrauka"
+
+#: src/Includes/ClassACF.php:304
+msgid "Do you have a featured image for this offer or need?"
+msgstr "Ar turite išskirtinį šio pasiūlymo ar poreikio vaizdą?"
+
+#: src/Includes/ClassACF.php:312
+msgid "Additonal Attachments"
+msgstr "Papildomi priedai"
+
+#: src/Includes/ClassACF.php:315
+msgid "Here you can upload a PDF with additional information or prices"
+msgstr ""
+"Čia galite įkelti PDF failą su papildoma informacija ar prekių / paslaugų "
+"kainomis"
+
+#: src/Includes/ClassACF.php:347
+msgid "The Community Directory generated form for Offers & Needs."
+msgstr "Bendruomenės Katalogo sugeneruota forma dėl Pasiųlymų ir Poreikių"
+
+#: src/Includes/ClassActivator.php:161
+msgid "Entity Subscriber"
+msgstr "Narystės Prenumeratorius"
+
+#: src/Includes/ClassCommunityDirectory.php:336
+msgid "m/d/Y g:i:s a"
+msgstr "d.m.Y G:i:s"
+
+#: src/Includes/ClassEntity.php:45 src/Includes/ClassLocation.php:78
+#: src/Includes/instances/Entity.php:398 src/Includes/instances/Entity.php:409
+#: src/views/elements/location-single-no-photo.php:3
+#: src/views/elements/location-single.php:3 src/views/single-cd-location.php:13
+msgid "location"
+msgstr "vieta"
+
+#: src/Includes/ClassEntity.php:55
+msgid "Add Entity"
+msgstr "Pridėkite Narį"
+
+#: src/Includes/ClassEntity.php:56
+msgid "Add New Entity"
+msgstr "Pridėkite Naują Nari"
+
+#: src/Includes/ClassEntity.php:57
+msgid "Edit Entity"
+msgstr "Redaguokite Nari"
+
+#: src/Includes/ClassEntity.php:58
+msgid "New Entity"
+msgstr "Naujas Narys"
+
+#: src/Includes/ClassEntity.php:59
+msgid "View Entity"
+msgstr "Peržiūrėkite Nari"
+
+#: src/Includes/ClassEntity.php:60
+msgid "Search Entity"
+msgstr "Ieškokite Narių"
+
+#: src/Includes/ClassEntity.php:61
+msgid "No Entities Found"
+msgstr "Nerasta Narių"
+
+#: src/Includes/ClassEntity.php:62
+msgid "No Entities Found in Trash"
+msgstr "Šiukšliadėžėje Nerasta Narių"
+
+#: src/Includes/ClassEntity.php:67
+msgid "Community Directory Entities"
+msgstr "Bendruomenės Katalogo Nariai"
+
+#: src/Includes/ClassEntity.php:90
+msgid "entity"
+msgstr "esybė"
+
+#: src/Includes/ClassLocation.php:40
+msgid "Add Location"
+msgstr "Pridėkite Vietą"
+
+#: src/Includes/ClassLocation.php:41
+msgid "Add New Location"
+msgstr "Pridėkite Naują Vietą"
+
+#: src/Includes/ClassLocation.php:42
+msgid "Edit Location"
+msgstr "Redaguokite Vieta"
+
+#: src/Includes/ClassLocation.php:43
+msgid "New Location"
+msgstr "Nauja Vieta"
+
+#: src/Includes/ClassLocation.php:44
+msgid "View Location"
+msgstr "Peržiūrėkite vietą"
+
+#: src/Includes/ClassLocation.php:45
+msgid "Search Location"
+msgstr "Ieškokite Vietą"
+
+#: src/Includes/ClassLocation.php:46
+msgid "No Locations Found"
+msgstr "Nerasta vietų"
+
+#: src/Includes/ClassLocation.php:47
+msgid "No Locations Found in Trash"
+msgstr "Šiukšliadėžėje Nerasta Vietų"
+
+#: src/Includes/ClassLocation.php:444
+#, php-format
+msgid "Successfully deleted %s location(s)"
+msgstr "Sėkmingai ištrinta %s vietą(-os)"
+
+#: src/Includes/ClassOffersNeeds.php:47 src/Includes/ClassOffersNeeds.php:50
+#: src/Includes/ClassOffersNeeds.php:60 src/Includes/ClassOffersNeeds.php:61
+msgid "Offers & Needs"
+msgstr "Pasiūlymai ir Poreikiai"
+
+#: src/Includes/ClassOffersNeeds.php:51
+msgid "Offer or Need"
+msgstr "Paliūlymas ar Poreikis"
+
+#: src/Includes/ClassOffersNeeds.php:52
+msgid "Add Offer or Need"
+msgstr "Pridėkite Pasiūlymą ar Poreikį"
+
+#: src/Includes/ClassOffersNeeds.php:53
+msgid "Add New Offer or Need"
+msgstr "Pridėk Naują Pasiūlymą ar Poreikį"
+
+#: src/Includes/ClassOffersNeeds.php:54
+msgid "Edit Offer or Need"
+msgstr "Redaguokite Pasiūlymą ar Poreikį"
+
+#: src/Includes/ClassOffersNeeds.php:55
+msgid "New Offer or Need"
+msgstr "Nauas Pasiūlymas ar Poreikis"
+
+#: src/Includes/ClassOffersNeeds.php:56
+msgid "View Offer or Need"
+msgstr "Peržiūrėkite Pasiūlymą ar Poreikį"
+
+#: src/Includes/ClassOffersNeeds.php:57
+msgid "Search Offer or Need"
+msgstr "Ieškokite Pasiūlymų ar Poreikių"
+
+#: src/Includes/ClassOffersNeeds.php:58
+msgid "No Offers & Needs Found"
+msgstr "Jokių Pasiūlymų ir Poreikių Rasta"
+
+#: src/Includes/ClassOffersNeeds.php:59
+msgid "No Offers & Needs Found in Trash"
+msgstr "Šiukšliadėžėje Nerasta Pasiūlymų ir Poreikių"
+
+#: src/Includes/ClassOffersNeeds.php:87
+msgid "offer-need"
+msgstr "pasiulymas-poreikis"
+
+#: src/Includes/ClassOffersNeeds.php:114 src/Includes/ClassOffersNeeds.php:117
+#: src/Includes/ClassOffersNeeds.php:127
+msgid "Product & Service Types"
+msgstr "Produktų ir Paslaugų Tipai"
+
+#: src/Includes/ClassOffersNeeds.php:118
+msgid "Product & Service Type"
+msgstr "Produktų ir Paslaugų Tipas"
+
+#: src/Includes/ClassOffersNeeds.php:119
+msgid "Search Product & Service Types"
+msgstr "Ieškoti Produktų ir Paslaugų Tipų"
+
+#: src/Includes/ClassOffersNeeds.php:120
+msgid "All Product & Service Types"
+msgstr "Visi Produktų ir Paslaugų Tipai"
+
+#: src/Includes/ClassOffersNeeds.php:121
+msgid "Parent Product & Service Type"
+msgstr "Pagrindinio Produkto ir Paslaugos Tipas"
+
+#: src/Includes/ClassOffersNeeds.php:122
+msgid "Parent Product & Service Type:"
+msgstr "Pagrindinio Produkto ir Paslaugos Tipas:"
+
+#: src/Includes/ClassOffersNeeds.php:123
+msgid "Edit Product & Service Type"
+msgstr "Redaguokite Produktų ir Paslaugų Tipą"
+
+#: src/Includes/ClassOffersNeeds.php:124
+msgid "Update Product & Service Type"
+msgstr "Atnaujinkite Produktų ir Paslaugų Tipą"
+
+#: src/Includes/ClassOffersNeeds.php:125
+msgid "Add New Product & Service Type"
+msgstr "Pridėkite Naują Produktų ir Paslaugų Tipą"
+
+#: src/Includes/ClassOffersNeeds.php:126
+msgid "New Product & Service Type Name"
+msgstr "Naujas Produktų ir Paslaugų Tipas"
+
+#: src/Includes/ClassOffersNeeds.php:130
+msgid "product-service-type"
+msgstr "produkto-paslaugos-tipas"
+
+#: src/Includes/ClassOffersNeeds.php:333
+msgid "food & drink"
+msgstr "maistas ir gėrimai"
+
+#: src/Includes/ClassOffersNeeds.php:334
+msgid "ingredients"
+msgstr "ingredientai"
+
+#: src/Includes/ClassOffersNeeds.php:335
+msgid "vegetables"
+msgstr "daržovės"
+
+#: src/Includes/ClassOffersNeeds.php:336
+msgid "fruit"
+msgstr "vaisiai"
+
+#: src/Includes/ClassOffersNeeds.php:337
+msgid "meat"
+msgstr "mėsa"
+
+#: src/Includes/ClassOffersNeeds.php:338
+msgid "mushrooms"
+msgstr "grybai"
+
+#: src/Includes/ClassOffersNeeds.php:339
+msgid "grains"
+msgstr "grūdai, kruopai"
+
+#: src/Includes/ClassOffersNeeds.php:340
+msgid "dairy products"
+msgstr "pieno produktai"
+
+#: src/Includes/ClassOffersNeeds.php:341
+msgid "desert"
+msgstr "desertai"
+
+#: src/Includes/ClassOffersNeeds.php:342
+msgid "fish"
+msgstr "žuvis"
+
+#: src/Includes/ClassOffersNeeds.php:343
+msgid "drinks"
+msgstr "gėrimai"
+
+#: src/Includes/ClassOffersNeeds.php:344
+msgid "services"
+msgstr "paslaugos"
+
+#: src/Includes/ClassOffersNeeds.php:345
+msgid "catering"
+msgstr "maitinimas"
+
+#: src/Includes/ClassOffersNeeds.php:346
+msgid "other"
+msgstr "kitas"
+
+#: src/Includes/ClassOffersNeeds.php:347
+msgid "home & construction"
+msgstr "namas ir buitis"
+
+#: src/Includes/ClassOffersNeeds.php:348
+msgid "furniture"
+msgstr "baldai"
+
+#: src/Includes/ClassOffersNeeds.php:349
+msgid "kitchen"
+msgstr "virtuvė"
+
+#: src/Includes/ClassOffersNeeds.php:350 src/Includes/ClassOffersNeeds.php:359
+msgid "flowers"
+msgstr "gėlės"
+
+#: src/Includes/ClassOffersNeeds.php:351
+msgid "bathroom"
+msgstr "vonios kambarys"
+
+#: src/Includes/ClassOffersNeeds.php:352
+msgid "bedroom & sleeping"
+msgstr "miegamasis"
+
+#: src/Includes/ClassOffersNeeds.php:353
+msgid "handyman"
+msgstr "meistrai"
+
+#: src/Includes/ClassOffersNeeds.php:354
+msgid "cleaning"
+msgstr "valymas"
+
+#: src/Includes/ClassOffersNeeds.php:355
+msgid "carpentry"
+msgstr "staliai"
+
+#: src/Includes/ClassOffersNeeds.php:356
+msgid "plumbing"
+msgstr "santechnikai"
+
+#: src/Includes/ClassOffersNeeds.php:357
+msgid "electric work"
+msgstr "elektrikai"
+
+#: src/Includes/ClassOffersNeeds.php:358
+msgid "garden, farm, forest"
+msgstr "daržas, ūkis, miškas"
+
+#: src/Includes/ClassOffersNeeds.php:360
+msgid "seeds"
+msgstr "sėklos"
+
+#: src/Includes/ClassOffersNeeds.php:361
+msgid "trees & plants"
+msgstr "augalai ir medžiai"
+
+#: src/Includes/ClassOffersNeeds.php:362
+msgid "animals"
+msgstr "gyvūnai"
+
+#: src/Includes/ClassOffersNeeds.php:363
+msgid "equipment"
+msgstr "įranga"
+
+#: src/Includes/ClassOffersNeeds.php:364
+msgid "landscaping"
+msgstr "apželdinimas"
+
+#: src/Includes/ClassOffersNeeds.php:365
+msgid "farm help"
+msgstr "pagalbininkas"
+
+#: src/Includes/ClassOffersNeeds.php:366
+msgid "real-estate"
+msgstr "nekilnojamasis turtas"
+
+#: src/Includes/ClassOffersNeeds.php:367
+msgid "apartment"
+msgstr "butas"
+
+#: src/Includes/ClassOffersNeeds.php:368
+msgid "land"
+msgstr "žemė"
+
+#: src/Includes/ClassOffersNeeds.php:369
+msgid "rent"
+msgstr "nuoma"
+
+#: src/Includes/ClassOffersNeeds.php:370
+msgid "cottage"
+msgstr "sodas"
+
+#: src/Includes/ClassOffersNeeds.php:371
+msgid "realty"
+msgstr "nekilnojamas turtas"
+
+#: src/Includes/ClassOffersNeeds.php:372
+msgid "transportation"
+msgstr "transportas"
+
+#: src/Includes/ClassOffersNeeds.php:373
+msgid "bikes"
+msgstr "dviračiai"
+
+#: src/Includes/ClassOffersNeeds.php:374
+msgid "vehicles"
+msgstr "transporto priemonės"
+
+#: src/Includes/ClassOffersNeeds.php:375
+msgid "courier"
+msgstr "kurjerai"
+
+#: src/Includes/ClassOffersNeeds.php:376
+msgid "carpooling"
+msgstr "bendras važiavimas (carpooling)"
+
+#: src/Includes/ClassOffersNeeds.php:377
+msgid "technology"
+msgstr "technologija"
+
+#: src/Includes/ClassOffersNeeds.php:378
+msgid "phones"
+msgstr "telefonai"
+
+#: src/Includes/ClassOffersNeeds.php:379
+msgid "tablets"
+msgstr "plančetės"
+
+#: src/Includes/ClassOffersNeeds.php:380
+msgid "computers"
+msgstr "kompiuteriai"
+
+#: src/Includes/ClassOffersNeeds.php:381 src/Includes/ClassOffersNeeds.php:399
+msgid "accessories"
+msgstr "aksesuarai"
+
+#: src/Includes/ClassOffersNeeds.php:382
+msgid "technical repair"
+msgstr "techninis remontas"
+
+#: src/Includes/ClassOffersNeeds.php:383
+msgid "web consulting & websites"
+msgstr "tinklapių konsultacija ir statyba"
+
+#: src/Includes/ClassOffersNeeds.php:384
+msgid "entertainment"
+msgstr "pramoga"
+
+#: src/Includes/ClassOffersNeeds.php:385
+msgid "books & movies"
+msgstr "knygos ir filmai"
+
+#: src/Includes/ClassOffersNeeds.php:386
+msgid "hunting & fishing"
+msgstr "medžioklė ir žvejyba"
+
+#: src/Includes/ClassOffersNeeds.php:387
+msgid "music"
+msgstr "muzika"
+
+#: src/Includes/ClassOffersNeeds.php:388
+msgid "games"
+msgstr "žaidimai"
+
+#: src/Includes/ClassOffersNeeds.php:389
+msgid "musical performance"
+msgstr "muzikinai pasirodymai"
+
+#: src/Includes/ClassOffersNeeds.php:390
+msgid "acting performance"
+msgstr "vaidybiniai ir dramos spektakliai"
+
+#: src/Includes/ClassOffersNeeds.php:391
+msgid "clothing"
+msgstr "apranga"
+
+#: src/Includes/ClassOffersNeeds.php:392
+msgid "men's clothing"
+msgstr "vyrų drabužiai"
+
+#: src/Includes/ClassOffersNeeds.php:393
+msgid "women's clothing"
+msgstr "moterų drabužiai"
+
+#: src/Includes/ClassOffersNeeds.php:394
+msgid "special occasion"
+msgstr "speciali apranga"
+
+#: src/Includes/ClassOffersNeeds.php:395
+msgid "children"
+msgstr "vaikai"
+
+#: src/Includes/ClassOffersNeeds.php:396
+msgid "children's clothing"
+msgstr "vaikų drabužiai"
+
+#: src/Includes/ClassOffersNeeds.php:397
+msgid "toys"
+msgstr "žaislai"
+
+#: src/Includes/ClassOffersNeeds.php:398
+msgid "school supplies"
+msgstr "mokyklos ištekliai"
+
+#: src/Includes/ClassOffersNeeds.php:400
+msgid "personal development & health"
+msgstr "asmeninis tobulėjimas ir sveikata"
+
+#: src/Includes/ClassOffersNeeds.php:401
+msgid "coaching, therapy, psychiatry"
+msgstr "koučingas ir terapija"
+
+#: src/Includes/ClassOffersNeeds.php:402
+msgid "doctor"
+msgstr "daktarai"
+
+#: src/Includes/ClassOffersNeeds.php:403
+msgid "beauty"
+msgstr "grožis"
+
+#: src/Includes/ClassOffersNeeds.php:404
+msgid "education"
+msgstr "edukacija"
+
+#: src/Includes/ClassOffersNeeds.php:405
+msgid "math"
+msgstr "matematika"
+
+#: src/Includes/ClassOffersNeeds.php:406
+msgid "science"
+msgstr "mokslas"
+
+#: src/Includes/ClassOffersNeeds.php:407
+msgid "spiritual"
+msgstr "dvasinis"
+
+#: src/Includes/ClassOffersNeeds.php:408
+msgid "healthy eating"
+msgstr "mitybas"
+
+#: src/Includes/ClassOffersNeeds.php:409
+msgid "sports & exercise"
+msgstr "sportas"
+
+#: src/Includes/ClassOffersNeeds.php:410
+msgid "work"
+msgstr "paslaugos"
+
+#: src/Includes/ClassOffersNeeds.php:411
+msgid "accounting"
+msgstr "buhalterija"
+
+#: src/Includes/ClassOffersNeeds.php:412
+msgid "legal"
+msgstr "juridinės paslaugos"
+
+#: src/Includes/ClassOffersNeeds.php:413
+msgid "arts & crafts"
+msgstr "menas ir amatai"
+
+#: src/Includes/ClassOffersNeeds.php:414
+msgid "give away"
+msgstr "atiduodu"
+
+#: src/Includes/ClassPublic.php:88
+msgid "My Profile"
+msgstr "Mano Profilis"
+
+#: src/Includes/ClassPublic.php:94
+msgid "Edit Profile"
+msgstr "Redaguokite profilį"
+
+#: src/Includes/ClassUWPForms.php:54 src/Includes/ClassUWPForms.php:72
+msgid "My location isn't listed"
+msgstr "Mano vieta nėra nurodyta"
+
+#: src/Includes/ClassUWPForms.php:56
+msgid "Select the village, town, or city you reside in."
+msgstr "Pasirinkite kaimą, miestelį ar miestą, kuriame gyvenate."
+
+#: src/Includes/ClassUWPForms.php:79 src/Includes/ClassUWPForms.php:86
+msgid "Your location"
+msgstr "Jūsų vieta"
+
+#: src/Includes/ClassUWPForms.php:90
+msgid "Enter the name of village, town, or city you reside in."
+msgstr "Įveskite jūsų gyvenvietės pavadinimą."
+
+#: src/Includes/helpers/misc.php:257
+msgid "pending"
+msgstr "laukiama"
+
+#: src/Includes/helpers/misc.php:259
+msgid "publish"
+msgstr "paskelbta"
+
+#: src/Includes/helpers/misc.php:261
+msgid "draft"
+msgstr "juodraštis"
+
+#: src/Includes/instances/Entity.php:170
+msgid "Incomplete Entity (missing entity info)"
+msgstr "Neišpildytas Narys (trūksta informacijos)"
+
+#: src/Includes/instances/Entity.php:400
+msgid "single"
+msgstr "viengubas"
+
+#: src/views/modal-location-select.php:10
+msgid "Select a location"
+msgstr "Pasirinkite vietą"
+
+#: src/views/modal-location-select.php:15
+msgid "Save"
+msgstr "Išsaugokite"
+
+#~ msgid "Do you offer a product, service, or anything people may find useful?"
+#~ msgstr ""
+#~ "Ar siūlote produktą, paslaugą ar ką nors, kas žmonėms gali būti naudinga?"
+
+#~ msgid "Offering Category"
+#~ msgstr "Siūlymo Kategorija"
+
+#~ msgid ""
+#~ "Write a description of the offer or service for your potential clients or "
+#~ "customers"
+#~ msgstr ""
+#~ "Parašykite savo potencialių klientų ar klientų pasiūlymo ar paslaugos "
+#~ "aprašymą"
+
+#~ msgid "Edit Entities"
+#~ msgstr "Redaguokite Narius"
+
+#~ msgid "These are the entities currently active and selectable"
+#~ msgstr "Tai yra šiuo metu aktyvios ir pasirenkamos esybės"
+
+#~ msgid "Edit existing entities or add new ones"
+#~ msgstr "Redaguokite esamas esybes arba pridėkite naujų"
+
+#, fuzzy
+#~| msgid "Created %d location(s)"
+#~ msgid "Generate new locations."
+#~ msgstr "Sukurta %d vieta(-os)"
+
+#, fuzzy
+#~| msgid "Options to remove data upon uninstall"
+#~ msgid "Options to remove data upon general"
+#~ msgstr "Parinktys, kaip pašalinti duomenis pašalinus"
