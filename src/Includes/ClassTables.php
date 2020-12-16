@@ -36,6 +36,8 @@ class ClassTables {
         $table_name = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         $charset_collate = $wpdb->get_charset_collate();
 
+        $last_version = get_option( 'community_directory_db_version', '' );
+
         if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
           
@@ -47,8 +49,10 @@ class ClassTables {
                 `active_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `inactive_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `post_id` BIGINT(20) UNSIGNED NOT NULL,
+                `coords` POINT NOT NULL,
                 UNIQUE `unique_index`(`slug`, `post_id`),
-                PRIMARY KEY  (id)
+                PRIMARY KEY  (id),
+                SPATIAL INDEX (`coords`)
                 )    $charset_collate;";
 
          
@@ -56,6 +60,15 @@ class ClassTables {
          
             add_option( 'community_directory_db_version', COMMUNITY_DIRECTORY_DB_VERSION );
         } else {
+            if ( $last_version === '0.0.1' ) {
+                $wpdb->query( "
+                    ALTER TABLE $table_name
+                    ADD COLUMN `coords` POINT
+                " );
+                $wpdb->query( "UPDATE $table_name SET `coords`  = ST_PointFromText('POINT(0 0)')" );
+                $wpdb->query( "ALTER TABLE $table_name MODIFY COLUMN `coords` POINT NOT NULL" );
+                $wpdb->query( "ALTER TABLE $table_name ADD SPATIAL INDEX(`coords`)" );
+            }
             update_option('community_directory_db_version', COMMUNITY_DIRECTORY_DB_VERSION );
         }
 

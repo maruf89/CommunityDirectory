@@ -200,8 +200,8 @@ class ClassLocation extends Routable {
         $slug = isset( $data[ 'slug' ] ) ? $data[ 'slug' ] : '';
         $Location = new Location();
             
-        if ( $data = self::get_by_name( $data[ 'display_name' ], $slug ) ) {
-            $Location->fill_with_data( $data );
+        if ( $loc_data = self::get_by_name( $data[ 'display_name' ], $slug ) ) {
+            $Location->fill_with_data( $loc_data );
         } else {
             $Location->insert_into_db( $data );
         }

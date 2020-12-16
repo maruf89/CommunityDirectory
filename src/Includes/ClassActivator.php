@@ -67,8 +67,6 @@ class ClassActivator {
         self::add_default_options();
 
         self::add_capabilities();
-
-        self::register_post_status();
         
         do_action( 'community_directory_create_tables' );
 
@@ -110,7 +108,7 @@ class ClassActivator {
             'uninstall_erase_data' => 0,
             'load_locations_nav_menu' => 1,
             'load_my_location_nav_menu' => 1,
-            'default_location' => '54.95,24.84',
+            'default_location' => '54.95 24.84',
         );
 
         foreach ($options as $option => $value){

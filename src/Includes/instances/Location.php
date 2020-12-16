@@ -23,6 +23,7 @@ class Location extends Instance {
     protected int $active_inhabitants;
     protected int $inactive_inhabitants;
     protected string $status;
+    protected $coords;
 
     public function __construct( $location_id = null, $post_id = null ) {
         if ( $location_id ) $this->location_id = $location_id;
@@ -85,39 +86,41 @@ class Location extends Instance {
      *     (string display_name|?string slug|?string status|?int active_inhabitants|?int inactive_inhabitants|?string coords)
      * @return                   int|WP_Error    either the returned row id or error
      */
-    public function insert_into_db( array $data ):int {
+    public function insert_into_db( array $data ):bool {
         if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
             die( 'display_name must be set and cannot be empty' );
         }
 
         global $wpdb;
 
-        if ( !isset( $data['slug'] ) )
+        // If we haven't set the properties on the Location object yet
+        if ( !isset( $this->slug ) )
             $data = apply_filters( 'community_directory_prepare_location_for_creation', $data, $this );
 
         // If the loc doesn't have a post_id insert into db
         if ( !isset( $this->post_id ) || !$this->post_id )
-            $this->create_new_post( $data );
+            $this->create_new_post( isset( $data[ 'user_id' ] ) ? $data[ 'user_id' ] : 0 );
 
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         $sql = $wpdb->prepare(
             "
-                INSERT INTO TABLE $table
+                INSERT INTO $table
                 ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords )
-                VALUES( %s, %s, %s, %d, %d, %d, ST_PointFromText(Point (%s)))
+                VALUES( %s, %s, %s, %d, %d, %d, ST_PointFromText('POINT($this->coords)'))
             ",
             $this->display_name,
             $this->slug,
             $this->status,
             $this->post_id,
             $this->active_inhabitants,
-            $this->inactive_inhabitants,
-            $this->coords
+            $this->inactive_inhabitants
         );
 
-        $x;
+        $result = $wpdb->query( $sql );
+        
+        $this->_save_to_cache();
 
-        return $wpdb->query( $sql );
+        return !!$result;
     }
     
     /**
@@ -178,6 +181,7 @@ class Location extends Instance {
         $this->slug = $data->slug;
         $this->active_inhabitants = $data->active_inhabitants;
         $this->inactive_inhabitants = $data->inactive_inhabitants;
+        $this->status = $data->status;
 
         if ( isset( $data->id ) )
             $this->location_id = $data->id;
@@ -186,13 +190,17 @@ class Location extends Instance {
             
         if ( isset( $data->post_id ) )
             $this->post_id = $data->post_id;
+
+        if ( isset( $data->coords ) )
+            $this->coords = $data->coords;
     }
     
     protected static array $_location_id_cache = [];
 
     protected function _save_to_cache() {
         parent::_save_to_cache();
-        self::$_location_id_cache[ $this->location_id ] = $this;
+        if ( isset( $this->location_id ) )
+            self::$_location_id_cache[ $this->location_id ] = $this;
     }
 
     /////////////////////////////////////
