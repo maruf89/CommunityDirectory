@@ -49,3 +49,28 @@ function community_directory_status_to_enum( $status = 'active' ) {
             break;
     }
 }
+
+/**
+ * given a coords, returns a mysql function for inserting POINT types
+ * 
+ * @param       $coords         (array|string)      must contain values representing latitude & longitude either
+ *                                                  as a string like '12.42,82.12' or as an array with at least 2 entries
+ * @return                      string              a mysql ready point value
+ */
+function community_directory_coords_to_mysql_point( $coords ):string {
+    switch ( gettype( $coords ) ) {
+        case 'string':
+            $re = '/(\d+\.\d+),?\s*(\d+\.\d+)/';
+            if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
+                list( $whole, $lat, $lon ) = $matches;
+                return "ST_PointFromText('POINT($lat $lon)')";
+            }
+            return '';
+        case 'array':
+            $lon = end( $coords );
+            $lat = prev( $coords );
+            return "ST_PointFromText('POINT($lat $lon)')";
+    }
+    
+    return '';
+}

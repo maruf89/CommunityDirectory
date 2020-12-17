@@ -95,12 +95,13 @@ class ClassLocation extends Routable {
     function get(
         array $results = [],
         string $status_type = null,
-        array $where_match = [],
+        array $where_match = null,
         string $output = null
     ) {
         global $wpdb;
 
         if ( null === $status_type ) $status_type = COMMUNITY_DIRECTORY_ENUM_ACTIVE;
+        if ( null === $where_match ) $where_match = [];
         if ( null === $output ) $output = OBJECT;
 
         $where = [];
@@ -113,11 +114,13 @@ class ClassLocation extends Routable {
                 switch ( $key ) {
                     case 'active_inhabitants':
                     case 'inactive_inhabitants':
-                        if ( gettype( $match ) === 'boolean' )
-                            $where[] = "$key > 0";
+                        if ( gettype( $match ) === 'boolean' ) {
+                            $operator = $match ? '>' : '<=';
+                            $where[] = "$key $operator 0";
+                        }
                         else if ( gettype( $match ) === 'string' )
                             $where[] = "$key $match";
-                        else $where[] = "$key > $match";
+                        else /** int */ $where[] = "$key > $match";
                         break;
                     default:
                         $where[] = "$key = '$match'";

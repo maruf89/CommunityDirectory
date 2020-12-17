@@ -72,7 +72,10 @@ class Entity extends Instance {
                 }
             }
 
-            if ( !$loc_name ) $this->_is_valid = false;
+            if ( !$loc_name ) {
+                $this->_is_valid = false;
+                $loc_name = '';
+            }
             
             return $this->location_name = $loc_name;
         }
@@ -267,9 +270,8 @@ class Entity extends Instance {
         }
 
         // Update the post_status
-        $status = $activate ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        community_directory_update_post_status( $this->post_id, $status );
-        return true;
+        $post_status = community_directory_bool_to_status( $activate, 'entity', 'post' );
+        return !!$this->update_post( array( 'status' => $post_status ) );
     }
 
     public function set_location( Location $location ):bool {

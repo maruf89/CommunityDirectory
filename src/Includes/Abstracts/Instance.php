@@ -48,7 +48,8 @@ abstract class Instance {
     /////////////////////////////////////
 
     public function update_post( array $changes ):int {
-        if ( !$this->post ) $this->load_from_db();
+        if ( !isset( $this->post_id ) || !$this->load_post_from_db() )
+            die( 'Unable to update ' . __CLASS__ . '::update_post without having a post_id' );
         
         return wp_update_post(
             array_merge( $changes, array( 'ID' => $this->post_id ) )

@@ -278,7 +278,7 @@ final class ClassCommunityDirectory {
         add_action( 'community_directory_add_inhabitant', array( $class_name, 'add_inhabitant' ), 10, 4 );
 
         
-        add_action( 'community_directory_shift_inhabitants_count', array( $instance, 'shift_inhabitants_count' ), 10, 3 );
+        add_action( 'community_directory_shift_inhabitants_count', array( $class_name, 'shift_inhabitants_count' ), 10, 3 );
     }
     
 

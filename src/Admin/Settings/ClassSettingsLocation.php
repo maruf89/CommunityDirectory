@@ -143,7 +143,8 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     }
 
     public function output_edit_location_list( $value ) {
-        $locations = community_directory_get_locations();
+        $locations = apply_filters( 'community_directory_get_locations', [], '', null );
+        $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
 
         ?>
                   <tr>

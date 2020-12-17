@@ -46,7 +46,7 @@ class ClassLocationListTable extends \WP_List_Table {
         global $wpdb, $_wp_column_headers;
         $screen = get_current_screen();
 
-        $where_status = $this->section ? community_directory_status_to_enum( $this->section ) : null;
+        $where_status = $this->section ? community_directory_status_to_enum( $this->section ) : '';
         
             /* -- Preparing your query -- */
         $query = apply_filters( 'community_directory_get_locations', array(), $where_status, null, 'sql' );
@@ -156,50 +156,57 @@ class ClassLocationListTable extends \WP_List_Table {
         return $actions;
     }
 
-    /**
-     * ToDo
-     */
     public function process_bulk_action() {
         $action      = $this->current_action();
         $all_locations = isset( $_REQUEST['all_locations'] ) ? wp_parse_id_list( wp_unslash( $_REQUEST['all_locations'] ) ) : array();
+
+        if ( !count( $all_locations ) ) return;
+        
+        $locations = [];
+        foreach ( $all_locations as $location_id ) $locations[] = new Location( $location_id );
 
         $count = 0;
 
         switch ( $action ) {
             case 'activate':
-                foreach ( $all_locations as $location_post_id ) {
-                    $location = new Location( $location_post_id );
-                    if ( $location->is_valid() && $location->activate_deactivate( true, false, true ) ) $count++;
-                }
+                foreach ( $locations as $location )
+                    if ( $location->is_valid() && $location->activate_deactivate( true ) ) $count++;
 
                 add_settings_error(
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Activated %d location', 'Activated %d locations', $count ), $count ),
+                    sprintf( _n( 'Activated %d location', 'Activated %d locations', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;
             case 'deactivate':
-                foreach ( $all_locations as $location_post_id ) {
-                    $location = new Location( $location_post_id );
-                    if ( $location->activate_deactivate( false, false, true ) ) $count++;
-                }
+                foreach ( $locations as $location )
+                    if ( $location->activate_deactivate( false ) ) $count++;
 
                 add_settings_error(
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Deactivated %d location', 'Deactivated %d locations', $count ), $count ),
+                    sprintf( _n( 'Deactivated %d location', 'Deactivated %d locations', $count, 'community-directory' ), $count ),
+                    'success'
+                );
+                break;
+            case 'delete':
+                foreach ( $locations as $location )
+                    if ( $location->delete_self() ) $count++;
+
+                add_settings_error(
+                    'bulk_action',
+                    'bulk_action',
+                    /* translators: %d: Number of requests. */
+                    sprintf( _n( 'Deleted %d location', 'Deleted %d locations', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;
         }
     }
 
-    /**
-     * ToDo
-     */
     public function process_single_action() {
         $action      = $this->current_action();
         $location_id = isset( $_REQUEST['location'] ) ? (int) wp_unslash( $_REQUEST['location'] ) : null;
@@ -210,7 +217,7 @@ class ClassLocationListTable extends \WP_List_Table {
 
         switch ( $action ) {
             case 'activate':
-                if ( $location->set_status( true, false, true ) ) {
+                if ( $location->activate_deactivate( true ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',
@@ -221,7 +228,7 @@ class ClassLocationListTable extends \WP_List_Table {
                 }
                 break;
             case 'deactivate':
-                if ( $location->set_status( false, false, true ) ) {
+                if ( $location->activate_deactivate( false ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',
@@ -231,6 +238,15 @@ class ClassLocationListTable extends \WP_List_Table {
                     );
                 }
                 break;
+            case 'delete':
+                if ( $location->delete_self() )
+                    add_settings_error(
+                        'bulk_action',
+                        'bulk_action',
+                        /* translators: %d: Number of requests. */
+                        __( 'Deleted location', 'community-directory' ),
+                        'success'
+                    );
         }
     }
 
@@ -242,8 +258,8 @@ class ClassLocationListTable extends \WP_List_Table {
         return __( 'No locations found.', 'community-directory' );
     }
 
-    public function column_cb( $item ) {
-        return sprintf( '<input type="checkbox" name="all_locations[]" value="%1$s" /><span class="spinner"></span>', esc_attr( $item->ID ) );
+    public function column_cb( $location ) {
+        return sprintf( '<input type="checkbox" name="all_locations[]" value="%1$s" /><span class="spinner"></span>', esc_attr( $location->location_id ) );
     }
 
     public function column_title( Location $location ) {
@@ -253,21 +269,14 @@ class ClassLocationListTable extends \WP_List_Table {
         $sort = $this->get_sort_params( true );
         $url = "<a href='?page=$cd&action=%s&location=%s${tab}${section}${sort}'>%s</a>";
         
-        $edit_url = Location::get_edit_link( $location->post_id );
+        $edit_url = Location::get_edit_link( $location->location_id );
         $edit_link = "<a href='$edit_url' %s>%s</a>";
         
         $actions = array(
-            'activate'      => sprintf( $url, 'activate', $location->post_id, __( 'Activate', 'community-directory' ) ),
-            'deactivate'    => sprintf( $url, 'deactivate', $location->post_id, __( 'Deactivate', 'community-directory' )),
-            'edit'          => sprintf( $edit_link, 'style="color:red"', __( 'Edit', 'community-directory' ) ),
-            //'delete'
+            'rename'      => sprintf( $url, 'rename', $location->location_id, __( 'Rename (todo)', 'community-directory' ) ),
+            'edit'          => sprintf( $edit_link, '', __( 'Edit', 'community-directory' ) ),
+            'delete'          => sprintf( $url, 'delete', $location->location_id, __( 'Delete', 'community-directory' ) ),
         );
-
-        $remove_key = $location->stats === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'activate' : 'deactivate';
-        unset( $actions[$remove_key] );
-
-        // don't allow activating invalid locations
-        if ( !$location->is_valid() && $remove_key !== 'activate' ) unset( $actions['activate'] );
 
         return sprintf( '%1$s <span style="color:silver ; display : none;">(id:%2$s)</span>%3$s',
             /*$1%s*/ sprintf( $edit_link, 'style="font-weight:bold"', $location->display_name ),
@@ -281,7 +290,36 @@ class ClassLocationListTable extends \WP_List_Table {
     }
 
     public function column_status( Location $location ) {
-        return $location->get_status( 'display' );
+        $active = $location->get_status( 'bool' );
+        $color = $active ? 'green' : 'grey';
+        $display_status = $location->get_status( 'display' );
+
+        $cd = COMMUNITY_DIRECTORY_NAME;
+        $tab = empty( $this->page_tab ) ? '' : "&tab=$this->page_tab";
+        $section = empty( $this->section ) ? '' : "&section=$this->section";
+        $sort = $this->get_sort_params( true );
+        $url = "<a href='?page=$cd&action=%s&location=%s${tab}${section}${sort}'>%s</a>";
+    
+        
+        $actions = array(
+            'activate'      => sprintf( $url, 'activate', $location->location_id, __( 'Activate', 'community-directory' ) ),
+            'deactivate'    => sprintf( $url, 'deactivate', $location->location_id, __( 'Deactivate', 'community-directory' )),
+        );
+
+        $remove_key = $location->status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'activate' : 'deactivate';
+        unset( $actions[$remove_key] );
+
+        // don't allow activating invalid locations
+        if ( !$location->is_valid() && $remove_key !== 'activate' ) unset( $actions['activate'] );
+
+        // don't allow activating invalid locations
+        if ( !$location->is_valid() && $remove_key !== 'activate' ) unset( $actions['activate'] );
+
+        return sprintf( '%1$s<br /><span style="color:silver; display : none;">(id:%2$s)</span>%3$s',
+            /*$1%s*/ "<span style='color:$color'>$display_status</span>",
+            /*$2%s*/ $location->ID,
+            /*$3%s*/ $this->row_actions( $actions )
+        );
     }
 
     public function column_active_inhabitants( Location $location ) {

@@ -42,10 +42,9 @@ class Location extends Instance {
         if ( $this->load_cd_from_db() ) {
             switch ( $format ) {
                 case 'raw': return $this->status;
-                case 'bool':
-                case 'enum': return $this->status ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
-                case 'display': return $this->status ?
-                    __( 'Active', 'community-directory' ) : __( 'Pending', 'community-directory' );
+                case 'bool': return $this->status === COMMUNITY_DIRECTORY_ENUM_ACTIVE;
+                case 'enum': return $this->status;
+                case 'display': return __( ucfirst( strtolower( $this->status ) ), 'community-directory' );
             }
         }
         return null;
@@ -153,22 +152,65 @@ class Location extends Instance {
     /////////////   Update   ////////////
     /////////////////////////////////////
 
+    /**
+     * Updates the Community Directory Locations table
+     */
     protected function update_cd_row( array $changes ):bool {
         if ( !count( $changes ) ) die( 'Location::update_cd_row must be passed an array argument with values' );
         
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         
+        $update = [];
+
+        foreach ( $changes as $key => $value ) {
+            switch ( $key ) {
+                case 'id':
+                    die( 'Cannot alter the id of an existing location' );
+                case 'active_inhabitants':
+                case 'inactive_inhabitants':
+                    $update[] = "$key = $value";
+                case 'status':
+                    $update[] = "$key = '" . community_directory_status_to_enum( $value ) . "'";
+                    break;
+                case 'coords':
+                    $update[] = "$key = " . community_directory_coords_to_mysql_point( $value );
+                default:
+                    $update[] = "$key = '$value'";
+            }
+        }
+
+        $update_clause = implode( ', ', $update );
+
+        if ( isset( $this->location_id ) ) {
+            $which = 'id';
+            $id = $this->location_id;
+        } else {
+            $which = 'post_id';
+            $id = $this->post_id;
+        }
+
+        global $wpdb;
         
-        
-        return $wpdb->query(
-            "UPDATE $table SET 
-            $field = $field + $count
-            WHERE $which = $loc_or_post_id"
-        );
+        return !!$wpdb->query("
+            UPDATE $table
+            SET $update_clause
+            WHERE $which = $id
+        ");
     }
     
-    public function activate_deactivate():bool {
-        
+    /**
+     * Activates/Deactivates a location and it's post
+     */
+    public function activate_deactivate( bool $activate ):bool {
+        $this->load_from_db();
+
+        $cd_status = community_directory_bool_to_status( $activate, 'location' );
+        $cd_updated = $this->update_cd_row( array( 'status' => $cd_status ) );
+
+        $post_status = community_directory_bool_to_status( $activate, 'location', 'post' );
+        $post_updated = $this->update_post( array( 'status' => $post_status ) );
+
+        return $cd_updated && $post_updated;
     }
 
     /////////////////////////////////////
@@ -179,15 +221,13 @@ class Location extends Instance {
      * Delete its own cd row, post, and remove itself from caches
      */
     public function delete_self():bool {
-        global $wpdb;
+        if ( !$this->load_cd_from_db() ) return false;
 
-        $where = array();
-        if ( isset( $this->location_id ) ) $where[ 'id' ] = $this->location_id;
-        else $where[ 'post_id' ] = $this->post_id;
+        global $wpdb;
         
         $cd_delete = $wpdb->delete(
             COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            $where,
+            array( 'id' => $this->location_id ),
             '%d'
         );
         
@@ -217,9 +257,7 @@ class Location extends Instance {
         if ( !isset( $this->location_id ) || !isset( $this->post_id ) || !$this->_check_cd_fields() ) {
             $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
             $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
-            $row = $wpdb->get_row( 'SELECT id AS location_id, display_name, slug, status,
-                                           active_inhabitants, inactive_inhabitants,
-                                           coords
+            $row = $wpdb->get_row( 'SELECT *
                                     FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
                                     WHERE $where_key = $where_val"
             );
@@ -346,19 +384,14 @@ class Location extends Instance {
         $post_id = $which === 'post_id' ? $loc_or_post_id : null;
         $location_id = $which === 'id' ? $loc_or_post_id : null;
 
-        $Location = Location::get_instance( $post_id, $location_id );
-
         global $wpdb;
 
         $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $changes = array();
+        $changes[ $field ] = "$field + $count";
+        $Location = Location::get_instance( $post_id, $location_id );
         
-        return $wpdb->query(
-            "UPDATE $table SET 
-            $field = $field + $count
-            WHERE $which = $loc_or_post_id"
-        );
+        return $Location->update_cd_row( $changes );
     }
 
     /**

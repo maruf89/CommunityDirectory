@@ -225,14 +225,23 @@ function community_directory_get_post_var_by_field( $var_to_get, $where_key, $wh
     return $post;
 }
 
-function community_directory_update_post_status( $post_id, $status ) {
-    // Update the post to be published or pending
-    return wp_update_post(
-        array(
-            'ID' => $post_id,
-            'post_status' => community_directory_enum_status_to_post_status( $status ),
-        )
-    );
+function community_directory_bool_to_status( bool $bool, string $what_for = 'entity', string $type = 'enum' ):string {
+    switch ( $what_for ) {
+        case 'entity':
+            switch ( $type ) {
+                case 'enum':
+                    return $bool ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
+                case 'post':
+                    return $bool ? 'publish' : 'pending';
+            }
+        case 'location':
+            switch ( $type ) {
+                case 'enum':
+                    return $bool ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
+                case 'post':
+                    return $bool ? 'publish' : 'pending';
+            }
+    }
 }
 
 /**
@@ -243,7 +252,7 @@ function community_directory_update_post_status( $post_id, $status ) {
  * @return                          string      returns the corresponding wp post status type
  */
 function community_directory_enum_status_to_post_status( $status = '', $display = false ):string {
-    switch ( $status ) {
+    switch ( strtoupper( $status ) ) {
         case COMMUNITY_DIRECTORY_ENUM_PENDING:
             return $display ? __( 'pending', 'community-directory' ) : 'pending';
         case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
