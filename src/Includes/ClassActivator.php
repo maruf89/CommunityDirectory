@@ -146,30 +146,11 @@ class ClassActivator {
             'assign_product_service_type' => true,
         ];
 
-        // $location_caps = [
-        //     //* Meta capabilities
-        //     'read' => true,
-        //     'edit_location' => true,
-        //     'read_location' => true,
-        //     'delete_location' => false,
-        //     'edit_locations' => false,
-        //     'edit_others_locations' => false,
-        //     'publish_locations' => false,
-        //     'read_private_locations' => false,
-        //     'create_locations' => false,
-        // ];
-
         add_role(
             self::$role_entity,
             __( 'Entity Subscriber', 'community-directory' ),
             $entity_caps
         );
-
-        // add_role(
-        //     self::$role_location,
-        //     __( 'Location Manager', 'community-directory' ),
-        //     $location_caps
-        // );
     }
 
     public static function deactivate($network_wide = false) {

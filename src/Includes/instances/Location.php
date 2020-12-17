@@ -15,7 +15,7 @@ use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 class Location extends Instance {
     public static string $post_type = 'cd-location';
 
-    protected bool $cd_loaded = false;
+    protected bool $_cd_loaded = false;
 
     protected int $location_id;
     protected string $display_name;
@@ -25,9 +25,10 @@ class Location extends Instance {
     protected string $status;
     protected $coords;
 
-    public function __construct( $location_id = null, $post_id = null ) {
+    public function __construct( int $location_id = null, int $post_id = null, object $post = null ) {
         if ( $location_id ) $this->location_id = $location_id;
         if ( $post_id ) $this->post_id = $post_id;
+        if ( $post ) $this->from_post( $post );
     }
 
     /////////////////////////////////////
@@ -38,13 +39,12 @@ class Location extends Instance {
      * Gets the entities status depending on the desired format
      */
     public function get_status( $format = 'bool' ) {
-        if ( $this->load_from_db() ) {
-            $status = $this->status;
+        if ( $this->load_cd_from_db() ) {
             switch ( $format ) {
-                case 'raw': return $status;
+                case 'raw': return $this->status;
                 case 'bool':
-                case 'enum': return $status ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
-                case 'display': return $status ?
+                case 'enum': return $this->status ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
+                case 'display': return $this->status ?
                     __( 'Active', 'community-directory' ) : __( 'Pending', 'community-directory' );
             }
         }
@@ -149,6 +149,55 @@ class Location extends Instance {
         return $this->post_id;
     }
 
+    /////////////////////////////////////
+    /////////////   Update   ////////////
+    /////////////////////////////////////
+
+    protected function update_cd_row( array $changes ):bool {
+        if ( !count( $changes ) ) die( 'Location::update_cd_row must be passed an array argument with values' );
+        
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        
+        
+        
+        return $wpdb->query(
+            "UPDATE $table SET 
+            $field = $field + $count
+            WHERE $which = $loc_or_post_id"
+        );
+    }
+    
+    public function activate_deactivate():bool {
+        
+    }
+
+    /////////////////////////////////////
+    /////////////   Delete   ////////////
+    /////////////////////////////////////
+
+    /**
+     * Delete its own cd row, post, and remove itself from caches
+     */
+    public function delete_self():bool {
+        global $wpdb;
+
+        $where = array();
+        if ( isset( $this->location_id ) ) $where[ 'id' ] = $this->location_id;
+        else $where[ 'post_id' ] = $this->post_id;
+        
+        $cd_delete = $wpdb->delete(
+            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+            $where,
+            '%d'
+        );
+        
+        $deleted_post = wp_delete_post( $this->post_id, true );
+
+        $this->_remove_from_cache();
+
+        return !!$cd_delete && !!$deleted_post;
+    }
+
     //////////////////////////////////
     //////// Loading from DB /////////
     //////////////////////////////////
@@ -156,25 +205,28 @@ class Location extends Instance {
     protected function load_from_db():bool {
         if ( $this->_has_loaded ) return true;
         if ( !isset( $this->location_id ) && !isset( $this->post_id ) ) return false;
-        
-        global $wpdb;
-        $loaded = false;
 
-        if ( !isset( $this->location_id ) || !isset( $this->post_id ) ) {
+        return $this->_has_loaded = $this->load_cd_from_db() && $this->load_post_from_db();
+    }
+
+    protected function load_cd_from_db() {
+        if ( $this->_cd_loaded ) return true;
+
+        global $wpdb;
+
+        if ( !isset( $this->location_id ) || !isset( $this->post_id ) || !$this->_check_cd_fields() ) {
             $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
             $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
-            $row = $wpdb->get_row( 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS .
-                            " WHERE $where_key = $where_val" );
+            $row = $wpdb->get_row( 'SELECT id AS location_id, display_name, slug, status,
+                                           active_inhabitants, inactive_inhabitants,
+                                           coords
+                                    FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
+                                    WHERE $where_key = $where_val"
+            );
 
-            if ( $row ) {
-                $this->fill_with_data( $row );
-                $this->cd_loaded = true;
-            }
+            return $row && $this->fill_with_data( $row );
         }
-
-        $this->load_post_from_db();
-
-        return $this->_has_loaded = $this->cd_loaded && $this->_post_loaded;
+        return false;
     }
 
     public function fill_with_data( object $data ) {
@@ -192,16 +244,48 @@ class Location extends Instance {
         if ( isset( $data->post_id ) )
             $this->post_id = $data->post_id;
 
-        if ( isset( $data->coords ) )
-            $this->coords = $data->coords;
+        if ( isset( $data->coords ) && !empty( $data->coords ) )
+            $this->coords = unpack('x/x/x/x/corder/Ltype/dlat/dlon', $data->coords );
+
+        return $this->_check_cd_fields();
+    }
+
+    /**
+     * Check whether all of the cd db row fields are set
+     */
+    private function _check_cd_fields():bool {
+        $fields = [
+            'location_id' => 'integer',
+            'display_name' => 'string',
+            'slug' => 'string',
+            'status' => 'string',
+            'active_inhabitants' => 'integer',
+            'inactive_inhabitants' => 'integer',
+            'coords' => 'array',
+        ];
+
+        foreach ( $fields as $prop => $type )
+            if ( !isset( $this->{$prop} ) || gettype( $this->{$prop} ) !== $type ) return false;
+
+
+        // If we got this far then, everything is set
+        return $this->_cd_loaded = true;
     }
     
     protected static array $_location_id_cache = [];
 
     protected function _save_to_cache() {
-        parent::_save_to_cache();
+        if ( isset( $this->post_id ) )
+            parent::_save_to_cache();
         if ( isset( $this->location_id ) )
             self::$_location_id_cache[ $this->location_id ] = $this;
+    }
+
+    protected function _remove_from_cache() {
+        if ( isset( $this->post_id ) )
+            parent::_remove_from_cache();
+        if ( isset( $this->location_id ) && isset( self::$_location_id_cache[ $this->location_id ] ) )
+            unset( self::$_location_id_cache[ $this->location_id ] );
     }
 
     /////////////////////////////////////
@@ -214,8 +298,8 @@ class Location extends Instance {
     public static function get_instance(
         int $post_id = null,
         int $location_id = null,
-        \WP_Post $post = null
-    ):?Entity {
+        object $post = null
+    ):?Location {
         if ( !$post_id && !$location_id && !$post ) return null;
         
         $instance = parent::_get_instance( $post_id, $post );
@@ -224,7 +308,7 @@ class Location extends Instance {
         else if ( $location_id && isset( self::$_location_id_cache[ $location_id ] ) )
             return self::$_location_id_cache[ $location_id ];
 
-        return new Entity( $location_id, $post_id, $post );
+        return new Location( $location_id, $post_id, $post );
     }
 
     /**
@@ -252,6 +336,52 @@ class Location extends Instance {
         if ( $instance ) $instance->fill_with_data( (object) $prepared );
         
         return $prepared;
+    }
+    
+    /**
+     * Adds to the active/inactive inhabitants count based on the status and count
+     */
+    public static function add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
+        $post_id = $which === 'post_id' ? $loc_or_post_id : null;
+        $location_id = $which === 'id' ? $loc_or_post_id : null;
+
+        $Location = Location::get_instance( $post_id, $location_id );
+
+        global $wpdb;
+
+        $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        
+        return $wpdb->query(
+            "UPDATE $table SET 
+            $field = $field + $count
+            WHERE $which = $loc_or_post_id"
+        );
+    }
+
+    /**
+     * Shifts the active/inactive inhabitants count in the location table
+     * 
+     * @param       $loc_id_or_post_id      int     either the location id, or post_id
+     * @param       $which                  string  either 'id' or 'post_id'
+     * @param       $increment              bool    whether to increment active_inhabitants
+     */
+    public static function shift_inhabitants_count( $loc_id_or_post_id, $which, $increment ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
+
+        global $wpdb;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = "UPDATE $table SET ";
+        $plus_minus_active = $increment ? '+' : '-';
+        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
+        $plus_minus_inactive = $increment ? '-' : '+';
+        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
+        $where = "WHERE $which = $loc_id_or_post_id";
+        
+        return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
     }
 
 }

@@ -89,30 +89,46 @@ class ClassLocation extends Routable {
         return $arr;
     }
 
+    /**
+     * Get's all locations based on passed in vars
+     */
     function get(
-        $results = [],
+        array $results = [],
         string $status_type = null,
-        bool $with_inhabitants = null,
+        array $where_match = [],
         string $output = null
     ) {
         global $wpdb;
 
         if ( null === $status_type ) $status_type = COMMUNITY_DIRECTORY_ENUM_ACTIVE;
-        if ( null === $with_inhabitants ) $with_inhabitants = false;
         if ( null === $output ) $output = OBJECT;
 
-        $where_status = '';
+        $where = [];
+        
         if ( !empty( $status_type ) )
-            $where_status = "AND status = '$status_type'";
+            $where[] = "status = '$status_type'";
 
-        $where_inhabitants = '';
-        if ( $with_inhabitants ) $where_inhabitants = ' AND active_inhabitants > 0';
+        if ( count( $where_match ) ) {
+            foreach ( $where_match as $key => $match ) {
+                switch ( $key ) {
+                    case 'active_inhabitants':
+                    case 'inactive_inhabitants':
+                        if ( gettype( $match ) === 'boolean' )
+                            $where[] = "$key > 0";
+                        else if ( gettype( $match ) === 'string' )
+                            $where[] = "$key $match";
+                        else $where[] = "$key > $match";
+                        break;
+                    default:
+                        $where[] = "$key = '$match'";
+                }
+            }
+        }
+                    
+        $where_clauses = count( $where ) ? 'WHERE ' . implode( ' AND ', $where) : '';
 
         $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
-                WHERE 1=1
-                $where_status
-                $where_inhabitants
-                ";
+                $where_clauses";
         
         if ( $output === 'sql' ) return $sql;
         
@@ -222,6 +238,8 @@ class ClassLocation extends Routable {
     }
 
     /**
+     * Deprecated-> delete after removal from ClassSettingsLocation
+     * 
      * Adds new locations to the locations table
      * 
      * @param       $new_locations  array       a multi-dimensional of new locations
@@ -345,47 +363,7 @@ class ClassLocation extends Routable {
         return $updated_rows;
     }
 
-    /**
-     * Adds to the active/inactive inhabitants count based on the status and count
-     */
-    public static function add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
-        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
-
-        global $wpdb;
-
-        $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        
-        return $wpdb->query(
-            "UPDATE $table SET 
-            $field = $field + $count
-            WHERE $which = $loc_or_post_id"
-        );
-    }
-
-    /**
-     * Shifts the active/inactive inhabitants count in the location table
-     * 
-     * @param       $loc_id_or_post_id      int     either the location id, or post_id
-     * @param       $which                  string  either 'id' or 'post_id'
-     * @param       $increment              bool    whether to increment active_inhabitants
-     */
-    public static function shift_inhabitants_count( $loc_id_or_post_id, $which, $increment ) {
-        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
-
-        global $wpdb;
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        $sql = "UPDATE $table SET ";
-        $plus_minus_active = $increment ? '+' : '-';
-        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
-        $plus_minus_inactive = $increment ? '-' : '+';
-        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
-        $where = "WHERE $which = $loc_id_or_post_id";
-        
-        return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
-    }
+    
 
     /**
      * Gathers passed in POST data to delet a location and it's corresponding wp post
@@ -396,28 +374,14 @@ class ClassLocation extends Routable {
         }
 
         $post_id = community_directory_get_row_var( $_POST['location_id'], 'post_id' );
-        self::delete_location_post( $post_id );
+        $Location = Location::get_instance( $post_id );
+        $Location->delete_self();
 
         if ( $deleted_rows = ClassLocation::delete_location( (int) $_POST['location_id'] ) ) {
             die( sprintf( __( 'Successfully deleted %s location(s)', 'community-directory' ), $deleted_rows ) );
         } else {
             die( wp_send_json_error( 'Error occurred deleting location' ) );
         }
-    }
-
-    /**
-     * Deletes an individual location from MySQL
-     * 
-     * @param           $location_id        int
-     */
-    public static function delete_location( $location_id ) {
-        global $wpdb;
-
-        return $wpdb->delete(
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array( 'id' => $location_id ),
-            '%d'
-        );
     }
 
 /////////// Wordpress Methods //////////
@@ -448,13 +412,6 @@ class ClassLocation extends Routable {
         }
         
         return wp_update_post( $update_data );
-    }
-
-    /**
-     * Force deletes an individual post
-     */
-    public static function delete_location_post( $post_id ) {
-        return wp_delete_post( $post_id, true );
     }
 
     protected array $route_map = [

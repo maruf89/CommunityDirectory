@@ -187,8 +187,6 @@ final class ClassCommunityDirectory {
 
         // Update values
         add_action( 'community_directory_update_locations', array( $instance, 'update_locations' ), 10, 1 );
-        add_action( 'community_directory_add_inhabitant', array( $instance, 'add_inhabitant' ), 10, 4 );
-        add_action( 'community_directory_shift_inhabitants_count', array( $instance, 'shift_inhabitants_count' ), 10, 3 );
     }
 
     /**
@@ -246,6 +244,7 @@ final class ClassCommunityDirectory {
             array( $instance, 'get_latest' ), 10, 5 );
     }
 
+    // OfferNeed
     public function load_instance_offers_needs_actions_and_filters( string $class_name ) {
         // On saving the type (if offer/need)
         add_filter(
@@ -255,6 +254,7 @@ final class ClassCommunityDirectory {
         add_action( 'wp_insert_post_data', array( $class_name, 'set_post_props_on_save' ), 10, 3 );
     }
 
+    // Entity
     public function load_instance_entity_actions_and_filters( string $class_name ) {
         add_filter(
             'acf/update_value/key=' . ClassACF::$entity_active_key,
@@ -270,9 +270,15 @@ final class ClassCommunityDirectory {
             array( $class_name, 'activate_deactivate_entity' ), 10, 3 );
     }
 
+    // Location
     public function load_instance_location_actions_and_filters( string $class_name ) {
         add_filter( 'community_directory_get_location', array( $class_name, 'get_instance' ), 10, 3 );
         add_filter( 'community_directory_prepare_location_for_creation', array( $class_name, 'prepare_for_creation' ), 10, 2 );
+
+        add_action( 'community_directory_add_inhabitant', array( $class_name, 'add_inhabitant' ), 10, 4 );
+
+        
+        add_action( 'community_directory_shift_inhabitants_count', array( $instance, 'shift_inhabitants_count' ), 10, 3 );
     }
     
 

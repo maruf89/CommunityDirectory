@@ -37,14 +37,6 @@ function community_directory_update_locations( $data, $update_by = 'id' ) {
     return $Location::update_locations( $data, $update_by );
 }
 
-/**
- * See class field for description
- */
-function community_directory_add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
-    $Location = ClassLocation::get_instance();
-    return $Location::add_inhabitant( $loc_or_post_id, $which, $status, $count );
-}
-
 function community_directory_status_to_enum( $status = 'active' ) {
     
     switch (strtoupper($status)) {

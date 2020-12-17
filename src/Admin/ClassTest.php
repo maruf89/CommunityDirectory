@@ -126,7 +126,7 @@ class ClassTest {
 
         // If we're not generating locations, get the existing ones
         if ( !$generate_locations ) {
-            $db_locations = apply_filters( 'community_directory_get_locations', [], null, ARRAY_A );
+            $db_locations = apply_filters( 'community_directory_get_locations', [], null, null, ARRAY_A );
             $db_locations = apply_filters( 'community_directory_format_locations', $db_locations, 'display_name' );
             $locations = array_keys( $db_locations );
         } else

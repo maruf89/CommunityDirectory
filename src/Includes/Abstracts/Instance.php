@@ -85,7 +85,7 @@ abstract class Instance {
      */
     protected function from_post_obj( object $post ):bool {
         $wp_post = $post instanceof \WP_Post ? $post : new \WP_Post( $post );
-        return $this->from_post( $post );
+        return $this->from_post( $wp_post );
     }
 
     /**
@@ -109,5 +109,18 @@ abstract class Instance {
 
     protected function _save_to_cache() {
         self::$_post_id_cache[ $this->post_id ] = $this;
+    }
+
+    protected function _remove_from_cache() {
+        if ( isset( self::$_post_id_cache[ $this->post_id ] ) )
+            unset( self::$_post_id_cache[ $this->post_id ] );
+    }
+
+    /////////////////////////////////////
+    /////////////   Static   ////////////
+    /////////////////////////////////////
+
+    public static function get_edit_link( int $post_id ):string {
+        return admin_url( "post.php?post=$post_id&action=edit" );
     }
 }

@@ -339,8 +339,15 @@ class Entity extends Instance {
         if ( isset( $data['location_post_id'] ) ) {
             $args['post_parent'] = $data['location_post_id'];
 
-            if ( isset( $data[ 'status' ] ) && gettype( $data[ 'status' ] === 'string' ) )
-                community_directory_add_inhabitant( $data['location_post_id'], 'post_id', $data[ 'status' ] );
+            if ( isset( $data[ 'status' ] ) && gettype( $data[ 'status' ] === 'string' ) ) {
+                // Update the count
+                do_action( 'community_directory_add_inhabitant',
+                        $data['location_post_id'],
+                        'post_id',
+                        $data[ 'status' ],
+                        1
+                );
+            }
         }
         
         $entity_post_id = wp_insert_post( $args );
@@ -473,7 +480,7 @@ class Entity extends Instance {
             else return '';
         }
 
-        return admin_url( "post.php?post=$post_id&action=edit" );
+        return parent::get_edit_link( $post_id );
     }
 
     /**

@@ -15,7 +15,7 @@ use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
 class ClassUWPForms {
 
     public static function builder_extra_fields_locationselect( $x, $field, $value, $form_type ) {
-        $locations = apply_filters( 'community_directory_get_locations', [], null );
+        $locations = apply_filters( 'community_directory_get_locations', [], null, array( 'active_inhabitants' => true ) );
         
         $design_style = uwp_get_option("design_style","bootstrap");
         $bs_form_group = $design_style ? "form-group" : "";

@@ -27,7 +27,7 @@ class ClassLocationsWidget extends \WP_Widget {
     public function widget( $args, $instance ) {
         $title = apply_filters( 'widget_title', $instance['title'] );
         
-        $locations = apply_filters( 'community_directory_get_locations', [], null, true );
+        $locations = apply_filters( 'community_directory_get_locations', [], null, array( 'active_inhabitants' => '> 0' ) );
         $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
         $template_file = apply_filters( 'community_directory_template_location-list.php', '' );
         load_template( $template_file, false, array(

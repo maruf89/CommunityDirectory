@@ -65,22 +65,6 @@ class ClassSettingsEntity extends AbstractClassSettingsPage {
 
         switch ($current_section) {
             case 'entityless':
-                // $settings = array(
-                //     array(
-                //         'title' => __( 'Entity Options', 'community-directory' ),
-                //         'type'  => 'title',
-                //         'desc'  => __( 'Options regarding entities', 'community-directory' ),
-                //         'desc_tip' => true,
-                //     ),
-                //     array(
-                //         'name' => __( 'Generate entities for site users', 'community-directory' ),
-                //         'desc'     => __( 'Generate new entities for the users of the current site without entities.', 'community-directory' ),
-                //         'id'    => 'generate_entities_for_users',
-                //         'type'  => 'checkbox',
-                //         'desc_tip' => true,
-                //     ),
-                //     array( 'type' => 'sectionend', 'id' => 'entity-options' ),
-                // );
                 $settings = array(
                     array(
                         'name' => __( 'Entityless Users', 'community-directory' ),
