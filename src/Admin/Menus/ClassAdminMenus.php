@@ -14,37 +14,6 @@ use Maruf89\CommunityDirectory\Includes\instances\Entity;
 class ClassAdminMenus {
 
     /**
-     * Initiates the entity role type capabilities
-     */
-    // public function admin_init() {
-    //     // Add the roles you'd like to administer the custom post types
-	// 	$all_roles = array( 'entity_subscriber', 'editor', 'administrator' );
-	// 	$editor_roles = array( 'editor', 'administrator' );
-		
-	// 	// Loop through each role and assign capabilities
-	// 	foreach( $all_roles as $the_role ) {
-    //         $role = get_role( $the_role );
-    //         if ( $role == null ) continue;
-    //         $role->add_cap( 'read_entity');
-    //         $role->add_cap( 'edit_entity' );
-    //         $role->add_cap( 'read_private_entities' );
-    //         $role->add_cap( 'edit_entities' );
-    //         $role->add_cap( 'edit_published_entities' );
-    //     }
-    //     unset( $the_role );
-		
-	// 	// Loop through each role and assign capabilities
-	// 	foreach( $editor_roles as $the_role ) {
-	// 	    $role = get_role( $the_role );
-    //         $role->add_cap( 'publish_entities' );
-    //         $role->add_cap( 'edit_others_entities' );
-    //         $role->add_cap( 'delete_others_entities' );
-    //         $role->add_cap( 'delete_private_entities' );
-    //         $role->add_cap( 'delete_published_entities' );
-	// 	}
-    // }
-
-    /**
      * Adds Community Directory to the admin menu
      */
     public function admin_menu() {
@@ -105,8 +74,9 @@ class ClassAdminMenus {
 
         // Modify menu items for entity_subscribers
         $user = wp_get_current_user();
+        $active_entity = Entity::get_active_entity();
         if ( in_array( ClassEntity::$role_entity, (array) $user->roles ) ) {
-            Entity::get_active_entity();
+            
 
             // Rename dashboard 
             $menu[2][0] = __( 'Around Me', 'community-directory' );
@@ -123,6 +93,14 @@ class ClassAdminMenus {
 
             // Remove dashboard submenu items
             $submenu['index.php'] = array();
+        } else if ( $active_entity ) {
+            // Insert an edit entity link for everyone else
+            $entity_post_type = ClassEntity::$post_type;
+            $submenu[ "edit.php?post_type=$entity_post_type"][9] = array(
+                __( 'Edit My Entity', 'community-directory' ),
+                'edit_entities',
+                Entity::get_edit_link()
+            );
         }
     }
 

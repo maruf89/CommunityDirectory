@@ -50,7 +50,14 @@ class ClassAdmin {
 
         wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
 
-        
+        // if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+        //     wp_enqueue_style(
+        //         'leaflet_css',
+        //         COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.css', array(),
+        //         COMMUNITY_DIRECTORY_VERSION,
+        //         'all'
+        //     );
+        // }
 
     }
 
@@ -60,7 +67,7 @@ class ClassAdmin {
      * @since    1.0.0
      * @param $hook_suffix
      */
-    public function enqueue_scripts($hook_suffix) {
+    public function enqueue_scripts( $hook_suffix ) {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';// '.min';
 
@@ -70,6 +77,15 @@ class ClassAdmin {
             WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
             'all'
         );
+        
+        // if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+        //     wp_enqueue_script(
+        //         'leaflet_js',
+        //         COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.js', array(),
+        //         COMMUNITY_DIRECTORY_VERSION,
+        //         'all'
+        //     );
+        // }
 
         wp_localize_script( 'community_directory_admin_js', 'cdData',
             array(
@@ -77,7 +93,7 @@ class ClassAdmin {
                 'translations' => array(
                     'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' )
                 ),
-                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base, //  '/wp-json/wp/v2/',
+                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base,
                 'postType' => array(
                     'entity' => ClassEntity::$post_type,
                     'location' => ClassLocation::$post_type,
