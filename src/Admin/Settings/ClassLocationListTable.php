@@ -346,7 +346,7 @@ class ClassLocationListTable extends \WP_List_Table {
 
         ob_start();
         
-        if ( !$has_coords ):?>
+        if ( $has_coords ):?>
 
             <div id="<?= $columnId ?>">
                 <a class="button-primary thickbox select-coords-modal enable-on-load disabled"
