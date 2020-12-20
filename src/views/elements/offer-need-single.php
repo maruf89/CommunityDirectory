@@ -17,6 +17,9 @@
         <span class="tag product-or-service">
             <strong><?= $type_type ?>:</strong> <?= $offer_need->get_offer_need_type() ?>
         </span>
+        <span class="tag product-or-service">
+            <strong><?= __( 'Category', 'community-directory' ) ?>:</strong> <?= $offer_need->get_category( false ) ?>
+        </span>
         <span class="tag urgency">
             <strong><?= __( 'Urgency', 'community-directory' ) ?>:</strong> <?= $offer_need->get_urgency( true ) ?>
         </span>

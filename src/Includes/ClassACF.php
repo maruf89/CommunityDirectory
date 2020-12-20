@@ -380,3 +380,5 @@ class ClassACF {
     }
 
 }
+
+__( 'Category', 'community-directory' );

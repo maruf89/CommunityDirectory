@@ -15,10 +15,12 @@ use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 class OfferNeed extends Instance {
     public static string $post_type = 'cd-offers-needs';
     protected bool $_acf_loaded = false;
+    protected bool $_taxonomy_loaded = false;
     protected static string $entity_loc_separator = '1100';
 
     protected int $entity_post_id;
     protected int $location_post_id;
+    protected ?\WP_Term $category;
 
     protected ?array $acf_data = null;
 
@@ -125,12 +127,18 @@ class OfferNeed extends Instance {
         return $translated ? __( ucfirst( $type ), 'community-directory' ) : $type;
     }
 
+    public function get_category( bool $return_obj = false ) {
+        if ( !$this->load_taxonomy() || !$this->category ) return $return_obj ? (object) null : '';
+
+        return $return_obj ? $this->category : $this->category->name;
+    }
+
     //////////////////////////////////
     //////// Loading from DB /////////
     //////////////////////////////////
 
     protected function load_from_db():bool {
-        return $this->_has_loaded = $this->load_post_from_db() && $this->load_acf_from_db();
+        return $this->_has_loaded = $this->load_post_from_db() && $this->load_acf_from_db() && $this->load_taxonomy();
     }
 
     protected function from_post( \WP_Post $post ):bool {
@@ -155,6 +163,17 @@ class OfferNeed extends Instance {
         }
 
         return false;
+    }
+
+    protected function load_taxonomy():bool {
+        if ( $this->_taxonomy_loaded ) return true;
+        
+        $terms = get_the_terms( $this->post_id, ClassOffersNeeds::$taxonomy );
+        if ( gettype( $terms ) !== 'array' || !count( $terms ) ) $this->category = null;
+        else {
+            $this->category = $terms[ 0 ];
+        }
+        return $this->_taxonomy_loaded = true;
     }
 
     //////////////////////////////////

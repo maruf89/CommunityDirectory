@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-12-20 20:37+0200\n"
-"PO-Revision-Date: 2020-12-20 20:43+0200\n"
+"POT-Creation-Date: 2020-12-20 21:04+0200\n"
+"PO-Revision-Date: 2020-12-20 21:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -718,7 +718,7 @@ msgstr "Apibūdinimas"
 msgid "Describe what it is you're offering or seeking."
 msgstr "Apibūdinkite, ką siūlote ar ieškote."
 
-#: src/Includes/ClassACF.php:320 src/views/elements/offer-need-single.php:21
+#: src/Includes/ClassACF.php:320 src/views/elements/offer-need-single.php:24
 msgid "Urgency"
 msgstr "Skubumas"
 
@@ -761,6 +761,10 @@ msgid ""
 msgstr ""
 "Čia galite įkelti PDF failą, vaizdą ar dokumentą su papildoma informacija ar "
 "kainomis."
+
+#: src/Includes/ClassACF.php:384 src/views/elements/offer-need-single.php:21
+msgid "Category"
+msgstr "Kategoria"
 
 #: src/Includes/ClassActivator.php:152
 msgid "Entity Subscriber"
@@ -1340,7 +1344,7 @@ msgstr "Pasiūlymo Tipas"
 msgid "Type of Need"
 msgstr "Poreikio Tipas"
 
-#: src/views/elements/offer-need-single.php:26
+#: src/views/elements/offer-need-single.php:29
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
 
@@ -1422,9 +1426,6 @@ msgstr "Nariai - %s"
 #~ msgid "Do you offer a product, service, or anything people may find useful?"
 #~ msgstr ""
 #~ "Ar siūlote produktą, paslaugą ar ką nors, kas žmonėms gali būti naudinga?"
-
-#~ msgid "Offering Category"
-#~ msgstr "Siūlymo Kategorija"
 
 #~ msgid ""
 #~ "Write a description of the offer or service for your potential clients or "
