@@ -188,28 +188,39 @@ class ClassOffersNeeds extends Routable {
             $result = new WP_Query($query);
             if( $type['status'] == NULL ):
                 $class = ($wp_query->query_vars['post_status'] == NULL) ? ' class="current"' : '';
-                $views['all'] = sprintf(__('<a href="%s"'. $class .'>All <span class="count">(%d)</span></a>', 'all'),
+                $views['all'] = sprintf('<a href="%s" %s>%s <span class="count">(%d)</span></a>', 'all',
                     admin_url('edit.php?post_type=post'),
-                    $result->found_posts);
+                    $class,
+                    __( 'All', 'community-directory' ),
+                    $result->found_posts
+                );
             elseif( $type['status'] == 'publish' ):
                 $class = ($wp_query->query_vars['post_status'] == 'publish') ? ' class="current"' : '';
-                $views['publish'] = sprintf(__('<a href="%s"'. $class .'>Published <span class="count">(%d)</span></a>', 'publish'),
+                $views['publish'] = sprintf('<a href="%s" %s>%s <span class="count">(%d)</span></a>', 'publish',
                     admin_url('edit.php?post_status=publish&post_type=post'),
+                    $class,
+                    __( 'Published', 'community-directory' ),
                     $result->found_posts);
             elseif( $type['status'] == 'draft' ):
                 $class = ($wp_query->query_vars['post_status'] == 'draft') ? ' class="current"' : '';
-                $views['draft'] = sprintf(__('<a href="%s"'. $class .'>Draft'. ((sizeof($result->posts) > 1) ? "s" : "") .' <span class="count">(%d)</span></a>', 'draft'),
+                $views['draft'] = sprintf('<a href="%s" %s>%s <span class="count">(%d)</span></a>', 'draft',
                     admin_url('edit.php?post_status=draft&post_type=post'),
+                    $class,
+                    _n( 'Draft', 'Drafts', (sizeof($result->posts)), 'community-directory' ),
                     $result->found_posts);
             elseif( $type['status'] == 'pending' ):
                 $class = ($wp_query->query_vars['post_status'] == 'pending') ? ' class="current"' : '';
-                $views['pending'] = sprintf(__('<a href="%s"'. $class .'>Pending <span class="count">(%d)</span></a>', 'pending'),
+                $views['pending'] = sprintf('<a href="%s" %s>%s <span class="count">(%d)</span></a>', 'pending',
                     admin_url('edit.php?post_status=pending&post_type=post'),
+                    $class,
+                    __( 'Pending', 'community-directory' ),
                     $result->found_posts);
             elseif( $type['status'] == 'trash' ):
                 $class = ($wp_query->query_vars['post_status'] == 'trash') ? ' class="current"' : '';
-                $views['trash'] = sprintf(__('<a href="%s"'. $class .'>Trash <span class="count">(%d)</span></a>', 'trash'),
+                $views['trash'] = sprintf('<a href="%s" %s>%s <span class="count">(%d)</span></a>', 'trash',
                     admin_url('edit.php?post_status=trash&post_type=post'),
+                    $class,
+                    __( 'Trash', 'community-directory' ),
                     $result->found_posts);
             endif;
         }
@@ -246,7 +257,7 @@ class ClassOffersNeeds extends Routable {
             foreach ( $reals as $real )
                 $num_posts[$type] = ( isset( $num_posts[$type] ) ) ? $num_posts[$type] + $_num_posts[$real] : $_num_posts[$real];
         $class = ( empty($_GET['post_mime_type']) && !$detached && !isset($_GET['status']) ) ? ' class="current"' : '';
-        $views['all'] = "<a href='upload.php'$class>" . sprintf( __('All <span class="count">(%s)</span>', 'uploaded files' ), number_format_i18n( $_total_posts )) . '</a>';
+        $views['all'] = "<a href='upload.php'$class>" . sprintf( '%s <span class="count">(%s)</span>', __( 'All', 'community-directory' ), __( 'uploaded files', 'community-directory' ), number_format_i18n( $_total_posts )) . '</a>';
         foreach ( $post_mime_types as $mime_type => $label ) {
             $class = '';
             if ( !wp_match_mime_types($mime_type, $avail_post_mime_types) )
@@ -256,7 +267,7 @@ class ClassOffersNeeds extends Routable {
             if ( !empty( $num_posts[$mime_type] ) )
                 $views[$mime_type] = "<a href='upload.php?post_mime_type=$mime_type'$class>" . sprintf( translate_nooped_plural( $label[2], $num_posts[$mime_type] ), $num_posts[$mime_type] ) . '</a>';
         }
-        $views['detached'] = '<a href="upload.php?detached=1"' . ( $detached ? ' class="current"' : '' ) . '>' . sprintf( __( 'Unattached <span class="count">(%s)</span>', 'detached files' ), $total_orphans ) . '</a>';
+        $views['detached'] = '<a href="upload.php?detached=1"' . ( $detached ? ' class="current"' : '' ) . '>' . sprintf( '%s <span class="count">(%s)</span>', __( 'Unattached', 'community-directory' ), 'detached files', $total_orphans ) . '</a>';
         return $views;
     }
 
