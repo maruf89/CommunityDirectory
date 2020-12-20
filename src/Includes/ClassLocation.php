@@ -416,16 +416,8 @@ class ClassLocation extends Routable {
     }
 
     public function update_coords( int $location_id, float $lat, float $lon ):bool {
-        $updated = false;
-        try {
-            $Location = Location::get_instance( null, $location_id );
-            $updated = $Location->update_cd_row( array( 'coords' => "$lat,$lon" ) );
-            throw new \Exception('Testing on Live');
-        } catch (\Throwable $ex) {
-            \Sentry\captureException($ex);
-        }
-        
-        return $updated;
+        $Location = Location::get_instance( null, $location_id );
+        return $Location->update_cd_row( array( 'coords' => "$lat,$lon" ) );
     }
 
     protected array $route_map = [

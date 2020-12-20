@@ -135,6 +135,7 @@ final class ClassCommunityDirectory {
         add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
+        add_action( 'init', array( $this, 'register_error_handler' ), 10, 1 );
         add_action( 'init', array( $this->location, 'register_post_type' ) );
         add_action( 'init', array( $this->entity, 'register_post_type' ) );
         add_action( 'init', array( $this->offers_needs, 'register_post_type' ) );
@@ -401,6 +402,11 @@ final class ClassCommunityDirectory {
     public function load_widgets() {
         register_widget( $this->locations_widget = new ClassLocationsWidget() );
         register_widget( $this->offers_needs_hashtag_widget = new ClassOffersNeedsHashTagWidget() );
+    }
+
+    public function register_error_handler() {
+        // Triggers the error handler registration init in the constructor
+        ClassErrorHandler::get_instance();
     }
 }
 
