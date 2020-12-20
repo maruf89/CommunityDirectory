@@ -2,6 +2,8 @@
 
 get_header();
 
+__( 'Preferred Method of Contact', 'community-directory' )
+
 ?>
 
     <main id="content" class="container">
