@@ -9,7 +9,7 @@
 
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\{ClassLocation, ClassErrorHandler};
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
 class Location extends Instance {
@@ -100,12 +100,14 @@ class Location extends Instance {
         if ( !isset( $this->post_id ) || !$this->post_id )
             $this->create_new_post( isset( $data[ 'user_id' ] ) ? $data[ 'user_id' ] : 0 );
 
+        $coords = community_directory_coords_to_mysql_point( $this->coords );
+            
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         $sql = $wpdb->prepare(
             "
                 INSERT INTO $table
                 ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords )
-                VALUES( %s, %s, %s, %d, %d, %d, ST_PointFromText('POINT($this->coords)'))
+                VALUES( %s, %s, %s, %d, %d, %d, $coords )
             ",
             $this->display_name,
             $this->slug,
@@ -285,8 +287,17 @@ class Location extends Instance {
         if ( isset( $data->post_id ) )
             $this->post_id = $data->post_id;
 
-        if ( isset( $data->coords ) && !empty( $data->coords ) )
-            $this->coords = unpack('x/x/x/x/corder/Ltype/dlat/dlon', $data->coords );
+        if ( isset( $data->coords ) && !empty( $data->coords ) ) {
+            if ( gettype( $data->coords ) === 'array' ) $this->coords = $data->coords;
+            else {
+                try {
+                    $this->coords = unpack('x/x/x/x/corder/Ltype/dlat/dlon', $data->coords);
+                } catch (\Exception $ex) {
+                    ClassErrorHandler::handle_exception($ex);
+                }
+            }
+        }
+            
 
         return $this->_check_cd_fields();
     }
@@ -369,7 +380,7 @@ class Location extends Instance {
             'status'                => COMMUNITY_DIRECTORY_ENUM_PENDING,
             'active_inhabitants'    => 0,
             'inactive_inhabitants'  => 0,
-            'coords'                => $default_loc,
+            'coords'                => community_directory_coords_to_array( '0,0' ),
         );
 
         $prepared = wp_parse_args( $data, $default_args );

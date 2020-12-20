@@ -9,8 +9,7 @@
 
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
-use Maruf89\CommunityDirectory\Includes\ClassACF;
-use Maruf89\CommunityDirectory\Includes\ClassOffersNeeds;
+use Maruf89\CommunityDirectory\Includes\{ClassACF, ClassOffersNeeds, ClassErrorHandler};
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
 class OfferNeed extends Instance {
@@ -29,18 +28,37 @@ class OfferNeed extends Instance {
         if ( $post ) $this->from_post( $post );
     }
 
+    
     private static string $_get_acf = 'get_acf_';
     private static int $_get_acf_len = 8; // Must equal strlen of $_get_acf
+    private static string $_has_acf = 'has_acf_';
+    private static int $_has_acf_len = 8; // Must equal strlen of $_has_acf
     public function __call( $name, $arguments ) {
-        if ( substr( $name, 0, self::$_get_acf_len ) !== self::$_get_acf )
-            die( 'Invalid method called ' . __CLASS__ . '::' . $name );
+        $type;
+        $len;
 
-        $field = substr( $name, self::$_get_acf_len );
-        $acf_field = "offers_needs_$field";
+        // Get
+        if ( substr( $name, 0, static::$_get_acf_len ) === static::$_get_acf ) {
+            $type = 'get';
+            $len = static::$_get_acf_len;
+        } else if ( substr( $name, 0, static::$_has_acf_len ) === static::$_has_acf ) {
+            $type = 'has';
+            $len = static::$_has_acf_len;
+        } else
+            return ClassErrorHandler::handle_exception( new \WP_Error(
+                'Invalid method called ' . __CLASS__ . '::' . $name
+            ) );
+        
+        $acf_field = 'offers_needs_' . substr( $name, $len );
+        $acf_loaded = $this->load_acf_from_db();
 
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::${$acf_field}] ) ) return '';
-
-        return $this->acf_data[ClassACF::${$acf_field}];
+        switch ( $type ) {
+            case 'get':
+                if ( $acf_loaded ) return $this->acf_data[ClassACF::${$acf_field}] ?? '';
+                return '';
+            case 'has':
+                return $acf_loaded && isset( $this->acf_data[ClassACF::${$acf_field}] ) && !empty( $this->acf_data[ClassACF::${$acf_field}] );
+        }
     }
 
     public function get_acf_hashtag_title() {
@@ -65,6 +83,17 @@ class OfferNeed extends Instance {
 
     public function get_entity():?Entity {
         return Entity::get_instance( $this->entity_post_id );
+    }
+
+    public function get_featured( string $size = 'medium' ):string {
+        $image = $this->__call( 'get_acf_image', array() );
+
+        return  wp_get_attachment_image( $image[ 'ID' ], $size );
+    }
+
+    public function get_product_or_service( bool $translated = true ):string {
+        $type = $this->__call( 'get_acf_product_or_service', array() );
+        return $translated ? __( ucfirst( $type ), 'community-directory' ) : $type;
     }
 
     //////////////////////////////////

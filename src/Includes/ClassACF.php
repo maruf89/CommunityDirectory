@@ -38,20 +38,20 @@ class ClassACF {
 
     /////// Offers & Needs field keys and field names
     public static $offers_needs_form_group_key = 'group_community_directory_offers_needs';
-    public static $offers_needs_hashtag_title_key = 'field_cd_hashtag_title';
-    public static $offers_needs_hashtag_title = 'hashtag_title';
-    public static $offers_needs_product_or_service_key = 'field_cd_product_or_service';
-    public static $offers_needs_product_or_service = 'product_or_service';
+    public static $offers_needs_hashtag_title_key = 'field_cd_offer_need_hashtag_title';
+    public static $offers_needs_hashtag_title = 'offer_need_hashtag_title';
+    public static $offers_needs_product_or_service_key = 'field_cd_offer_need_product_or_service';
+    public static $offers_needs_product_or_service = 'offer_need_product_or_service';
     public static $offers_needs_type_key = 'field_cd_offer_need_type';
     public static $offers_needs_type = 'offer_need_type';
-    public static $offers_needs_description_key = 'field_cd_offer_description';
-    public static $offers_needs_description = 'offer_description';
-    public static $offers_needs_urgency_key = 'field_cd_offer_urgency';
-    public static $offers_needs_urgency = 'offer_urgency';
-    public static $offers_needs_image_key = 'field_cd_offer__image';
-    public static $offers_needs_image = 'offer_image';
-    public static $offers_needs_attachments_key = 'field_cd_offer_attachments';
-    public static $offers_needs_attachments = 'offer_attachments';
+    public static $offers_needs_description_key = 'field_cd_offer_need_description';
+    public static $offers_needs_description = 'offer_need_description';
+    public static $offers_needs_urgency_key = 'field_cd_offer_need_urgency';
+    public static $offers_needs_urgency = 'offer_need_urgency';
+    public static $offers_needs_image_key = 'field_cd_offer_need_image';
+    public static $offers_needs_image = 'offer_need_image';
+    public static $offers_needs_attachment_key = 'field_cd_offer_need_attachment';
+    public static $offers_needs_attachment = 'offer_need_attachment';
 
     private static $instance;
 
@@ -336,6 +336,7 @@ class ClassACF {
             'name' => self::$offers_needs_image,
             'type' => 'image',
             'instructions' => __( 'Do you have a featured image for this offer or need?', 'community-directory' ),
+            'library' => 'uploadedTo',
             'return_format' => 'array',
             'preview_size' => 'medium',
             'max_size' => 5,
@@ -347,15 +348,7 @@ class ClassACF {
             'label' => __( 'Additonal Attachments', 'community-directory' ),
             'name' => self::$offers_needs_attachments,
             'type' => 'file',
-            'instructions' => __( 'Here you can upload a PDF with additional information or prices', 'community-directory' ),
-            'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    'field' => self::$offers_needs_type_key,
-                    'operator' => '==',
-                    'value' => 'offer',
-                ),
-            ),
+            'instructions' => __( 'Here you can upload a PDF, image, or document with additional information or prices.', 'community-directory' ),
             'return_format' => 'array',
             'library' => 'uploadedTo',
             'max_size' => 10,

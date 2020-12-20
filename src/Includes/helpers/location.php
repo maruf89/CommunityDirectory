@@ -60,7 +60,7 @@ function community_directory_status_to_enum( $status = 'active' ) {
 function community_directory_coords_to_mysql_point( $coords ):string {
     switch ( gettype( $coords ) ) {
         case 'string':
-            $re = '/(\d+\.\d+),?\s*(\d+\.\d+)/';
+            $re = '/(\d+\.?\d*),?\s*(\d+\.?\d*)/';
             if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
                 list( $whole, $lat, $lon ) = $matches;
                 return "ST_PointFromText('POINT($lat[0] $lon[0])')";
@@ -73,4 +73,13 @@ function community_directory_coords_to_mysql_point( $coords ):string {
     }
     
     return '';
+}
+
+function community_directory_coords_to_array( string $coords ):array {
+    $re = '/(\d+\.?\d*),?\s*(\d+\.?\d*)/';
+    if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
+        list( $whole, $lat, $lon ) = $matches;
+        return [ (int) $lat[0], (int) $lon[0] ];
+    }
+    return [];
 }
