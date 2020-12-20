@@ -344,9 +344,9 @@ class ClassACF {
         );
 
         $fields_arr[] = array(
-            'key' => self::$offers_needs_attachments_key,
+            'key' => self::$offers_needs_attachment_key,
             'label' => __( 'Additonal Attachments', 'community-directory' ),
-            'name' => self::$offers_needs_attachments,
+            'name' => self::$offers_needs_attachment,
             'type' => 'file',
             'instructions' => __( 'Here you can upload a PDF, image, or document with additional information or prices.', 'community-directory' ),
             'return_format' => 'array',
