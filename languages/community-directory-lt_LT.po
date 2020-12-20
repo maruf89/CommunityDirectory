@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-12-20 20:37+0200\n"
-"PO-Revision-Date: 2020-12-20 20:37+0200\n"
+"PO-Revision-Date: 2020-12-20 20:43+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -266,7 +266,7 @@ msgstr "Bendrieji Nustatymai"
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:86
 msgid "Add 'Locations' to the nav menu"
-msgstr "Prie naršymo meniu pridėkite „Vietos“"
+msgstr "Prie naršymo meniu pridėkite 'Vietos'"
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:87
 msgid ""
@@ -278,7 +278,7 @@ msgstr ""
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:92
 msgid "Add My Location to the nav menu"
-msgstr "Prie naršymo meniu pridėkite „Mano vieta“"
+msgstr "Prie naršymo meniu pridėkite 'Mano vieta'"
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:93
 msgid ""
@@ -300,7 +300,7 @@ msgstr ""
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:104
 msgid "Enable OpenStreetMap"
-msgstr "Įgalinkite „OpenStreetMap“"
+msgstr "Įgalinkite 'OpenStreetMap'"
 
 #: src/Admin/Settings/ClassSettingsGeneral.php:105
 msgid "If enabled, loads the OSM API."
@@ -449,7 +449,7 @@ msgid ""
 "check the 'Generate New Locations' checkbox."
 msgstr ""
 "Nėra vietų, kur generuoti vartotojus. Arba sukurkite kai kurias vietas arba "
-"pažymėkite žymimąjį laukelį „Sugeneruokite Naujas Vietas“."
+"pažymėkite žymimąjį laukelį 'Sugeneruokite Naujas Vietas'."
 
 #: src/Admin/Settings/ClassSettingsTest.php:184
 #, php-format
@@ -554,7 +554,7 @@ msgid ""
 "Select 'Active' to make your profile visible. If 'Inactive', your profile "
 "will not be visible to others."
 msgstr ""
-"Pasirinkite „Aktyvus“, kad jūsų profilis būtų matomas. Jei „Neaktyvus“, jūsų "
+"Pasirinkite 'Aktyvus', kad jūsų profilis būtų matomas. Jei 'Neaktyvus', jūsų "
 "profilis nebus viešintas."
 
 #: src/Includes/ClassACF.php:139 src/Includes/ClassCommunityDirectory.php:391
@@ -1363,12 +1363,12 @@ msgstr "Gal turite ką pasiūlyti? Pranešk apie tai."
 #: src/views/offers-and-needs-no-results.php:14
 #, php-format
 msgid "Create one <a href=\"%s\">here</a>."
-msgstr "Sukurkite vieną <a href=“%s”>čia</a>."
+msgstr "Sukurkite vieną <a href='%s'>čia</a>."
 
 #: src/views/offers-and-needs-no-results.php:17
 #, php-format
 msgid "Register your account <a href=\"%s\">here</a> to get started."
-msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href=“%s”>čia</a>."
+msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href='%s'>čia</a>."
 
 #: src/views/offers-and-needs-no-results.php:24
 #, php-format
@@ -1404,11 +1404,11 @@ msgstr "Nariai - %s"
 
 #, php-format
 #~ msgid "<a href=\"%s\" %s>All <span class=\"count\">(%d)</span></a>"
-#~ msgstr "<a href=“%s” %s>Visi <span class=“count”>(%d)</span></a>"
+#~ msgstr "<a href='%s' %s>Visi <span class='count'>(%d)</span></a>"
 
 #, php-format
 #~ msgid "<a href=\"%s\" %s>Published <span class=\"count\">(%d)</span></a>"
-#~ msgstr "<a href=“%s” %s>Paskelbta <span class=“count”>(%d)</span></a>"
+#~ msgstr "<a href='%s' %s>Paskelbta <span class='count'>(%d)</span></a>"
 
 #~ msgid "Community Directory Form"
 #~ msgstr "Bendrijos Katalogo Forma"
