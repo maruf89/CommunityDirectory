@@ -71,6 +71,35 @@ class OfferNeed extends Instance {
         return $title;
     }
 
+    /**
+     * Returns Translated
+     */
+    public function get_offer_need_type():string {
+        $options = [
+            'service' => 'Service',
+            'product' => 'Product',
+        ];
+
+        $which = $this->__call( 'get_acf_product_or_service', array() );
+
+        return __( $options[ $which ], 'community-directory' );
+    }
+
+    /**
+     * Returns Translated
+     */
+    public function get_urgency():string {
+        $options = [
+            'urgent' => 'Urgent/Limited Time',
+            'seasonal' => 'Seasonal',
+            'ongoing' => 'Ongoing',
+        ];
+
+        $which = $this->__call( 'get_acf_urgency', array() );
+
+        return __( $options[ $which ], 'community-directory' );
+    }
+
     public function get_link():string {
         $link = Entity::get_display_link( $this->get_entity() );
         return empty( $link ) ? '' : "$link/#" . $this->get_id();

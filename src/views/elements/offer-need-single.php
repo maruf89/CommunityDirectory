@@ -15,10 +15,10 @@
             </figure>
         <?php endif; ?>
         <span class="tag product-or-service">
-            <strong><?= $type_type ?>:</strong> <?= $offer_need->get_acf_product_or_service() ?>
+            <strong><?= $type_type ?>:</strong> <?= $offer_need->get_offer_need_type() ?>
         </span>
         <span class="tag urgency">
-            <strong><?= __( 'Urgency', 'community-directory' ) ?>:</strong> <?= $offer_need->get_acf_urgency() ?>
+            <strong><?= __( 'Urgency', 'community-directory' ) ?>:</strong> <?= $offer_need->get_urgency( true ) ?>
         </span>
         <p><?= $offer_need->get_acf_description() ?></p>
         <?php if ( $offer_need->has_acf_attachment() ): ?>
