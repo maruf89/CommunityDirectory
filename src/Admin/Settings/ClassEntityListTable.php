@@ -359,7 +359,9 @@ class ClassEntityListTable extends \WP_List_Table {
     private function require_location_select( $modal_id = '' ) {
         if ( $this->loc_modal_loaded ) return;
 
-        require_once( COMMUNITY_DIRECTORY_TEMPLATES_PATH . 'modal-location-select.php' );
+        $template_file = apply_filters( 'community_directory_template_modal-location-select.php', '' );
+        load_template( $template_file, false, array( 'modal_id' => $modal_id ) );
+        
         $this->loc_modal_loaded = true;
     }
 }

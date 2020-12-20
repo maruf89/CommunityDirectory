@@ -17,7 +17,6 @@ use Maruf89\CommunityDirectory\Includes\ClassLocation;
 use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 class ClassPublic {
-
     private string $_template_hook_prefix = 'community_directory_template_';
     private int $_template_hook_prefix_len;
 

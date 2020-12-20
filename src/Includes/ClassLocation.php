@@ -387,8 +387,6 @@ class ClassLocation extends Routable {
         }
     }
 
-/////////// Wordpress Methods //////////
-
     
 
     /**
@@ -417,14 +415,35 @@ class ClassLocation extends Routable {
         return wp_update_post( $update_data );
     }
 
+    public function update_coords( int $location_id, float $lat, float $lon ):bool {
+        $updated = false;
+        try {
+            $Location = Location::get_instance( null, $location_id );
+            $updated = $Location->update_cd_row( array( 'coords' => "$lat,$lon" ) );
+            throw new \Exception('Something bad happened…');
+        } catch (\Throwable $ex) {
+            \Sentry\captureException($ex);
+        }
+        
+        return $updated;
+    }
+
     protected array $route_map = [
+        '/update-coords' => array(
+            'callback'  => 'update_coords',
+            'args'      => array(
+                'location_id'   => 'integer',
+                'lat'           => 'float',
+                'lon'           => 'float',
+            )
+        ),
         '/get'      => array(
             'callback'  => 'get',
             'args'      => array(
                 'results'           => '?array',
                 'status_type'       => '?string',
-                'with_inhabitants'  => '?bool',
-                'formatted'         => '?bool',
+                'with_inhabitants'  => '?boolean',
+                'formatted'         => '?boolean',
             )
         )
     ];
@@ -438,12 +457,12 @@ class ClassLocation extends Routable {
      */
     public static function get_router_end_points( array $callback ):array {
         return array(
-            '/test-loc' => array(
-                'methods'   => 'PUT',
+            '/update-coords' => array(
+                'methods'   => 'POST',
                 'callback'  => $callback,
-                'permission_callback' => function( $request ) {
-                    // This always returns false
-                    return is_user_logged_in();
+                'permission_callback' => function ( $request ):bool {
+                    $params = $request->get_params();
+                    return current_user_can( 'edit_others_entities' ) || ClassEntity::user_can_edit_entity( $params['entity'] );
                 },
             ),
             '/get' => array(

@@ -100,6 +100,13 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
                 'id'   => 'load_menu_slug',
                 'type' => 'text',
             ),
+            array(
+                'name' => __( 'Enable OpenStreetMap', 'community-directory' ),
+                'desc' => __( 'If enabled, loads the OSM API.' ),
+                'id'   => 'enable_open_street_map',
+                'type' => 'checkbox',
+            ),
+
             array( 'type' => 'sectionend', 'id' => 'general-options' ),
         ) );
 

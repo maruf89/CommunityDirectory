@@ -1,7 +1,7 @@
 <?php
 
 add_thickbox();
-$modal_id = isset( $modal_id ) ? $modal_id : 'modalLocationSelect';
+$modal_id = isset( $args[ 'modal_id' ] ) ? $args[ 'modal_id' ] : 'modalLocationSelect';
 
 ?>
 

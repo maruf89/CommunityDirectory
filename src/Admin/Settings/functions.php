@@ -11,9 +11,9 @@
  *
  * @return      string                      Setting Value.
  */
-function community_directory_get_option( $key = '', $default = false, $cache = true ) {
+function community_directory_get_option( $key = '', $default = false, $cache = false ) {
 
-    if ($cache) {
+    if ( $cache ) {
         global $community_directory_options;
     } else {
         $community_directory_options = get_option( 'community_directory_settings' );

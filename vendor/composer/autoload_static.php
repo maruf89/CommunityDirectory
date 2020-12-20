@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit11acec11c5c60ffc225236804a0a2776
+class ComposerStaticInitdf3ddcada953477f75000612ef27d845
 {
     public static $files = array (
         'e6a76feb9d19e56b39885ed751517890' => __DIR__ . '/../..' . '/src/Includes/helpers/location.php',
@@ -49,6 +49,7 @@ class ComposerStaticInit11acec11c5c60ffc225236804a0a2776
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Composer\\Installers\\AglInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AglInstaller.php',
         'Composer\\Installers\\AimeosInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AimeosInstaller.php',
         'Composer\\Installers\\AnnotateCmsInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AnnotateCmsInstaller.php',
@@ -155,6 +156,7 @@ class ComposerStaticInit11acec11c5c60ffc225236804a0a2776
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassAdminSettings' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassAdminSettings.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassEntityListTable' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassEntityListTable.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassEntitylessUserListTable' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassEntitylessUserListTable.php',
+        'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassLocationListTable' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassLocationListTable.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsEntity' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassSettingsEntity.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsGeneral' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassSettingsGeneral.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsLocation' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassSettingsLocation.php',
@@ -188,10 +190,10 @@ class ComposerStaticInit11acec11c5c60ffc225236804a0a2776
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit11acec11c5c60ffc225236804a0a2776::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdf3ddcada953477f75000612ef27d845::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdf3ddcada953477f75000612ef27d845::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdf3ddcada953477f75000612ef27d845::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitdf3ddcada953477f75000612ef27d845::$classMap;
 
         }, null, ClassLoader::class);
     }

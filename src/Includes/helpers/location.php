@@ -63,7 +63,7 @@ function community_directory_coords_to_mysql_point( $coords ):string {
             $re = '/(\d+\.\d+),?\s*(\d+\.\d+)/';
             if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
                 list( $whole, $lat, $lon ) = $matches;
-                return "ST_PointFromText('POINT($lat $lon)')";
+                return "ST_PointFromText('POINT($lat[0] $lon[0])')";
             }
             return '';
         case 'array':

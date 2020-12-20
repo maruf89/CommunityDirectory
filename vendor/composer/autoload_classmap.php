@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Composer\\Installers\\AglInstaller' => $vendorDir . '/composer/installers/src/Composer/Installers/AglInstaller.php',
     'Composer\\Installers\\AimeosInstaller' => $vendorDir . '/composer/installers/src/Composer/Installers/AimeosInstaller.php',
     'Composer\\Installers\\AnnotateCmsInstaller' => $vendorDir . '/composer/installers/src/Composer/Installers/AnnotateCmsInstaller.php',
@@ -112,6 +113,7 @@ return array(
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassAdminSettings' => $baseDir . '/src/Admin/Settings/ClassAdminSettings.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassEntityListTable' => $baseDir . '/src/Admin/Settings/ClassEntityListTable.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassEntitylessUserListTable' => $baseDir . '/src/Admin/Settings/ClassEntitylessUserListTable.php',
+    'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassLocationListTable' => $baseDir . '/src/Admin/Settings/ClassLocationListTable.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsEntity' => $baseDir . '/src/Admin/Settings/ClassSettingsEntity.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsGeneral' => $baseDir . '/src/Admin/Settings/ClassSettingsGeneral.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsLocation' => $baseDir . '/src/Admin/Settings/ClassSettingsLocation.php',

@@ -300,7 +300,7 @@ function community_directory_function_transliterate_string( $txt ) {
  * Prepares a location for slug
  */
 function community_directory_string_to_slug( $location ) {
-    $formatted = strtolower( transliterate_string( $location ) );
+    $formatted = strtolower( community_directory_function_transliterate_string( $location ) );
     $formatted = sanitize_title_with_dashes( $formatted );
     return $formatted;
 }

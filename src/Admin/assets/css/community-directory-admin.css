@@ -41,3 +41,6 @@
 /** * #cd-product-service-type-all, /** * base-font-size #cd-product-service-type-all, /** */ #cd-product-service-type-all {
 	max-height: 1400px;
 }
+/** * .acf-field-open-street-map div[data-editor-config], /** * base-font-size .acf-field-open-street-map div[data-editor-config], /** */ .acf-field-open-street-map div[data-editor-config] {
+	min-height: 200px;
+}

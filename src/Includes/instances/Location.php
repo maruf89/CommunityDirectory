@@ -155,7 +155,7 @@ class Location extends Instance {
     /**
      * Updates the Community Directory Locations table
      */
-    protected function update_cd_row( array $changes ):bool {
+    public function update_cd_row( array $changes ):bool {
         if ( !count( $changes ) ) die( 'Location::update_cd_row must be passed an array argument with values' );
         
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
@@ -174,6 +174,7 @@ class Location extends Instance {
                     break;
                 case 'coords':
                     $update[] = "$key = " . community_directory_coords_to_mysql_point( $value );
+                    break;
                 default:
                     $update[] = "$key = '$value'";
             }
@@ -190,12 +191,14 @@ class Location extends Instance {
         }
 
         global $wpdb;
-        
-        return !!$wpdb->query("
+
+        $sql = "
             UPDATE $table
             SET $update_clause
             WHERE $which = $id
-        ");
+        ";
+        
+        return !!$wpdb->query( $sql );
     }
     
     /**

@@ -108,6 +108,7 @@ class ClassActivator {
             'uninstall_erase_data' => 0,
             'load_locations_nav_menu' => 1,
             'load_my_location_nav_menu' => 1,
+            'enable_open_street_map' => 1,
             'default_location' => '54.95 24.84',
         );
 

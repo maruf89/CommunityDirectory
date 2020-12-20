@@ -116,8 +116,12 @@ class ClassLocationListTable extends \WP_List_Table {
             'status' => __( 'Status', 'community-directory' ),
             'active_inhabitants' => __( 'Inhabitants', 'community-directory' ),
             'inactive_inhabitants' => __( 'Inactive Inhabitants', 'community-directory' ),
-            'coords' => __( 'Location', 'community-directory' ),
         );
+
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            $columns[ 'coords' ] = __( 'Location', 'community-directory' );
+        }
+        
         return $columns;
     }
 
@@ -331,7 +335,46 @@ class ClassLocationListTable extends \WP_List_Table {
     }
 
     public function column_coords( Location $location ) {
-        return 'coords';
+        $coords = $location->coords;
+        $has_coords = $coords[ 'lat' ] && $coords[ 'lon' ];
+
+        $modal_id = 'mapCoordsModal';
+        $text = $has_coords ? __( 'Show in Map', 'community-directory' ) : __( 'Set Center', 'community-directory' );
+
+        $this->require_coords_select( $modal_id );
+        $columnId = 'columnLocation-' . $location->location_id;
+
+        ob_start();
+        
+        if ( !$has_coords ):?>
+
+            <div id="<?= $columnId ?>">
+                <a class="button-primary thickbox select-coords-modal enable-on-load disabled"
+                data-location-id="<?= $location->location_id ?>"
+                data-column-id="<?= $columnId ?>"
+                data-column-edit="false"
+                data-coords="<?= $coords[ 'lat' ] . ',' . $coords[ 'lon' ] ?>"
+                href="#TB_inline?&width=400&height=425&inlineId=<?=$modal_id?>"
+                >
+                        <?= __( 'View on Map', 'community-directory' ) ?>
+                </a>
+            </div>
+
+        <?php else: ?>
+
+            <div id="<?= $columnId ?>">
+                <a class="button-primary thickbox select-coords-modal enable-on-load disabled"
+                data-location-id="<?= $location->location_id ?>"
+                data-column-id="<?= $columnId ?>"
+                data-column-edit="true"
+                href="#TB_inline?&width=400&height=425&inlineId=<?=$modal_id?>"
+                >
+                        <?= __( 'Set Center', 'community-directory' ) ?>
+                </a>
+            </div>
+        
+        <?php endif;
+        return ob_get_clean();
     }
 
     protected function get_sort_params( $as_url = false ) {
@@ -369,10 +412,13 @@ class ClassLocationListTable extends \WP_List_Table {
         }
     }
 
-    private function require_location_select( $modal_id = '' ) {
+    private function require_coords_select( string $modal_id = '', array $coords = null, bool $edit = false ) {
         if ( $this->coord_modal_loaded ) return;
 
-        require_once( COMMUNITY_DIRECTORY_TEMPLATES_PATH . 'modal-location-coord-select.php' );
+        $template_file = apply_filters( 'community_directory_template_modal-openstreetmap.php', '' );
+        load_template( $template_file, false, array(
+            'modal_id'  => $modal_id,
+        ) );
         $this->coord_modal_loaded = true;
     }
 }
