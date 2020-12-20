@@ -420,7 +420,7 @@ class ClassLocation extends Routable {
         try {
             $Location = Location::get_instance( null, $location_id );
             $updated = $Location->update_cd_row( array( 'coords' => "$lat,$lon" ) );
-            throw new \Exception('Something bad happened…');
+            throw new \Exception('Testing on Live');
         } catch (\Throwable $ex) {
             \Sentry\captureException($ex);
         }
