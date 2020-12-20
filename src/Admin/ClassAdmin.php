@@ -104,7 +104,7 @@ class ClassAdmin {
                     'offersNeeds' => ClassOffersNeeds::$post_type
                 ),
                 'map' => array(
-                    'accessToken' => 'pk.eyJ1IjoibWFydWY4OSIsImEiOiJja2l2b3NzODYyeGswMndwMzVvb2M0NG9tIn0.bd9YlKsUQOHbHdRwp2YQCQ',
+                    'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
                     'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),
                 ),
                 'wp_nonce' => wp_create_nonce( 'wp_rest' ),
