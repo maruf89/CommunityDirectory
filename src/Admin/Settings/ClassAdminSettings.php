@@ -547,8 +547,10 @@ class ClassAdminSettings {
                         <a class="button-primary" href="<?= $url ?>">
                             <?= $value[ 'text' ] ?? __( 'Go', 'community-directory' ) ?>
                         </a>
+                        <?= $value[ 'desc' ] ?? '' ?>
                     </td>
                     </tr><?php
+                    break;
                     
                 // Checkbox input
                 case 'checkbox' :

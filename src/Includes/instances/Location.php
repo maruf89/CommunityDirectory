@@ -28,7 +28,7 @@ class Location extends Instance {
     public function __construct( int $location_id = null, int $post_id = null, object $post = null ) {
         if ( $location_id ) $this->location_id = $location_id;
         if ( $post_id ) $this->post_id = $post_id;
-        if ( $post ) $this->from_post( $post );
+        if ( $post ) $this->from_post_obj( $post );
     }
 
     /////////////////////////////////////
@@ -171,6 +171,7 @@ class Location extends Instance {
                 case 'active_inhabitants':
                 case 'inactive_inhabitants':
                     $update[] = "$key = $value";
+                    break;
                 case 'status':
                     $update[] = "$key = '" . community_directory_status_to_enum( $value ) . "'";
                     break;
