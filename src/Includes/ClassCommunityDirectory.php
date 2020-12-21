@@ -176,7 +176,7 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
 
         add_filter( 'community_directory_get_locations', array( $instance, 'get' ), 10, 4 );
-        add_filter( 'community_directory_format_locations', array( $instance, 'format_locations' ), 10, 2 );
+        add_filter( 'community_directory_format_locations', array( $instance, 'format' ), 10, 2 );
 
         // Delete location
         add_action( 'wp_ajax_location_delete', array( $instance, 'delete_location_ajax' ), 10, 0 );
@@ -226,7 +226,7 @@ final class ClassCommunityDirectory {
     }
 
     public function load_entity_actions_and_filters( ClassEntity $instance ) {
-        add_filter( 'community_directory_get_entities', array( $instance, 'get_entities' ), 10, 4 );
+        add_filter( 'community_directory_get_entities', array( $instance, 'get' ), 10, 4 );
 
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 3 );
     }

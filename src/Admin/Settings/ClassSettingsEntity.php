@@ -46,9 +46,11 @@ class ClassSettingsEntity extends AbstractClassSettingsPage {
      * Output the settings.
      */
     public function output() {
-        global $current_section;
+        global $current_section, $community_directory_hide_save_button;
 
         $this->settings = $this->get_settings( $current_section );
+
+        $community_directory_hide_save_button = true;
 
         ClassAdminSettings::output_fields( $this->settings );
     }

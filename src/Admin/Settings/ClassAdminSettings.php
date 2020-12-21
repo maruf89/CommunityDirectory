@@ -531,6 +531,25 @@ class ClassAdminSettings {
                     </tr><?php
                     break;
 
+                // Button
+                case 'button' :
+                    $action = $value[ 'action' ] ?? '';
+
+                    $url = admin_url() . '?page=' . $_REQUEST[ 'page' ] . '&tab=' . $_REQUEST[ 'tab' ] . "&action=$action";
+                    
+                    ?>
+                    <tr valign="top" class="<?php echo $wrap_class; ?><?php if(isset($value['advanced']) && $value['advanced']){echo " community-directory-advanced-setting";}?>">
+                    <th scope="row" class="titledesc">
+                        <label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+                        <?php echo $tooltip_html; ?>
+                    </th>
+                    <td class="forminp wp-ui-core forminp-<?php echo sanitize_title( $value['type'] ) ?>">
+                        <a class="button-primary" href="<?= $url ?>">
+                            <?= $value[ 'text' ] ?? __( 'Go', 'community-directory' ) ?>
+                        </a>
+                    </td>
+                    </tr><?php
+                    
                 // Checkbox input
                 case 'checkbox' :
 

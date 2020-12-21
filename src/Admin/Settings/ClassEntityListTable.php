@@ -47,7 +47,7 @@ class ClassEntityListTable extends \WP_List_Table {
         $screen = get_current_screen();
 
             /* -- Preparing your query -- */
-        $query = ClassEntity::get_entities( array(), false, false, $this->display_status, true );
+        $query = apply_filters( 'community_directory_get_entities', [], $this->display_status, null, 'sql' );
 
             /* -- Ordering parameters -- */
         list( $orderby, $order ) = $this->get_sort_params();

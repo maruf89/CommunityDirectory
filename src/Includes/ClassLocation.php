@@ -91,6 +91,12 @@ class ClassLocation extends Routable {
 
     /**
      * Get's all locations based on passed in vars
+     * 
+     * @param       $results            ?array           an array which to merge with passed in results
+     * @param       $status_type        ?string          optional status value to match against (default: COMMUNITY_DIRECTORY_ENUM_ACTIVE)
+     *                                                   one of (''|COMMUNITY_DIRECTORY_ENUM_ACTIVE|COMMUNITY_DIRECTORY_ENUM_INACTIVE)
+     * @param       $where_match        ?array           optional array with fields to match against
+     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
      */
     function get(
         array $results = [],
@@ -139,6 +145,7 @@ class ClassLocation extends Routable {
     }
 
     /**
+     * @deprecated
      * Accepts an array of location 'id' values and returns the rows
      * 
      * @param       $field_values   array           array of values to get (could be location ids)
@@ -172,7 +179,14 @@ class ClassLocation extends Routable {
         } else return false;
     }
 
-    public static function format_locations( array $results, string $format = 'id' ) {
+    /**
+     * Formats passed in locations based on second argument
+     * 
+     * @param $results          array           the rows to format
+     * @param $format           ?string         an location field to format the key, 'instance' to return Location instances (default: 'id')
+     * @return                  array           formatted rows
+     */
+    public static function format( array $results, string $format = 'id' ) {
         if ( !count( $results ) ) return $results;
         
         if ( $format === 'instance' ) return self::format_to_instances( $results );
@@ -241,7 +255,8 @@ class ClassLocation extends Routable {
     }
 
     /**
-     * Deprecated-> delete after removal from ClassSettingsLocation
+     * @deprecated
+     * -> delete after removal from ClassSettingsLocation
      * 
      * Adds new locations to the locations table
      * 
@@ -278,6 +293,7 @@ class ClassLocation extends Routable {
     }
 
     /**
+     * @deprecated
      * Updates any number of locations
      * 
      * @param           $update_locations_array     ARRAY_A     A hash array structured like

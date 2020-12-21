@@ -88,8 +88,10 @@ class ClassShortcodes {
         $entities = apply_filters(
             'community_directory_get_entities',
             array(),
+            'publish',
+            [ 'location_id' => $location_id ],
             $location_id,
-            'location',
+            null
         );
 
         if ( count( $entities ) ) {

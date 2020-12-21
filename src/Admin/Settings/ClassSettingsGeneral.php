@@ -40,6 +40,9 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
     public function output() {
         global $current_section;
 
+        if ( isset( $_REQUEST[ 'action' ] ) && \method_exists( $this, 'action_' . $_REQUEST[ 'action' ] ) )
+            \call_user_func( array($this, 'action_' . $_REQUEST[ 'action' ] ) );
+        
         $settings = $this->get_settings( $current_section );
 
         ClassAdminSettings::output_fields( $settings );
@@ -106,6 +109,14 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
                 'id'   => 'enable_open_street_map',
                 'type' => 'checkbox',
             ),
+            array(
+                'name' => __( 'Reindex Active/Inactive Entities', 'community-directory' ),
+                'desc' => __( 'Clicking this button updates the active/inactive inhabitants to reflect the actual count for each location (workaround)' ),
+                'id'   => 'reindex_inhabitants',
+                'type' => 'button',
+                'action' => 'reindex_inhabitants',
+                'text' => __( 'Reindex', 'community-directory' ),
+            ),
 
             array( 'type' => 'sectionend', 'id' => 'general-options' ),
         ) );
@@ -115,5 +126,13 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
         $settings[] = array( 'type' => 'sectionend', 'id' => 'general_options' );
 
         return $settings;
+    }
+
+    public function action_reindex_inhabitants() {
+        $locations = apply_filters( 'community_directory_get_locations', [], '', null, null );
+        $locations = apply_filters( 'community_directory_format_locations', $locations, 'id' );
+
+        $entities = apply_filters( 'community_directory_get_entities', [], null, null, null );
+        die('hi');
     }
 }

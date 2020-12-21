@@ -107,77 +107,76 @@ class ClassEntity extends Routable {
     }
 
     /**
-     * Get's all entities matching a post_id, slug, or returning all
-     * A wp filter method that can be called on it's own to get all of the entities for a given location
+     * Get's all entities based on passed in vars
      * 
-     * @param           $entity_arr     array       the array to populate with entities
-     * @param           $where_val      int|string  the location  (optional: if empty returns all entities)
-     * @param           $where_key      string      options: ('location' or any field key)
-     *                                              if 'location' passed, $where_val must be either a location post id's slug or post's ID. Otherwise a post's field key
-     * @param           $status         string      the post's status. If empty, returns all post status types
-     * @param           $sql_only       bool        whether to return only the sql query
-     * @return                          array       Entity post types
+     * @param       $results            ?array           an array which to merge with passed in results
+     * @param       $post_status        ?string|array    optional array, first variable must be (=|!=), default: =
+     *                                                   if null or empty string, returns non-auto draft fields
+     * @param       $where_match        ?array           optional array with fields to match against
+     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
      */
-    public static function get_entities(
-        array $entity_arr,
-        $where_val = false,
-        $where_key = '',
-        string $status = 'publish',
-        bool $sql_only = false
+    function get(
+        array $results = [],
+        $post_status = null,
+        array $where_match = null,
+        string $output = null
     ) {
         global $wpdb;
-        $post_type = self::$post_type;
 
-        $where_status = "post_status != 'auto-draft'";
-        if ( !empty( $status ) )
-            $where_status = "post_status = '$status'";
+        if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
+        if ( null === $where_match ) $where_match = [];
+        if ( null === $output ) $output = OBJECT;
 
-        if ( $where_key === 'location' ) {
-            switch ( gettype( $where_val ) ) {
-                case 'integer':
-                    $sql = "
-                        SELECT *
-                        FROM $wpdb->posts
-                        WHERE $where_status
-                          AND post_type = '$post_type'
-                          AND post_parent = '$where_val'
-                    ";
-                    break;
-                case 'string':
-
-                    if ( empty( $status ) )
-                        $where_status = "entity.post_status != 'auto-draft";
-                    else
-                        $where_status = "entity.post_status = '$status'";
-                        
-                    $sql = "
-                        SELECT entity.*
-                        FROM $wpdb->posts AS location
-                        JOIN $wpdb->posts AS entity
-                        ON location.ID = entity.post_parent
-                        WHERE $where_status
-                          AND entity.post_type = '$post_type'
-                          AND location.post_name = '$where_val'
-                    ";
-                    break;
-            }
-        } else {
-            $where_match = '';
-            if ( $where_val && !empty( $where_key ) )
-                $where_match = "AND $where_val = '$where_val'";
-
-            $sql = "
-                SELECT *
-                FROM $wpdb->posts
-                WHERE $where_status AND post_type = '$post_type' $where_match
-            ";
-        }
-
-        if ( $sql_only ) return $sql;
+        // Create where array with the first check
+        $where = [ 'post_type = \'' . static::$post_type . '\'' ];
         
-        $entities = $wpdb->get_results( $sql );
+        if ( gettype( $post_status ) === 'string' )
+            $post_status = [ '=', $post_status ];
+        
+        $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
 
-        return array_merge( $entity_arr, $entities );
+        if ( count( $where_match ) ) {
+            foreach ( $where_match as $key => $match ) {
+                switch ( $key ) {
+
+                    // Integer values
+                    case 'location_id':
+                        $where[] = "post_parent = $match";
+                        break;
+                    case 'post_parent':
+                    case 'post_author':
+                    case 'ID':
+                        $where[] = "$key = $match";
+                        break;
+
+                    // Date type, must include (>|<|>=) next to date value
+                    case 'post_date':
+                    case 'post_modified':
+                        $where[] = "$key $match";
+                        break;
+
+                    // Default string values
+                    case 'slug':
+                        $key = 'post_name';
+                    default:
+                        $where[] = "$key = '$match'";
+                }
+            }
+        }
+                    
+        $where_clauses = 'WHERE ' . implode( ' AND ', $where );
+
+        $sql = "
+            SELECT *
+            FROM $wpdb->posts
+            $where_clauses  
+        ";
+        
+        if ( $output === 'sql' ) return $sql;
+
+        $entities = $wpdb->get_results( $sql );
+        
+        return array_merge( $entities, $results );
     }
 
     /**
@@ -202,6 +201,22 @@ class ClassEntity extends Routable {
         ";
 
         return $sql_only ? $sql : $wpdb->get_results( $sql );
+    }
+
+    /**
+     * Formats entity types based on second parameter
+     * 
+     * @param $results          array           the rows to format
+     * @param $format           ?string         an entity field to format the key, 'instance' to return Entity instances (default: 'id')
+     * @return                  array           formatted
+     */
+    public static function format( array $results, string $format = 'id' ) {
+        if ( !count( $results ) ) return $results;
+        
+        if ( $format === 'instance' ) return self::format_to_instances( $results );
+        if ( gettype( $format ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $format is a string
+        return self::format_row_locations( $results, $format );
     }
 
     public static function format_to_instances( $rows ) {

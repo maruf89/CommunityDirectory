@@ -84,6 +84,8 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                 );
                 break;
             default:
+                global $community_directory_hide_save_button;
+                $community_directory_hide_save_button = true;
                 $cur = empty( $current_section ) ? 'all' : $current_section;
                 $settings = array(
                     array(
