@@ -152,6 +152,33 @@ class ClassActivator {
             __( 'Entity Subscriber', 'community-directory' ),
             $entity_caps
         );
+
+        $location_caps = array_merge( $entity_caps, [
+            'edit_location' => true, 
+            'read_location' => true, 
+            'delete_location' => false, 
+            'edit_locations' => true, 
+            'edit_others_locations' => true, 
+            'publish_locations' => true,       
+            'read_private_locations' => true, 
+            'edit_locations' => true,
+            'delete_locations' => false,
+            'delete_others_locations' => false,
+            'manage_product_service_type' => true,
+            'edit_product_service_type' => true,
+            'delete_product_service_type' => true,
+        ] );
+
+        add_role(
+            self::$role_location,
+            __( 'Location Manager', 'community-directory' ),
+            $location_caps
+        );
+
+        $admin_role = get_role( 'administrator' );
+        foreach( $location_caps as $cap => $val ) {
+            $admin_role->add_cap( $cap, true );
+        }
     }
 
     public static function deactivate($network_wide = false) {

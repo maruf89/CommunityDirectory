@@ -273,7 +273,7 @@ class ClassLocationListTable extends \WP_List_Table {
         $sort = $this->get_sort_params( true );
         $url = "<a href='?page=$cd&action=%s&location=%s${tab}${section}${sort}'>%s</a>";
         
-        $edit_url = Location::get_edit_link( $location->location_id );
+        $edit_url = Location::get_edit_link( $location->post_id );
         $edit_link = "<a href='$edit_url' %s>%s</a>";
         
         $actions = array(

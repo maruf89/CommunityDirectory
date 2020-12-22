@@ -310,6 +310,12 @@ function community_directory_format_uc_first( $location ) {
     return mb_convert_case( mb_convert_case( $location , MB_CASE_LOWER, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
 }
 
+function community_directory_is_valid_location_name( string $loc_name ):bool {
+    $match = preg_match('/^[\p{L}\s]+$/u', $loc_name, $output_array);
+
+    return !!$match;
+}
+
 function community_directory_settings_get( string $key = '', string $default_value = '' ) {
     $settings = get_option( 'community_directory_settings', array());
 

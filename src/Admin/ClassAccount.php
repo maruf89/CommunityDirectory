@@ -32,12 +32,19 @@ class ClassAccount {
              !isset( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
                 return $errors;
 
-        if ( (int) $data[ClassUWPFormBuilder::$location_not_listed_name] === 0 &&
-             empty( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
-                $errors->add( 'Missing Field', __( 'You must select your village, town, or city from the options', 'community-directory' ) );
-        else if ( (int) $data[ClassUWPFormBuilder::$location_not_listed_name] === 1 ) {
-            if ( empty( $data[ClassUWPFormBuilder::$new_location_name] ) )
-                $errors->add( 'Missing Field', __( 'Your location field cannot be left blank.', 'community-directory', ) );
+        if ( isset( $data[ClassUWPFormBuilder::$location_not_listed_name] ) ) {
+            if ( (int) $data[ClassUWPFormBuilder::$location_not_listed_name] === 0 &&
+                empty( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
+                    $errors->add( 'Missing Field', __( 'You must select your village, town, or city from the options', 'community-directory' ) );
+            else if ( (int) $data[ClassUWPFormBuilder::$location_not_listed_name] === 1 ) {
+                $new_loc = $data[ClassUWPFormBuilder::$community_directory_location_name];
+
+                if ( empty( $new_loc ) )
+                    $errors->add( 'Missing Field', __( 'Your location field cannot be left blank.', 'community-directory', ) );
+                
+                if ( !community_directory_is_valid_location_name( $new_loc ) )
+                    $errors->add( 'Invalid Field', __( 'The location name field you entered is invalid. It cannot contain any numbers or special characters.', 'community-directory', ) );
+            }
         }
 
         return $errors;
@@ -55,10 +62,10 @@ class ClassAccount {
     public static function save_data_to_user_meta( $data, $validation_type, $user_id ) {
         // return if validating something else
         if ( $validation_type !== 'register' ||
-             !isset( $data[ClassUWPFormBuilder::$community_directory_location_name] ) )
+             !isset( $data[ ClassUWPFormBuilder::$community_directory_location_name ] ) )
                 return $data;
                 
-        $location_name = $data[ClassUWPFormBuilder::$community_directory_location_name];
+        $location_name = sanitize_text_field( $data[ ClassUWPFormBuilder::$community_directory_location_name ] );
         self::create_loc_and_entity( $location_name, $data, $user_id );
 
         return $data;

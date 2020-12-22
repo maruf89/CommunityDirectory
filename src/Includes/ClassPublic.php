@@ -183,6 +183,5 @@ class ClassPublic {
 
         return COMMUNITY_DIRECTORY_TEMPLATES_PATH . $file;
     }
-    
 
 }

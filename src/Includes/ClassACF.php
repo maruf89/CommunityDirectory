@@ -149,7 +149,7 @@ class ClassACF {
 			'label' => __( 'Location Name', 'community-directory' ),
 			'name' => self::$entity_location_name,
 			'type' => 'text',
-			'instructions' => __( 'Does your place have a name? If not, your first name will be shown.', 'community-directory' ),
+			'instructions' => __( 'This is how you will appear in the directory under your city or town.', 'community-directory' ),
 			'required' => 1,
 			'placeholder' => __( 'Hillsdale Farms', 'community-directory' ),
 			'maxlength' => '50',

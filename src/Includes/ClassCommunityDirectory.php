@@ -153,8 +153,8 @@ final class ClassCommunityDirectory {
      * @param $instance
      */
     public function load_assets_actions_and_filters( ClassPublic $instance) {
-        add_action( 'wp_enqueue_scripts', array($instance, 'enqueue_styles') );
-        add_action( 'wp_enqueue_scripts', array($instance, 'enqueue_scripts') );
+        add_action( 'wp_enqueue_scripts', array( $instance, 'enqueue_styles' ) );
+        add_action( 'wp_enqueue_scripts', array( $instance, 'enqueue_scripts' ) );
     }
 
     /**
@@ -407,6 +407,11 @@ final class ClassCommunityDirectory {
     public function register_error_handler() {
         // Triggers the error handler registration init in the constructor
         ClassErrorHandler::get_instance();
+    }
+
+    public function custom_nonce_value () {
+        $created_nonce = wp_create_nonce();
+        define( 'NONCE_RANDVALUE', $created_nonce ); 
     }
 }
 
