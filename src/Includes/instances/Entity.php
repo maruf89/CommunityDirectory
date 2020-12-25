@@ -271,7 +271,7 @@ class Entity extends Instance {
 
         // Update the post_status
         $post_status = community_directory_bool_to_status( $activate, 'entity', 'post' );
-        return !!$this->update_post( array( 'status' => $post_status ) );
+        return !!$this->update_post( array( 'post_status' => $post_status ) );
     }
 
     public function set_location( Location $location ):bool {
@@ -343,6 +343,7 @@ class Entity extends Instance {
 
             if ( isset( $data[ 'status' ] ) && gettype( $data[ 'status' ] === 'string' ) ) {
                 // Update the count
+                $args[ 'post_status' ] = community_directory_enum_status_to_post_status( $data[ 'status' ] );
                 do_action( 'community_directory_add_inhabitant',
                         $data['location_post_id'],
                         'post_id',

@@ -89,12 +89,12 @@ class ClassAccount {
         $Entity = new Entity( null, $user_id );
         $Entity->insert_into_db( array(
             'user_id'                   => $user_id,
-            'first_name'                => $data['first_name'],
-            'last_name'                 => $data['last_name'],
+            'first_name'                => $data[ 'first_name' ],
+            'last_name'                 => $data[ 'last_name' ],
             'location_id'               => $Location->location_id,
             'location_display_name'     => $Location->display_name,
             'location_post_id'          => $Location->post_id,
-            'status'                    => $Location->status,
+            'status'                    => isset( $data[ 'status' ] ) ? $data[ 'status' ] : COMMUNITY_DIRECTORY_ENUM_PENDING,
         ) );
 
         // Set the user's role to entity-subscriber

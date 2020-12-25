@@ -55,6 +55,7 @@ class ClassUWPForms {
                     <?php foreach ( $locations as $row ): ?>
                         <?php
                             $selected = !$loc_not_listed_selected &&
+                                isset( $_POST[ ClassUWPFormBuilder::$community_directory_location_name ] ) &&
                                 $_POST[ ClassUWPFormBuilder::$community_directory_location_name ] == $row->display_name;
                         ?>
                         <option value="<?= $row->display_name ?>"
