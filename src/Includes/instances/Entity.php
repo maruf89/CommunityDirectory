@@ -414,7 +414,7 @@ class Entity extends Instance {
         if ( Entity::$active_entity != null ) return Entity::$active_entity;
 
         if ( !( $author_id = get_current_user_id() ) ) {
-            die( 'Cannot get active entity of non-logged in user.' );
+            return null;
         }
 
         $entity_post_id = community_directory_get_post_var_by_field(

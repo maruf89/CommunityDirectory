@@ -1,9 +1,6 @@
 To Do
 =====
 
-# Admin Tab
-- Add Refresh button which searches through users and reupdates active/inactive inhabitants
-
 # Places
 - Show distance from Muse river
 
@@ -22,7 +19,6 @@ Menu button which links to the user's backend where nearby offers/needs are show
 
 
 # Offers & Needs
-- Flesh out offers and needs display
 - Activating/deactivating entities publishes/pends their offers/needs
 - Allow uploading galleries
 
