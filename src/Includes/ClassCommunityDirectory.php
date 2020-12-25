@@ -210,7 +210,7 @@ final class ClassCommunityDirectory {
     }
 
     public function load_template_actions_and_filters( ClassPublic $instance ) {
-        $prefix = $instance->get_template_hook_prefix();
+        $prefix = ClassPublic::get_template_hook_prefix();
         add_filter( "${prefix}location-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}elements/location-single-no-photo.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}elements/location-single.php", array( $instance, 'load_template' ), 10, 1 );

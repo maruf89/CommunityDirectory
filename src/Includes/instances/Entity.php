@@ -208,7 +208,7 @@ class Entity extends Instance {
      * Returns the featured image
      */
     public function get_featured( string $type = 'src' ) {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$entity_picture] ) ) return '';
+        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$entity_picture] ) || !$this->acf_data[ClassACF::$entity_picture] ) return '';
 
         $img_arr = $this->acf_data[ClassACF::$entity_picture];
         switch ( $type ) {

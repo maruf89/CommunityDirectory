@@ -12,16 +12,14 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Includes\ClassEntity;
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
 use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 class ClassPublic {
-    private string $_template_hook_prefix = 'community_directory_template_';
-    private int $_template_hook_prefix_len;
+    private static string $_template_hook_prefix = 'community_directory_template_';
+    private static int $_template_hook_prefix_len;
 
     public function __construct() {
-        $this->_template_hook_prefix_len = strlen( $this->_template_hook_prefix );
+        static::$_template_hook_prefix_len = strlen( static::$_template_hook_prefix );
     }
     
     /**
@@ -170,7 +168,7 @@ class ClassPublic {
         return $template;
     }
 
-    public function get_template_hook_prefix():string { return $this->_template_hook_prefix; }
+    public static function get_template_hook_prefix():string { return static::$_template_hook_prefix; }
 
     /**
      * Is loaded via a filter call
@@ -179,7 +177,7 @@ class ClassPublic {
         // get name of current filter
         // Will look something like: "community_directory_template_location-list.php"
         $current = current_filter();
-        $file = substr( $current, $this->_template_hook_prefix_len );
+        $file = substr( $current, static::$_template_hook_prefix_len );
 
         return COMMUNITY_DIRECTORY_TEMPLATES_PATH . $file;
     }
