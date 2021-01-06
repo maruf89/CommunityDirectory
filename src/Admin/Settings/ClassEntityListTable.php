@@ -173,7 +173,7 @@ class ClassEntityListTable extends \WP_List_Table {
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Activated %d entity', 'Activated %d entities', $count ), $count ),
+                    sprintf( _n( 'Activated %d entity', 'Activated %d entities', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;
@@ -187,7 +187,7 @@ class ClassEntityListTable extends \WP_List_Table {
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Deactivated %d entity', 'Deactivated %d entities', $count ), $count ),
+                    sprintf( _n( 'Deactivated %d entity', 'Deactivated %d entities', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;

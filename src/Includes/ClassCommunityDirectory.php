@@ -417,5 +417,13 @@ final class ClassCommunityDirectory {
 
 $translations = [
     __( 'm/d/y g:i a', 'community-directory' ),
-    __( 'm/d/Y g:i:s a', 'community-directory' )
+    __( 'm/d/Y g:i:s a', 'community-directory' ),
+    ngettext( 'Activated %d location', 'Activated %d locations', 2 ),
+    ngettext( '%d Inhabitant', '%d Inhabitants', 2 ),
+    ngettext( 'Activated %d entity', 'Activated %d entities', 2 ),
+    ngettext( 'Deactivated %d entity', 'Deactivated %d entities', 2 ),
+    ngettext( 'Activated %d location', 'Activated %d locations', 2 ),
+    ngettext( 'Deactivated %d location', 'Deactivated %d locations', 2 ),
+    ngettext( 'Deleted %d location', 'Deleted %d locations', 2 ),
+    ngettext( 'Draft', 'Drafts', 2 )
 ];

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: 2020-12-22 20:24+0200\n"
-"PO-Revision-Date: 2020-12-22 20:27+0200\n"
-"Last-Translator: \n"
+"Project-Id-Version: 2021.01\n"
+"POT-Creation-Date: 2021-01-06 18:17+0200\n"
+"PO-Revision-Date: 2021-01-06 18:19+0200\n"
+"Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
 "MIME-Version: 1.0\n"
@@ -11,21 +11,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ..\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && (n%100<11 || n%100>19) ? 0 : n"
-"%10>=2 && n%10<=9 && (n%100<11 || n%100>19) ? 1 : 2);\n"
-"X-Poedit-KeywordsList: __\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
+"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
+"1 : 2);\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2,3;_n:1,2,3;__ngettext_noop:1,2,3;"
+"_n_noop:1,2,3;_c,_nc:4c,1,2,3;_x:1,2c,3;_nx:4c,1,2,3;_nx_noop:4c,1,2,3;"
+"_ex:1,2c,3;esc_attr__;esc_attr_e;esc_attr_x:1,2c,3c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c,3c\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: vendor\n"
 
-#: src/Admin/ClassAccount.php:37
+#: src/Admin/ClassAccount.php:38
 msgid "You must select your village, town, or city from the options"
 msgstr "Iš variantų turite pasirinkti savo kaimą, miestelį ar miestą"
 
-#: src/Admin/ClassAccount.php:42
+#: src/Admin/ClassAccount.php:43
 msgid "Your location field cannot be left blank."
 msgstr "Vietos laukas negali būti tuščias."
 
-#: src/Admin/ClassAccount.php:45
+#: src/Admin/ClassAccount.php:46
 msgid ""
 "The location name field you entered is invalid. It cannot contain any "
 "numbers or special characters."
@@ -78,7 +82,13 @@ msgstr "Redaguokite Savo Narystės Profilį"
 msgid "Profile Settings"
 msgstr "Profilio Nustatymai"
 
-#: src/Admin/Menus/ClassMenuItems.php:38
+#: src/Admin/Menus/ClassMenuItems.php:17
+#: src/Admin/Widgets/ClassLocationsWidget.php:19
+#: src/Includes/ClassLocation.php:52
+msgid "Community Directory Locations"
+msgstr "Bendruomenių katalogų vietos"
+
+#: src/Admin/Menus/ClassMenuItems.php:38 src/Admin/Menus/ClassMenuItems.php:50
 msgid "Common"
 msgstr "Bendra"
 
@@ -90,6 +100,18 @@ msgstr "Prisijungę"
 msgid "Logged-Out"
 msgstr "Atsijungę"
 
+#: src/Admin/Menus/ClassMenuItems.php:51
+msgid "Common links are visible to everyone."
+msgstr "Bendros nuorodos matomis visiems."
+
+#: src/Admin/Menus/ClassMenuItems.php:65
+msgid "Select all"
+msgstr "Pasirinkite Viską"
+
+#: src/Admin/Menus/ClassMenuItems.php:68
+msgid "Add to Menu"
+msgstr "Pridėkite į Menių"
+
 #: src/Admin/Settings/ClassAdminSettings.php:68
 msgid "Action failed. Please refresh the page and retry."
 msgstr "Nepavyko atlikti veiksmo. Atnaujinkite puslapį ir bandykite dar kartą."
@@ -98,9 +120,29 @@ msgstr "Nepavyko atlikti veiksmo. Atnaujinkite puslapį ir bandykite dar kartą.
 msgid "Your settings have been saved."
 msgstr "Jūsų nustatymai išsaugoti."
 
+#: src/Admin/Settings/ClassAdminSettings.php:353
+msgid "Upload Image"
+msgstr "Įkelkite Paveikslėlį"
+
+#: src/Admin/Settings/ClassAdminSettings.php:354
+msgid "Remove Image"
+msgstr "Ištrinkite Paveikslėlį"
+
 #: src/Admin/Settings/ClassAdminSettings.php:548
 msgid "Go"
 msgstr "Eik"
+
+#: src/Admin/Settings/ClassAdminSettings.php:698
+msgid "Select a page&hellip;"
+msgstr "Pasirinkite puslapį&hellip;"
+
+#: src/Admin/Settings/ClassAdminSettings.php:701
+msgid "Edit Page"
+msgstr "Redaguokite Puslapį"
+
+#: src/Admin/Settings/ClassAdminSettings.php:704
+msgid "View Page"
+msgstr "Pažiūrėkite į Puslapį"
 
 #: src/Admin/Settings/ClassAdminSettings.php:745
 msgid "Documentation"
@@ -526,11 +568,6 @@ msgstr "Prideda įvestį laukui Vieta."
 msgid "Options will be generated automatically"
 msgstr "Parinktys bus sugeneruotos automatiškai"
 
-#: src/Admin/Widgets/ClassLocationsWidget.php:19
-#: src/Includes/ClassLocation.php:52
-msgid "Community Directory Locations"
-msgstr "Bendruomenių katalogų vietos"
-
 #: src/Admin/Widgets/ClassLocationsWidget.php:22
 msgid "Displays locations"
 msgstr "Rodo vietas"
@@ -556,6 +593,10 @@ msgstr "Pasiūlymas"
 #: src/Includes/ClassACF.php:282 src/Includes/helpers/offer_need.php:12
 msgid "Need"
 msgstr "Poreikis"
+
+#: src/Admin/views/html-admin-settings.php:31
+msgid "Save changes"
+msgstr "Išsaugokite pakeitimus"
 
 #: src/Includes/Abstracts/Routable.php:88
 #, php-format
@@ -809,8 +850,64 @@ msgstr "Vietos Valdas"
 msgid "m/d/Y g:i:s a"
 msgstr "d.m.Y G:i:s"
 
+#: src/Includes/ClassCommunityDirectory.php:421
+#: src/Includes/ClassCommunityDirectory.php:425
+#, php-format
+msgid "Activated %d location"
+msgid_plural "Activated %d locations"
+msgstr[0] "Suaktyvuota %d vietą"
+msgstr[1] "Suaktyvuotos %d vietos"
+msgstr[2] "Suaktyvuota %d vietų"
+
+#: src/Includes/ClassCommunityDirectory.php:422
+#, php-format
+msgid "%d Inhabitant"
+msgid_plural "%d Inhabitants"
+msgstr[0] "%d Gyventojas"
+msgstr[1] "%d Gyventojai"
+msgstr[2] "%d Gyventojų"
+
+#: src/Includes/ClassCommunityDirectory.php:423
+#, php-format
+msgid "Activated %d entity"
+msgid_plural "Activated %d entities"
+msgstr[0] "Suaktyvuota %d narys"
+msgstr[1] "Suaktyvuota %d narai"
+msgstr[2] "Suaktyvuota %d narių"
+
+#: src/Includes/ClassCommunityDirectory.php:424
+#, php-format
+msgid "Deactivated %d entity"
+msgid_plural "Deactivated %d entities"
+msgstr[0] "Deaktyvuota %d narys"
+msgstr[1] "Deaktyvuota %d nariai"
+msgstr[2] "Deaktyvuota %d narių"
+
+#: src/Includes/ClassCommunityDirectory.php:426
+#, php-format
+msgid "Deactivated %d location"
+msgid_plural "Deactivated %d locations"
+msgstr[0] "Deaktyvuota %d vietą"
+msgstr[1] "Deaktyvuota %d vietos"
+msgstr[2] "Deaktyvuota %d vietų"
+
+#: src/Includes/ClassCommunityDirectory.php:427
+#, php-format
+msgid "Deleted %d location"
+msgid_plural "Deleted %d locations"
+msgstr[0] "Ištrinta %d vietą"
+msgstr[1] "Ištrinta %d vietos"
+msgstr[2] "Ištrinta %d vietų"
+
+#: src/Includes/ClassCommunityDirectory.php:428
+msgid "Draft"
+msgid_plural "Drafts"
+msgstr[0] "Juodraštis"
+msgstr[1] "Juodraščiai"
+msgstr[2] "Juodraščių"
+
 #: src/Includes/ClassEntity.php:45 src/Includes/ClassLocation.php:78
-#: src/Includes/instances/Entity.php:458 src/Includes/instances/Entity.php:473
+#: src/Includes/instances/Entity.php:459 src/Includes/instances/Entity.php:474
 #: src/views/elements/location-single-no-photo.php:3
 #: src/views/elements/location-single.php:3
 msgid "location"
@@ -1327,27 +1424,27 @@ msgstr "menas ir amatai"
 msgid "give away"
 msgstr "atiduodu"
 
-#: src/Includes/ClassPublic.php:87
+#: src/Includes/ClassPublic.php:85
 msgid "My Profile"
 msgstr "Mano Profilis"
 
-#: src/Includes/ClassPublic.php:93
+#: src/Includes/ClassPublic.php:91
 msgid "Edit Profile"
 msgstr "Redaguokite profilį"
 
-#: src/Includes/ClassUWPForms.php:57 src/Includes/ClassUWPForms.php:75
+#: src/Includes/ClassUWPForms.php:65 src/Includes/ClassUWPForms.php:83
 msgid "My location isn't listed"
 msgstr "Mano vieta nėra nurodyta"
 
-#: src/Includes/ClassUWPForms.php:60
+#: src/Includes/ClassUWPForms.php:68
 msgid "Select the village, town, or city you reside in."
 msgstr "Pasirinkite kaimą, miestelį ar miestą, kuriame gyvenate."
 
-#: src/Includes/ClassUWPForms.php:82 src/Includes/ClassUWPForms.php:90
+#: src/Includes/ClassUWPForms.php:90 src/Includes/ClassUWPForms.php:98
 msgid "Your location"
 msgstr "Jūsų vieta"
 
-#: src/Includes/ClassUWPForms.php:96
+#: src/Includes/ClassUWPForms.php:105
 msgid "Enter the name of village, town, or city you reside in."
 msgstr "Įveskite jūsų gyvenvietės pavadinimą."
 
@@ -1412,7 +1509,7 @@ msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href='%s'>čia</a>
 #: src/views/offers-and-needs-no-results.php:24
 #, php-format
 msgid "No %s."
-msgstr "Nėra %s"
+msgstr "Nėra %s."
 
 #: src/views/offers_needs_hashtag_list.php:9
 msgid "Latest Offers"
@@ -1440,6 +1537,11 @@ msgstr "Poreikiai - %s"
 #, php-format
 msgid "Entities in %s"
 msgstr "Nariai - %s"
+
+#, fuzzy, php-format
+#~| msgid "Inhabitants"
+#~ msgid "%d Inhabitants"
+#~ msgstr "Aktyvūs Gyventojai"
 
 #~ msgid "Does your place have a name? If not, your first name will be shown."
 #~ msgstr ""
