@@ -3,9 +3,8 @@
 namespace Maruf89\CommunityDirectory\Admin;
 
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\{ClassLocation, ClassActivator};
 use Maruf89\CommunityDirectory\Includes\instances\Entity;
-use Maruf89\CommunityDirectory\Includes\ClassActivator;
 
 /**
  * The account and registration part of the plugin
@@ -68,6 +67,9 @@ class ClassAccount {
         $location_name = sanitize_text_field( $data[ ClassUWPFormBuilder::$community_directory_location_name ] );
         self::create_loc_and_entity( $location_name, $data, $user_id );
 
+        // Set this so we can trigger actions on the user's first login
+        update_user_meta($user_id, 'prefix_first_login', '1');
+
         return $data;
     }
 
@@ -100,6 +102,24 @@ class ClassAccount {
         // Set the user's role to entity-subscriber
         $user = new \WP_User( $user_id );
         $user->set_role( ClassActivator::$role_entity );
+    }
+
+    public function check_first_login( $user_login, $user ) {
+        $user_id = $user->ID;
+        // getting prev. saved meta
+        $first_login = get_user_meta($user_id, 'prefix_first_login', true);
+        // if first time login
+        if ( $first_login == '1' ) {
+            $Entity = Entity::get_instance( null, $user_id );
+            
+            if ( $Entity ) {
+                // update meta after first login
+                update_user_meta($user_id, 'prefix_first_login', '0');
+                // redirect to given URL
+                wp_redirect( Entity::get_edit_link( $Entity->post_id ) );
+                exit;
+            }
+        }
     }
     
 }

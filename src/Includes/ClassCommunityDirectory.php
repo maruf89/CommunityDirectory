@@ -292,6 +292,7 @@ final class ClassCommunityDirectory {
     public function load_account_actions_and_filters( $instance ) {
         add_filter( 'uwp_validate_fields_before', array( $instance, 'validate_user_registration_before' ), 11, 3 );
         add_filter( 'uwp_before_extra_fields_save', array( $instance, 'save_data_to_user_meta' ), 11, 3 );
+        add_action('wp_login', array( $instance, 'check_first_login' ), 10, 2);
     }
 
     /**
@@ -317,8 +318,14 @@ final class ClassCommunityDirectory {
 
     public function load_admin_post_display_hooks_and_filters( $instance ) {
         $entity = ClassEntity::$post_type;
+        $offer_need = ClassOffersNeeds::$post_type;
         add_filter( "manage_${entity}_posts_columns", array( $instance, 'entity_post_column_head' ), 10, 1 );
         add_action( "manage_${entity}_posts_custom_column", array( $instance, 'entity_post_table_content' ), 10, 2 );
+        add_filter( "get_user_option_meta-box-order_${entity}", array( $instance, 'reorder_metaboxes') );
+        add_filter( "get_user_option_meta-box-order_${offer_need}", array( $instance, 'reorder_metaboxes') );
+        add_filter( "get_user_option_screen_layout_${entity}", array( $instance, 'force_single_col'), 10, 3 );
+        add_action('admin_head-post.php', array( $instance, 'hide_publishing_actions' ) );
+        add_action('admin_head-post-new.php', array( $instance, 'hide_publishing_actions' ) );
     }
 
     /**
