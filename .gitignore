@@ -11,6 +11,7 @@ vendor/*
 !vendor/kylekatarnls
 !vendor/guzzlehttp
 !vendor/sendinblue
+!vendor/symfony
 !vendor/.gitkeep
 vendor/composer/tmp-*
 vendor/composer/xdebug*
