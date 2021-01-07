@@ -63,13 +63,13 @@ class ClassTransactionalMailer implements IMailer {
     }
 
     public function send_welcome_email(
-        array $save_result,
+        bool $saved,
         array $data,
         string $validation_type,
         int $user_id
     ) {
-        if ( $validation_type !== 'register' )
-                return $data;
+        if ( !$saved || $validation_type !== 'register' )
+            return $data;
 
         $user = new \WP_User( $user_id );
         $email_addr = $user->data->user_email;
