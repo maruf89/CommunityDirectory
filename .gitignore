@@ -9,8 +9,12 @@ vendor/*
 !vendor/autoload.php
 !vendor/composer
 !vendor/kylekatarnls
+!vendor/guzzlehttp
+!vendor/sendinblue
 !vendor/.gitkeep
 vendor/composer/tmp-*
+vendor/composer/xdebug*
+vendor/composer/installers/*
 composer.lock
 composer.phar
 

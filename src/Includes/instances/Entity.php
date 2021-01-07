@@ -482,7 +482,7 @@ class Entity extends Instance {
             if ( self::$active_entity ) $post_id = self::$active_entity->post_id;
             else return '';
         }
-
+        
         return parent::get_edit_link( $post_id );
     }
 

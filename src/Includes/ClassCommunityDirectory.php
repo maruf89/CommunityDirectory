@@ -2,14 +2,12 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Admin\ClassAdmin;
-use Maruf89\CommunityDirectory\Admin\Menus\ClassAdminMenus;
-use Maruf89\CommunityDirectory\Admin\Menus\ClassMenuItems;
-use Maruf89\CommunityDirectory\Admin\ClassAdminPostDisplay;
-use Maruf89\CommunityDirectory\Admin\ClassAccount;
+use Maruf89\CommunityDirectory\Admin\{ClassAdmin, ClassAdminPostDisplay, ClassAccount};
+use Maruf89\CommunityDirectory\Admin\Menus\{ClassAdminMenus, ClassMenuItems};
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
-use Maruf89\CommunityDirectory\Admin\Widgets\ClassLocationsWidget;
-use Maruf89\CommunityDirectory\Admin\Widgets\ClassOffersNeedsHashTagWidget;
+use Maruf89\CommunityDirectory\Admin\Widgets\{ClassLocationsWidget, ClassOffersNeedsHashTagWidget};
+use Maruf89\CommunityDirectory\Email\ClassTransactionalMailer;
+
 
 final class ClassCommunityDirectory {
 
@@ -40,6 +38,8 @@ final class ClassCommunityDirectory {
     protected ClassUWPFormBuilder $uwp_form_builder;
     protected ClassAdminPostDisplay $admin_post_display;
     protected ClassAccount $account;
+
+    protected ClassTransactionalMailer $mailchimp;
 
     protected ClassLocationsWidget $locations_widget;
 
@@ -88,6 +88,9 @@ final class ClassCommunityDirectory {
         $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
         $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
         $this->load_instance_location_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
+
+        if ( ClassTransactionalMailer::enabled() )
+            $this->load_mailchimp_actions_and_filters( ClassTransactionalMailer::get_instance() );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -284,6 +287,10 @@ final class ClassCommunityDirectory {
         
         add_action( 'community_directory_shift_inhabitants_count', array( $class_name, 'shift_inhabitants_count' ), 10, 3 );
     }
+
+    public function load_mailchimp_actions_and_filters( ClassTransactionalMailer $instance ) {
+        add_filter( 'uwp_after_extra_fields_save', array( $instance, 'send_welcome_email' ), 11, 4 );
+    }
     
 
     /**
@@ -292,6 +299,7 @@ final class ClassCommunityDirectory {
     public function load_account_actions_and_filters( $instance ) {
         add_filter( 'uwp_validate_fields_before', array( $instance, 'validate_user_registration_before' ), 11, 3 );
         add_filter( 'uwp_before_extra_fields_save', array( $instance, 'save_data_to_user_meta' ), 11, 3 );
+        add_filter( 'community_directory_first_entity_login_link', array( $instance, 'get_first_entity_login_link' ), 10, 3 );
         add_action('wp_login', array( $instance, 'check_first_login' ), 10, 2);
     }
 

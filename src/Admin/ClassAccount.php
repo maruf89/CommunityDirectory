@@ -52,11 +52,11 @@ class ClassAccount {
     /**
      * Upon registration submission, field values are validated. Here we validate the location field.
      * 
-     * @param           $result             a_array     the validated form data, minus any extra fields not
+     * @param           $data               ARRAY_A     the validated form data, minus any extra fields not
      *                                                  correlating to something in the uwp form
-     * @param           $validation_type    string      uwp validation type
-     * @param           $user_id            int         
-     * @return                              a_array     $result
+     * @param           $validation_type    STRING      uwp validation type
+     * @param           $user_id            INTEGER      
+     * @return                              ARRAY_A     $result
      */
     public static function save_data_to_user_meta( $data, $validation_type, $user_id ) {
         // return if validating something else
@@ -104,7 +104,17 @@ class ClassAccount {
         $user->set_role( ClassActivator::$role_entity );
     }
 
-    public function check_first_login( $user_login, $user ) {
+    /**
+     * Action hook that returns the link to redirect to on first login
+     */
+    public function get_first_entity_login_link( string $redirect, \WP_User $user, Entity $Entity ):string {
+        return Entity::get_edit_link( $Entity->post_id );
+    }
+
+    /**
+     * Checks whether an entity user is logging in for the first time
+     */
+    public function check_first_login( string $user_login, \WP_User $user ) {
         $user_id = $user->ID;
         // getting prev. saved meta
         $first_login = get_user_meta($user_id, 'prefix_first_login', true);
@@ -113,10 +123,17 @@ class ClassAccount {
             $Entity = Entity::get_instance( null, $user_id );
             
             if ( $Entity ) {
+                do_action( 'community_directory_first_entity_login_before', $user, $Entity );
+
                 // update meta after first login
                 update_user_meta($user_id, 'prefix_first_login', '0');
+
                 // redirect to given URL
-                wp_redirect( Entity::get_edit_link( $Entity->post_id ) );
+                $redirect_link = apply_filters( 'community_directory_first_entity_login_link', '', $user, $Entity );
+                if ( !empty( $redirect_link ) )
+                    wp_redirect( $redirect_link );
+
+                do_action( 'community_directory_first_entity_login_after', $user, $Entity );
                 exit;
             }
         }
