@@ -39,8 +39,6 @@ final class ClassCommunityDirectory {
     protected ClassAdminPostDisplay $admin_post_display;
     protected ClassAccount $account;
 
-    protected ClassTransactionalMailer $mailchimp;
-
     protected ClassLocationsWidget $locations_widget;
 
     public static function init() {
@@ -90,7 +88,7 @@ final class ClassCommunityDirectory {
         $this->load_instance_location_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
 
         if ( ClassTransactionalMailer::enabled() )
-            $this->load_mailchimp_actions_and_filters( ClassTransactionalMailer::get_instance() );
+            $this->load_mail_actions_and_filters( ClassTransactionalMailer::get_instance() );
 
         // shortcodes
         $this->load_shortcodes( $this->shortcodes );
@@ -288,11 +286,11 @@ final class ClassCommunityDirectory {
         add_action( 'community_directory_shift_inhabitants_count', array( $class_name, 'shift_inhabitants_count' ), 10, 3 );
     }
 
-    public function load_mailchimp_actions_and_filters( ClassTransactionalMailer $instance ) {
-        add_filter( 'uwp_after_extra_fields_save', array( $instance, 'send_welcome_email' ), 11, 4 );
+    public function load_mail_actions_and_filters( ClassTransactionalMailer $instance ) {
+        add_action( 'uwp_activation_key', array( $instance, 'send_welcome_email' ), 10, 2 );
+        add_action( 'retrieve_password_key', array( $instance, 'send_forgotten_password_email' ), 10, 2 );
     }
     
-
     /**
      * Actions & Filters for account & registration
      */

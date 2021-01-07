@@ -32,8 +32,6 @@ class ClassTransactionalMailer implements IMailer {
         $mailer_instance =& $this;
         require_once( dirname(__FILE__) . '/wp_mail_override.php' );
 
-        $this->load_actions_and_filters();
-
         $config = Configuration::getDefaultConfiguration()->setApiKey(
             'api-key',
             $this->api_key
@@ -55,23 +53,20 @@ class ClassTransactionalMailer implements IMailer {
         } catch (Exception $e) {
             ClassErrorHandler::handle_exception( new \WP_Error( '', 'Error loading templates from SendInBlue', $e->getMessage() ) );
         }
-
     }
 
-    private function load_actions_and_filters() {
-        add_action( 'retrieve_password_key', array( $this, 'send_forgotten_password_email' ), 10, 2 );
-    }
-
-    public function send_welcome_email(
-        bool $saved,
-        array $data,
-        string $validation_type,
-        int $user_id
-    ) {
-        if ( !$saved || $validation_type !== 'register' )
-            return $data;
-
-        $user = new \WP_User( $user_id );
+    public function send_welcome_email( string $user_login, string $key ) {
+        $user = get_user_by( 'login', $user_login );
+        
+        $activation_link = add_query_arg(
+            array(
+                'uwp_activate' => 'yes',
+                'key' => $key,
+                'login' => $user_login
+            ),
+            site_url()
+        );
+        
         $email_addr = $user->data->user_email;
         $email = new SendSmtpEmail( array(
             'to'            => [ $this->get_to_from_user( $user ) ],
@@ -79,7 +74,7 @@ class ClassTransactionalMailer implements IMailer {
             'templateId'    => $this->templates[ 'signup' ],
             'params'        => (object) [
                 'display_name' => $user->data->display_name,
-                'activation_link' => uwp_get_activation_link( $user_id ),
+                'activation_link' => $activation_link,
                 'site_name' => get_bloginfo()
             ]
         ) );
@@ -92,8 +87,6 @@ class ClassTransactionalMailer implements IMailer {
         } catch ( Exception $e ) {
             ClassErrorHandler::handle_exception( new \WP_Error( '', "Error sending activation email to $email_addr", $e->getMessage() ) );
         }
-        
-        return $data;
     }
 
     public function send_forgotten_password_email( string $user_login, string $key ) {
