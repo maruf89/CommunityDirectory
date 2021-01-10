@@ -134,6 +134,23 @@ class OfferNeed extends Instance {
     }
 
     /**
+     * Gets the entities status depending on the desired format
+     */
+    public function get_status( $format = 'bool' ) {
+        if ( $this->acf_data || $this->load_acf_from_db() ) {
+            $active = $this->acf_data[ClassACF::$offers_needs_active] === 'true';
+            switch ( $format ) {
+                case 'raw': return $this->acf_data[ClassACF::$offers_needs_active];
+                case 'bool': return $active;
+                case 'enum': return $active ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
+                case 'display': return $active ?
+                    __( 'Active', 'community-directory' ) : __( 'Inactive', 'community-directory' );
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the owner Entity of this cpt
      */
     public function get_owner():Entity {
@@ -302,8 +319,8 @@ class OfferNeed extends Instance {
     }
 
     /**
-     * Upon publishing an OfferNeed updates the 'post_parent' with the "${entity_post_id}1100${location_post_id},
-     * and set's the 'post_parent' to the location's post id
+     * Upon publishing an OfferNeed updates the 'post_parent' field with
+     * "${entity_post_id}1100${location_post_id}
      */
     public static function set_post_props_on_save( array $sanitized, array $unsanitized, array $unprocessed ) {
         $status = [ 'publish', 'inactive' ];

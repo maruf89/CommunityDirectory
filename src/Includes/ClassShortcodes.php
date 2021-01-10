@@ -27,7 +27,7 @@ class ClassShortcodes {
             ? $attrs[ 'count' ] : 20;
 
         $offers_and_needs = apply_filters(
-            'community_directory_get_latest_offers_and_needs',
+            'community_directory_get_latest_offers_needs',
             array(),
             $type,
             $entity_id,
@@ -61,7 +61,7 @@ class ClassShortcodes {
             ? (int) $attrs[ 'count' ] : 20;
 
         $offers_and_needs = apply_filters(
-            'community_directory_get_latest_offers_and_needs',
+            'community_directory_get_latest_offers_needs',
             array(),
             $type,
             $entity_id,

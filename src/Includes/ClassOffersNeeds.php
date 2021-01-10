@@ -10,7 +10,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
-use Maruf89\CommunityDirectory\Includes\instances\OfferNeed;
+use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity};
 
 class ClassOffersNeeds extends Routable {
 
@@ -439,16 +439,91 @@ class ClassOffersNeeds extends Routable {
     public static function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                ClassACF::$offers_needs_hashtag_title_key,
-                ClassACF::$offers_needs_description_key,
+                ClassACF::$offers_needs_hashtag_title,
+                ClassACF::$offers_needs_description,
             ],
-            'email' => ClassACF::$entity_email_key,
+            'email' => ClassACF::$entity_email,
             'required' => []
         ];
 
-        $fields[ 'required' ][ ClassACF::$entity_active_key ] = 1;
+        // $fields[ 'required' ][ ClassACF::$offers_needs_active_key ] = 'true';
         
         return $fields;
+    }
+
+    /**
+     * TODO move this into a PHP trait across Entity and Location
+     * 
+     * Get's all offers and needs based on passed in vars
+     * 
+     * @param       $results            ?array           an array which to merge with passed in results
+     * @param       $post_status        ?string|array    optional array, first variable must be (=|!=), default: =
+     *                                                   if null or empty string, returns non-auto draft fields
+     * @param       $where_match        ?array           optional array with fields to match against
+     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
+     */
+    function get(
+        array $results = [],
+        $post_status = null,
+        array $where_match = null,
+        string $output = null
+    ) {
+        global $wpdb;
+
+        if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
+        if ( null === $where_match ) $where_match = [];
+        if ( null === $output ) $output = OBJECT;
+
+        // Create where array with the first check
+        $where = [ 'post_type = \'' . static::$post_type . '\'' ];
+        
+        if ( gettype( $post_status ) === 'string' )
+            $post_status = [ '=', $post_status ];
+        
+        $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
+
+        if ( count( $where_match ) ) {
+            foreach ( $where_match as $key => $match ) {
+                switch ( $key ) {
+
+                    // Integer values
+                    case 'owner':
+                        $where[] = "post_parent = $match";
+                        break;
+                    case 'post_parent':
+                    case 'post_author':
+                    case 'ID':
+                        $where[] = "$key = $match";
+                        break;
+
+                    // Date type, must include (>|<|>=) next to date value
+                    case 'post_date':
+                    case 'post_modified':
+                        $where[] = "$key $match";
+                        break;
+
+                    // Default string values
+                    case 'slug':
+                        $key = 'post_name';
+                    default:
+                        $where[] = "$key = '$match'";
+                }
+            }
+        }
+                    
+        $where_clauses = 'WHERE ' . implode( ' AND ', $where );
+
+        $sql = "
+            SELECT *
+            FROM $wpdb->posts
+            $where_clauses  
+        ";
+        
+        if ( $output === 'sql' ) return $sql;
+
+        $entities = $wpdb->get_results( $sql );
+        
+        return array_merge( $entities, $results );
     }
 
     /**
@@ -501,45 +576,46 @@ class ClassOffersNeeds extends Routable {
     }
 
     public static function format_to_instances( $rows ) {
-        foreach ( (object) $rows as $key => $post ) {
+        foreach ( (object) $rows as $key => $post )
             $rows[ $key ] = new OfferNeed( $post->ID, null, \WP_Post::get_instance( $post->ID ) );
-            // $rows[ $key ]->fill_with_data( $post );
-        }
 
         return $rows;
     }
 
+    /**
+     * Updates the offers/needs cpt post_status to reflect whether
+     * the parent entity is active or not
+     */
     public function entity_changed_activation( Entity $entity, bool $activated, bool $status_only ) {
         global $wpdb;
         $post_type = static::$post_type;
         $offers_needs_sql = $wpdb->prepare("
             SELECT post.ID
             FROM $wpdb->posts as post
-            LEFT JOIN $wpdb->post_meta as meta
+            LEFT JOIN $wpdb->postmeta as meta
             ON post.ID = meta.post_ID
             WHERE post.post_author = %d
             AND post.post_type = '%s'
             AND meta.meta_key = '%s'
-            AND meta.meta_value = 'true
+            AND meta.meta_value = 'true'
         ",
-        $entity->post_id, $post_type,
+        $entity->author_id, $post_type,
         ClassACF::$offers_needs_active);
 
-        $results = $wpdb->get_results( $sql );
+        $offers_needs = $wpdb->get_results( $offers_needs_sql );
 
-        
-        
-        if ( !count( $results ) ) return;
+        if ( !count( $offers_needs ) ) return;
 
-        
-        
-        $post_status_count = $activate ? 1 : 0;
-        // If owner entity is inactive, increment status count so it get's a different post_status
-        if ( !$owner->get_status() ) $post_status_count += 2;
-        
-        // Update the post_status
-        $post_status = community_directory_bool_to_status( $post_status_count, 'offer_need', 'post' );
-        $saved = !!$this->update_post( array( 'post_status' => $post_status ) );
+        // If entity isn't active, offers_needs will get altered statuses
+        $post_status_addition = $activated ? 0 : 2;
+        $offers_needs = static::format_to_instances( $offers_needs );
+
+        foreach ( $offers_needs as $on ) {
+            $on_active = $on->get_status();
+            $post_status_count = $post_status_addition + ( $on_active ? 1 : 0 );
+            $post_status = community_directory_bool_to_status( $post_status_count, 'offer_need', 'post' );
+            $on->update_post( array( 'post_status' => $post_status ) );
+        }
     }
 
     protected array $route_map = [

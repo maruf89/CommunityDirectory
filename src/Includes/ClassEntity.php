@@ -113,14 +113,14 @@ class ClassEntity extends Routable {
     public static function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                ClassACF::$entity_location_name_key,
-                ClassACF::$entity_about_key,
+                ClassACF::$entity_location_name,
+                ClassACF::$entity_about,
             ],
-            'email' => ClassACF::$entity_email_key,
+            'email' => ClassACF::$entity_email,
             'required' => []
         ];
 
-        $fields[ 'required' ][ ClassACF::$entity_active_key ] = 'true';
+        $fields[ 'required' ][ ClassACF::$entity_active ] = 'true';
         
         return $fields;
     }

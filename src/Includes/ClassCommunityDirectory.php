@@ -237,7 +237,7 @@ final class ClassCommunityDirectory {
     public function load_acf_actions_and_filters( ClassACF $instance ) {
         add_action( 'acf/init', array( $instance, 'initiate_plugin' ) );
         add_action( 'community_directory_acf_initiate_entity', array( $instance, 'initiate_entity' ) );
-        add_action( 'community_directory_acf_update', array( $instance, 'update' ) );
+        add_action( 'community_directory_acf_update', array( $instance, 'update' ), 10, 2 );
 
         add_filter( 'community_directory_required_acf_entity_fields', array( $instance, 'generate_required_entity_fields' ), 10, 1 );
         add_filter( 'community_directory_required_acf_offers_needs_fields', array( $instance, 'generate_required_offers_needs_fields' ), 10, 1 );
@@ -248,9 +248,11 @@ final class ClassCommunityDirectory {
         add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
         add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
+        add_filter( 'community_directory_get_offers_needs', array( $instance, 'get' ), 10, 4 );
         add_filter(
-            'community_directory_get_latest_offers_and_needs',
+            'community_directory_get_latest_offers_needs',
             array( $instance, 'get_latest' ), 10, 5 );
+        add_filter( 'community_directory_format_offers_needs_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
     }
 
     // OfferNeed
@@ -260,7 +262,7 @@ final class ClassCommunityDirectory {
             'acf/update_value/key=' . ClassACF::$offers_needs_type_key,
             array( $class_name, 'update_post_excerpt_with_type' ), 10, 3 );
         add_filter(
-            'acf/update_value/key=' . ClassACF::$entity_active_key,
+            'acf/update_value/key=' . ClassACF::$offers_needs_active_key,
             array( $class_name, 'acf_activation_changed' ), 10, 3 );
 
         add_action( 'wp_insert_post_data', array( $class_name, 'set_post_props_on_save' ), 10, 3 );

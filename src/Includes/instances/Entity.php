@@ -162,6 +162,8 @@ class Entity extends Instance {
     }
 
     /**
+     * TODO: Refactor away to Instance parent class
+     * 
      * Gets the entities status depending on the desired format
      */
     public function get_status( $format = 'bool' ) {

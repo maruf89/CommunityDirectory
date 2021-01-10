@@ -112,6 +112,14 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
                 'type' => 'checkbox',
             ),
             array(
+                'name' => 'Reload Offers Needs',
+                'desc' => 'Call this just once after updating offers needs to include active/inactive field',
+                'id'   => 'reload_offers_needs',
+                'type' => 'button',
+                'action' => 'reload_offers_needs',
+                'text' => __( 'Reload', 'community-directory' ),
+            ),
+            array(
                 'name' => __( 'Reindex Active/Inactive Entities', 'community-directory' ),
                 'desc' => __( 'Clicking this button updates the active/inactive inhabitants to reflect the actual count for each location (workaround)' ),
                 'id'   => 'reindex_inhabitants',
@@ -128,6 +136,16 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
         $settings[] = array( 'type' => 'sectionend', 'id' => 'general_options' );
 
         return $settings;
+    }
+
+    /**
+     * To be called once - sets all offers needs to active => true
+     */
+    public function action_reload_offers_needs() {
+        $offers_needs = apply_filters( 'community_directory_get_offers_needs', [], null, null, null );
+        $offers_needs = apply_filters( 'community_directory_format_offers_needs_to_instances', $offers_needs );
+
+        foreach ( $offers_needs as $offer_need ) $offer_need->activate_deactivate( true );
     }
 
     /**

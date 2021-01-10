@@ -30,7 +30,7 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
         $type = isset( $instance[ 'type' ] ) ? $instance[ 'type' ] : 'need';
 
         $offers_and_needs = apply_filters(
-            'community_directory_get_latest_offers_and_needs',
+            'community_directory_get_latest_offers_needs',
             array(),
             $type,
         );
