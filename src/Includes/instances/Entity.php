@@ -236,6 +236,17 @@ class Entity extends Instance {
     /////////////   Update   ////////////
     /////////////////////////////////////
 
+    /**
+     * Does the obvious, and triggers other actions that rely on
+     * an entities state, like:
+     *      - change post_status of Entity cpt
+     *      - hides any offers/needs that would be otherwise seen (via hook)
+     * 
+     * @param   $activate       boolean         Whether to activate/deactivate
+     * @param   $status_only    boolean         Whether to ONLY update the post's post_status
+     * @param   $force          boolean         Whether to force the action and ignore the entity's current state
+     * @return                  boolean         Whether it was successfull (in updating the post_status)
+     */
     public function activate_deactivate(
         bool $activate = true,
         bool $status_only = false,
@@ -260,7 +271,7 @@ class Entity extends Instance {
             // Update the user's active field in ACF
             $acf_updates = array();
             $acf_updates[ClassACF::$entity_active_key] = $active_state;
-            community_directory_acf_update_entity( $this->post_id, $acf_updates );
+            do_action( 'community_directory_acf_update', $this->post_id, $acf_updates );
 
             do_action( 'community_directory_shift_inhabitants_count',
                 $this->get_location()->location_id,
@@ -271,7 +282,12 @@ class Entity extends Instance {
 
         // Update the post_status
         $post_status = community_directory_bool_to_status( $activate, 'entity', 'post' );
-        return !!$this->update_post( array( 'post_status' => $post_status ) );
+        $saved = !!$this->update_post( array( 'post_status' => $post_status ) );
+
+        // Broadcast that the change occured
+        if ( $saved ) do_action( 'community_directory_entity_changed_activation', $this, $activate, $status_only );
+
+        return $saved;
     }
 
     public function set_location( Location $location ):bool {

@@ -38,6 +38,8 @@ class ClassACF {
 
     /////// Offers & Needs field keys and field names
     public static $offers_needs_form_group_key = 'group_community_directory_offers_needs';
+    public static $offers_needs_active_key = 'field_cd_offer_need_active';
+    public static $offers_needs_active = 'offer_need_active';
     public static $offers_needs_hashtag_title_key = 'field_cd_offer_need_hashtag_title';
     public static $offers_needs_hashtag_title = 'offer_need_hashtag_title';
     public static $offers_needs_product_or_service_key = 'field_cd_offer_need_product_or_service';
@@ -262,6 +264,31 @@ class ClassACF {
 
     public static function generate_required_offers_needs_fields( $fields_arr ) {
         $fields_arr[] = array(
+            'key' => self::$offers_needs_active_key,
+            'label' => __( 'Hash Tag Title', 'community-directory' ),
+            'name' => self::$offers_needs_active,
+            'type' => 'text',
+            'instructions' => __( 'Enter the hash tag title that sums up your offer or need in 49 characters or less. Example: #FreshlySqueezedAppleJuice', 'community-directory' ),
+            'maxlength' => 49,
+        );
+        $fields_arr[] = array(
+            'key'       => self::$offers_needs_active_key,
+			'label'     => __( 'Is Active', 'community-directory' ),
+			'name'      => self::$offers_needs_active,
+			'type'      => 'radio',
+			'instructions' => __( 'Select \'Active\' to make your offer/need visible. If \'Inactive\', your offer/need will not be visible to others.', 'community-directory' ),
+			'required' => 1,
+			'choices'   => array(
+				'true'      => __( 'Active', 'community-directory' ),
+				'false'     => __( 'Inactive', 'community-directory' ),
+			),
+			'default_value' => 'false',
+			'layout' => 'horizontal',
+			'return_format' => 'value',
+			'save_other_choice' => 0,
+        );
+
+        $fields_arr[] = array(
             'key' => self::$offers_needs_hashtag_title_key,
             'label' => __( 'Hash Tag Title', 'community-directory' ),
             'name' => self::$offers_needs_hashtag_title,
@@ -363,7 +390,7 @@ class ClassACF {
      *
      * @param       $entity_data        ARRAY_A     requires: 'first_name', 'last_name', 'entity_id' (post_id), 'status'
      */
-    public static function initiate_entity( $entity_data ) {
+    public static function initiate_entity( array $entity_data ) {
         // turn array vars into accessable vars
         extract( $entity_data );
 
@@ -375,8 +402,8 @@ class ClassACF {
         acf_update_values( $update_values, $entity_id );
     }
 
-    public static function update_entity( $entity_post_id, $entity_data ) {
-        acf_update_values( $entity_data, $entity_post_id );
+    public static function update( int $post_id, array $entity_data ) {
+        acf_update_values( $entity_data, $post_id );
     }
 
 }

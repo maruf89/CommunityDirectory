@@ -225,21 +225,38 @@ function community_directory_get_post_var_by_field( $var_to_get, $where_key, $wh
     return $post;
 }
 
-function community_directory_bool_to_status( bool $bool, string $what_for = 'entity', string $type = 'enum' ):string {
+function community_directory_bool_to_status( $action, string $what_for = 'entity', string $type = 'enum' ):string {
+    if ( gettype( $action ) === 'boolean' ) $action = $action ? 1 : 0;
+
     switch ( $what_for ) {
         case 'entity':
             switch ( $type ) {
                 case 'enum':
-                    return $bool ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
+                    return $action ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
                 case 'post':
-                    return $bool ? 'publish' : 'pending';
+                    return $action ? 'publish' : 'pending';
             }
         case 'location':
             switch ( $type ) {
                 case 'enum':
-                    return $bool ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
+                    return $action ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
                 case 'post':
-                    return $bool ? 'publish' : 'pending';
+                    return $action ? 'publish' : 'pending';
+            }
+        case 'offer_need':
+            switch ( $type ) {
+                case 'enum':
+                    return community_directory_bool_to_status( $action, 'entity' );
+                case 'post':
+                    switch ( $action ) {
+                        case 0:// Deactivated
+                        case 2:// Entity owner is inactive and offer_need is inactive
+                            return 'pending';
+                        case 1:// Active
+                            return 'publish';
+                        case 3:// Entity owner is inactive yet offer_need IS active (not visible)
+                            return 'future';
+                    }
             }
     }
 }

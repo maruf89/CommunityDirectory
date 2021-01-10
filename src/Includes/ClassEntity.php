@@ -38,6 +38,10 @@ class ClassEntity extends Routable {
         parent::__construct( $this );
     }
 
+    //////////////////////////////
+    ////////  WordPress  /////////
+    //////////////////////////////
+
     /**
      * Register's the Entity post type
      */
@@ -105,6 +109,25 @@ class ClassEntity extends Routable {
         $arr[] = self::$post_type;
         return $arr;
     }
+
+    public static function get_meta_search_fields():array {
+        $fields = [
+            'search' => [
+                ClassACF::$entity_location_name_key,
+                ClassACF::$entity_about_key,
+            ],
+            'email' => ClassACF::$entity_email_key,
+            'required' => []
+        ];
+
+        $fields[ 'required' ][ ClassACF::$entity_active_key ] = 'true';
+        
+        return $fields;
+    }
+
+    //////////////////////////////
+    ////////     Get     /////////
+    //////////////////////////////
 
     /**
      * Get's all entities based on passed in vars

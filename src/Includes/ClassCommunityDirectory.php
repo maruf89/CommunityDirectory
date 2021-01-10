@@ -34,6 +34,7 @@ final class ClassCommunityDirectory {
     protected ClassShortcodes $shortcodes;
     protected ClassACF $acf;
     protected ClassRestEndPoints $rest_end_points;
+    protected ClassSearch $search;
 
     protected ClassUWPFormBuilder $uwp_form_builder;
     protected ClassAdminPostDisplay $admin_post_display;
@@ -71,6 +72,7 @@ final class ClassCommunityDirectory {
         $this->admin_uwpform_builder = new ClassUWPFormBuilder();
         $this->admin_post_display = ClassAdminPostDisplay::get_instance();
         $this->account = new ClassAccount();
+        $this->search = new ClassSearch();
 
         // actions and filters
         $this->load_assets_actions_and_filters( $this->public );
@@ -235,6 +237,7 @@ final class ClassCommunityDirectory {
     public function load_acf_actions_and_filters( ClassACF $instance ) {
         add_action( 'acf/init', array( $instance, 'initiate_plugin' ) );
         add_action( 'community_directory_acf_initiate_entity', array( $instance, 'initiate_entity' ) );
+        add_action( 'community_directory_acf_update', array( $instance, 'update' ) );
 
         add_filter( 'community_directory_required_acf_entity_fields', array( $instance, 'generate_required_entity_fields' ), 10, 1 );
         add_filter( 'community_directory_required_acf_offers_needs_fields', array( $instance, 'generate_required_offers_needs_fields' ), 10, 1 );
@@ -244,6 +247,7 @@ final class ClassCommunityDirectory {
         add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
         add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
+        add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
         add_filter(
             'community_directory_get_latest_offers_and_needs',
             array( $instance, 'get_latest' ), 10, 5 );
@@ -251,10 +255,13 @@ final class ClassCommunityDirectory {
 
     // OfferNeed
     public function load_instance_offers_needs_actions_and_filters( string $class_name ) {
-        // On saving the type (if offer/need)
+        // On saving the type, sets the excerpt field to (offer|need)
         add_filter(
             'acf/update_value/key=' . ClassACF::$offers_needs_type_key,
             array( $class_name, 'update_post_excerpt_with_type' ), 10, 3 );
+        add_filter(
+            'acf/update_value/key=' . ClassACF::$entity_active_key,
+            array( $class_name, 'acf_activation_changed' ), 10, 3 );
 
         add_action( 'wp_insert_post_data', array( $class_name, 'set_post_props_on_save' ), 10, 3 );
     }

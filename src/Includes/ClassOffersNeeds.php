@@ -145,6 +145,9 @@ class ClassOffersNeeds extends Routable {
         $this->add_term_categories( $categories );
     }
 
+    /**
+     * Filters the HTML on the edit OffersNeeds cpt to replace the category checkboxes with radio buttons
+     */
     public function replace_terms_to_radio_start( string $post_type, \WP_Post $post ) {
         if ( $post_type === self::$post_type ) {
             $this->_replacing_checkboxes = true;
@@ -159,6 +162,10 @@ class ClassOffersNeeds extends Routable {
         }
     }
 
+    /**
+     * Updates the wp_query which by default loads all offers_needs a user can see
+     * This restricts it to only their own
+     */
     public static function pre_get_posts( $query ) {
         global $current_user, $wp_query;
         if( is_admin() && !current_user_can( 'edit_others_posts' ) ) {
@@ -168,7 +175,10 @@ class ClassOffersNeeds extends Routable {
         }
     }
 
-    // Fix post counts
+    /**
+     * Updates the number of Offer_Need posts a user sees
+     * because default is to show all
+     */
     public static function fix_post_counts($views) {
         global $current_user, $wp_query;
         unset($views['mine']);
@@ -227,7 +237,9 @@ class ClassOffersNeeds extends Routable {
         return $views;
     }
 
-    // Fix media counts
+    /**
+     * Further fixes number of media items that appear for a given user
+     */
     public static function fix_media_counts($views) {
         global $wpdb, $current_user, $post_mime_types, $avail_post_mime_types;
         $views = array();
@@ -271,6 +283,9 @@ class ClassOffersNeeds extends Routable {
         return $views;
     }
 
+    /**
+     * Registers Product/Service categories in WP
+     */
     public function add_term_categories( array $categories, array $parent = null ) {
         foreach ( $categories as $key => $term_or_arr ) {
             $term_type = gettype( $term_or_arr );
@@ -419,6 +434,23 @@ class ClassOffersNeeds extends Routable {
         'give away' => array()
     ];
 
+
+
+    public static function get_meta_search_fields():array {
+        $fields = [
+            'search' => [
+                ClassACF::$offers_needs_hashtag_title_key,
+                ClassACF::$offers_needs_description_key,
+            ],
+            'email' => ClassACF::$entity_email_key,
+            'required' => []
+        ];
+
+        $fields[ 'required' ][ ClassACF::$entity_active_key ] = 1;
+        
+        return $fields;
+    }
+
     /**
      * @param       $array          array       the array to fill
      * @param       $type           string      (offer|need)
@@ -475,6 +507,39 @@ class ClassOffersNeeds extends Routable {
         }
 
         return $rows;
+    }
+
+    public function entity_changed_activation( Entity $entity, bool $activated, bool $status_only ) {
+        global $wpdb;
+        $post_type = static::$post_type;
+        $offers_needs_sql = $wpdb->prepare("
+            SELECT post.ID
+            FROM $wpdb->posts as post
+            LEFT JOIN $wpdb->post_meta as meta
+            ON post.ID = meta.post_ID
+            WHERE post.post_author = %d
+            AND post.post_type = '%s'
+            AND meta.meta_key = '%s'
+            AND meta.meta_value = 'true
+        ",
+        $entity->post_id, $post_type,
+        ClassACF::$offers_needs_active);
+
+        $results = $wpdb->get_results( $sql );
+
+        
+        
+        if ( !count( $results ) ) return;
+
+        
+        
+        $post_status_count = $activate ? 1 : 0;
+        // If owner entity is inactive, increment status count so it get's a different post_status
+        if ( !$owner->get_status() ) $post_status_count += 2;
+        
+        // Update the post_status
+        $post_status = community_directory_bool_to_status( $post_status_count, 'offer_need', 'post' );
+        $saved = !!$this->update_post( array( 'post_status' => $post_status ) );
     }
 
     protected array $route_map = [

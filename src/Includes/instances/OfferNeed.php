@@ -133,6 +133,55 @@ class OfferNeed extends Instance {
         return $return_obj ? $this->category : $this->category->name;
     }
 
+    /**
+     * Returns the owner Entity of this cpt
+     */
+    public function get_owner():Entity {
+        return Entity::get_instance( $this->entity_post_id );
+    }
+
+    public function activate_deactivate(
+        bool $activate = true,
+        bool $status_only = false,
+        bool $force = false
+    ):bool {
+        // If we can't load the data, return false
+        if ( !$this->load_post_from_db() || !$this->load_acf_from_db() ) return false;
+
+        $active_state =& $this->acf_data[ ClassACF::$offers_needs_active ];
+
+        // If already set, don't do anything
+        if ( !$force ) {
+            if ( ( $activate && $active_state === 'true' ) ||
+                 ( !$activate && $active_state === 'false' ) ) return false;
+        }
+
+        // update the local variable
+        $active_state = $activate ? 'true' : 'false';
+
+        // In cases where user manually updates the field, we don't need to do it again
+        if ( !$status_only ) {
+            // Update the user's active field in ACF
+            $acf_updates = array();
+            $acf_updates[ ClassACF::$offers_needs_active_key ] = $active_state;
+            do_action( 'community_directory_acf_update', $this->post_id, $acf_updates );
+        }
+
+        $owner = $this->get_owner();
+        $post_status_count = $activate ? 1 : 0;
+        // If owner entity is inactive, increment status count so it get's a different post_status
+        if ( !$owner->get_status() ) $post_status_count += 2;
+        
+        // Update the post_status
+        $post_status = community_directory_bool_to_status( $post_status_count, 'offer_need', 'post' );
+        $saved = !!$this->update_post( array( 'post_status' => $post_status ) );
+
+        // Broadcast that the change occured
+        if ( $saved ) do_action( 'community_directory_offer_need_changed_activation', $this, $activate, $status_only );
+
+        return $saved;
+    }
+
     //////////////////////////////////
     //////// Loading from DB /////////
     //////////////////////////////////
@@ -274,6 +323,25 @@ class OfferNeed extends Instance {
         $sanitized[ 'post_parent' ] = self::generate_entity_loc_id( $Entity->post_id, $loc_id );
 
         return $sanitized;
+    }
+
+    public static function acf_activation_changed( $value, $post_id, $field ) {
+        if ( !isset( $_POST['acf'][ClassACF::$offers_needs_active_key] ) ) return $value;
+        
+        global $post;
+        
+        // get the old (saved) value
+        $was_active = get_field( ClassACF::$offers_needs_active, $post_id ) === 'true';
+
+        $is_active = $_POST['acf'][ClassACF::$offers_needs_active_key] === 'true';
+        
+        if ( $was_active == $is_active ) return $value;
+
+        // Update the post's status
+        $instance = self::get_instance( $post_id );
+        $instance->activate_deactivate( $is_active, true, false );
+        
+        return $value;
     }
 
 }
