@@ -10,9 +10,12 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
 use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
 
 class ClassLocation extends Routable {
 
+    use PostTypeMethods;
+    
     private static ClassLocation $instance;
 
     public static function get_instance() {
@@ -82,11 +85,6 @@ class ClassLocation extends Routable {
          
         // Post type, $args - the Post Type string can be MAX 20 characters
         register_post_type( self::$post_type, $custom_post_type_args );
-    }
-
-    public static function add_post_type( $arr ) {
-        $arr[] = self::$post_type;
-        return $arr;
     }
 
     /**

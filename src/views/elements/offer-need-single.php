@@ -6,7 +6,7 @@
     if ( $type === 'need' ) $type_type = __( 'Type of Need', 'community-directory' );
 ?>
 
-<li id="<?= $offer_need->get_id() ?>" class="cd-<?= $type ?>-single cd-on-single <?= "$type-$offer_need->ID card" ?>">
+<li id="p-<?= $offer_need->get_id() ?>" class="cd-<?= $type ?>-single cd-on-single <?= "$type-$offer_need->ID card" ?>">
     <div class="card-body">
         <h3 class="title"><?= $offer_need->post_title ?></h3>
         <?php if ( $offer_need->has_acf_image() ): ?>

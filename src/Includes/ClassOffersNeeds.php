@@ -11,8 +11,12 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
 use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity};
+use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
+use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
 
-class ClassOffersNeeds extends Routable {
+class ClassOffersNeeds extends Routable implements ISearchable {
+
+    use PostTypeMethods;
 
     private static ClassOffersNeeds $instance;
 
@@ -93,14 +97,6 @@ class ClassOffersNeeds extends Routable {
         );
 
         register_post_type( $post_type, $custom_post_type_args );
-    }
-
-    /**
-     * Filter method to aggregate post types
-     */
-    public static function add_post_type( $arr ) {
-        $arr[] = self::$post_type;
-        return $arr;
     }
 
     /**
@@ -434,96 +430,40 @@ class ClassOffersNeeds extends Routable {
         'give away' => array()
     ];
 
-
-
-    public static function get_meta_search_fields():array {
+    /**
+     * ISearchable Implementation
+     */
+    public function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                ClassACF::$offers_needs_hashtag_title,
-                ClassACF::$offers_needs_description,
+                'post' => [],
+                'meta' => [
+                    ClassACF::$offers_needs_hashtag_title,
+                    ClassACF::$offers_needs_description,
+                ]
             ],
-            'email' => ClassACF::$entity_email,
-            'required' => []
+            'required' => [
+                'meta' => [],
+            ]
         ];
 
-        // $fields[ 'required' ][ ClassACF::$offers_needs_active_key ] = 'true';
+        $fields[ 'required' ][ 'meta' ][ ClassACF::$offers_needs_active ] = [ '=', 'true' ];
         
         return $fields;
     }
 
-    /**
-     * TODO move this into a PHP trait across Entity and Location
-     * 
-     * Get's all offers and needs based on passed in vars
-     * 
-     * @param       $results            ?array           an array which to merge with passed in results
-     * @param       $post_status        ?string|array    optional array, first variable must be (=|!=), default: =
-     *                                                   if null or empty string, returns non-auto draft fields
-     * @param       $where_match        ?array           optional array with fields to match against
-     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
-     */
-    function get(
-        array $results = [],
-        $post_status = null,
-        array $where_match = null,
-        string $output = null
-    ) {
-        global $wpdb;
+    public function render_search_results( array $items, string $search ):string {
+        ob_start();
 
-        if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
-        if ( null === $where_match ) $where_match = [];
-        if ( null === $output ) $output = OBJECT;
-
-        // Create where array with the first check
-        $where = [ 'post_type = \'' . static::$post_type . '\'' ];
-        
-        if ( gettype( $post_status ) === 'string' )
-            $post_status = [ '=', $post_status ];
-        
-        $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
-
-        if ( count( $where_match ) ) {
-            foreach ( $where_match as $key => $match ) {
-                switch ( $key ) {
-
-                    // Integer values
-                    case 'owner':
-                        $where[] = "post_parent = $match";
-                        break;
-                    case 'post_parent':
-                    case 'post_author':
-                    case 'ID':
-                        $where[] = "$key = $match";
-                        break;
-
-                    // Date type, must include (>|<|>=) next to date value
-                    case 'post_date':
-                    case 'post_modified':
-                        $where[] = "$key $match";
-                        break;
-
-                    // Default string values
-                    case 'slug':
-                        $key = 'post_name';
-                    default:
-                        $where[] = "$key = '$match'";
-                }
-            }
+        foreach ( $items as $ON ) {
+            $template_file = apply_filters( 'community_directory_template_search/offer-need.php', '' );
+            load_template( $template_file, false, array(
+                'instance'  => OfferNeed::get_instance( null, null, $ON ),
+                'search'    => $search,
+            ) );
         }
-                    
-        $where_clauses = 'WHERE ' . implode( ' AND ', $where );
 
-        $sql = "
-            SELECT *
-            FROM $wpdb->posts
-            $where_clauses  
-        ";
-        
-        if ( $output === 'sql' ) return $sql;
-
-        $entities = $wpdb->get_results( $sql );
-        
-        return array_merge( $entities, $results );
+        return ob_get_clean();
     }
 
     /**

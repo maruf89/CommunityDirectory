@@ -9,11 +9,14 @@
 namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
-use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\instances\{Entity, Location};
+use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
+use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
 
-class ClassEntity extends Routable {
+class ClassEntity extends Routable implements ISearchable {
 
+    use PostTypeMethods;
+    
     private static ClassEntity $instance;
 
     protected string $router_ns = 'entity';
@@ -102,105 +105,34 @@ class ClassEntity extends Routable {
         register_post_type( $post_type, $custom_post_type_args );
     }
 
-    /**
-     * Filter method to aggregate post types
-     */
-    public static function add_post_type( $arr ) {
-        $arr[] = self::$post_type;
-        return $arr;
-    }
-
-    public static function get_meta_search_fields():array {
+    public function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                ClassACF::$entity_location_name,
-                ClassACF::$entity_about,
+                'post' => [],
+                'meta' => [
+                    ClassACF::$entity_location_name,
+                    ClassACF::$entity_about,
+                ]
             ],
             'email' => ClassACF::$entity_email,
-            'required' => []
+            'required' => [
+                'post' => [],
+                'meta' => [],
+            ]
         ];
 
-        $fields[ 'required' ][ ClassACF::$entity_active ] = 'true';
+        $fields[ 'required' ][ 'meta' ][ ClassACF::$entity_active ] = [ '=', 'true' ];
         
         return $fields;
+    }
+
+    public function render_search_results( array $items, string $search ):string {
+
     }
 
     //////////////////////////////
     ////////     Get     /////////
     //////////////////////////////
-
-    /**
-     * Get's all entities based on passed in vars
-     * 
-     * @param       $results            ?array           an array which to merge with passed in results
-     * @param       $post_status        ?string|array    optional array, first variable must be (=|!=), default: =
-     *                                                   if null or empty string, returns non-auto draft fields
-     * @param       $where_match        ?array           optional array with fields to match against
-     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
-     */
-    function get(
-        array $results = [],
-        $post_status = null,
-        array $where_match = null,
-        string $output = null
-    ) {
-        global $wpdb;
-
-        if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
-        if ( null === $where_match ) $where_match = [];
-        if ( null === $output ) $output = OBJECT;
-
-        // Create where array with the first check
-        $where = [ 'post_type = \'' . static::$post_type . '\'' ];
-        
-        if ( gettype( $post_status ) === 'string' )
-            $post_status = [ '=', $post_status ];
-        
-        $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
-
-        if ( count( $where_match ) ) {
-            foreach ( $where_match as $key => $match ) {
-                switch ( $key ) {
-
-                    // Integer values
-                    case 'location_id':
-                        $where[] = "post_parent = $match";
-                        break;
-                    case 'post_parent':
-                    case 'post_author':
-                    case 'ID':
-                        $where[] = "$key = $match";
-                        break;
-
-                    // Date type, must include (>|<|>=) next to date value
-                    case 'post_date':
-                    case 'post_modified':
-                        $where[] = "$key $match";
-                        break;
-
-                    // Default string values
-                    case 'slug':
-                        $key = 'post_name';
-                    default:
-                        $where[] = "$key = '$match'";
-                }
-            }
-        }
-                    
-        $where_clauses = 'WHERE ' . implode( ' AND ', $where );
-
-        $sql = "
-            SELECT *
-            FROM $wpdb->posts
-            $where_clauses  
-        ";
-        
-        if ( $output === 'sql' ) return $sql;
-
-        $entities = $wpdb->get_results( $sql );
-        
-        return array_merge( $entities, $results );
-    }
 
     /**
      * Returns all of the users without entities

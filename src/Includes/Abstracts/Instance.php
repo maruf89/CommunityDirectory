@@ -35,7 +35,7 @@ abstract class Instance {
         }
     }
 
-    protected static function _get_instance( int $post_id = null, \WP_Post $post = null ):?Instance {
+    protected static function _get_instance( int $post_id = null, object $post = null ):?Instance {
         if ( $post_id || ( $post && ( $post_id = $post->ID ) ) )
             if ( isset( self::$_post_id_cache[ $post_id ] ) )
                 return self::$_post_id_cache[ $post_id ];

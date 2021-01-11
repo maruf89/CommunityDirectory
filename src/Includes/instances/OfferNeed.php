@@ -25,9 +25,10 @@ class OfferNeed extends Instance {
     protected ?array $acf_data = null;
 
     public function __construct( int $post_id = null, int $entity_post_id = null, object $post = null ) {
+        if ( $post ) { $this->from_post_obj( $post ); return; }
+
         if ( $post_id ) $this->post_id = $post_id;
         if ( $entity_post_id ) $this->entity_post_id = $entity_post_id;
-        if ( $post ) $this->from_post( $post );
     }
 
     
@@ -252,7 +253,7 @@ class OfferNeed extends Instance {
     public static function get_instance(
         int $post_id = null,
         int $entity_id = null,
-        \WP_Post $post = null
+        object $post = null
     ):OfferNeed {
         if ( !$post_id && !$post ) return null;
         
@@ -265,8 +266,11 @@ class OfferNeed extends Instance {
         return 'To Do';
     }
 
-    public static function get_display_link( OfferNeed $entity = null ):string {
-        return 'To Do';
+    public static function get_display_link( OfferNeed $instance ):string {
+        $owner = $instance->get_owner();
+        $owner_link = $owner::get_display_link( $owner );
+
+        return "$owner_link#p-$instance->post_id";
     }
 
     public static function get_edit_link( int $post_id ):string {

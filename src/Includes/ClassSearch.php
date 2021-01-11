@@ -46,54 +46,74 @@ class ClassSearch extends Routable {
 
         if ( $type_class ) {
             $meta_search = $this->_format_meta_search(
-                $type_class::get_meta_search_fields(), 'search', $search, $type_class
+                $type_class->get_meta_search_fields(), 'search', $search, $type_class
             );
 
             global $wpdb;
             $results = $wpdb->get_results( $meta_search );
+            $count = count( $results );
+            $id_search = [];
 
-            if ( !count( $results ) ) return json_encode( $results );
+            if ( !$count ) return $this->_send_success( [ 'results' => $count ] );
+            else if ( $count === 1 ) $id_search = [ 'ID' => $results[ 0 ]->ID ];
+            else {
+                $ids = [];
+                foreach( $results as $res ) $ids[] = $res->ID;
+                $id_search = [ 'IDs' => $ids ];
+            }
 
-            
+            $items = $type_class->get( [], null, $id_search );
+
+            $render = $type_class->render_search_results( $items, $search );
+            return $this->_send_success( [ 'results' => $count, 'html' => $render ] );
         }
         
-    	return json_encode( $results );
+    	return $this->_send_success( $results );
     }
 
-    private function _format_meta_search( array $meta, string $search_type = 'search', string $search_val, $type_class ):string {
+    private function _format_meta_search( array $meta, string $search_type = 'search', string $search_query, $type_class ):string {
+        global $wpdb;
+        $search_val = $wpdb->_real_escape( $search_query );
+        
         $formatted = [ 'relation' => 'OR' ];
 
         $as_post = 'post';
         $as_meta = 'meta';
         $post_type = $type_class::$post_type;
         
-        $or = [];
-        $required = [
+        $or = [
+            "$as_post.post_title LIKE '%$search_val%'"
+        ];
+        $and = [
             "$as_post.post_type = '$post_type'",
             "$as_post.post_status = 'publish'"
         ];
 
         if ( isset( $meta[ $search_type ] ) )
-            foreach ( $meta[ $search_type ] as $key )
-                $or[] = "( $as_meta.meta_key = '$key' AND $as_meta.meta_value LIKE '%$search_val%' )";
-                // $formatted[] = [
-                //     'key' => $key,
-                //     'value' => '%' . \preg_quote( $search_val ) . '%',
-                //     'compare' => 'LIKE'
-                // ];
+            foreach ( $meta[ $search_type ] as $post_meta => $keys )
+                foreach ( $keys as $key )
+                    $or[] = $this->_add_where_match(
+                        $post_meta === 'meta' ? $as_meta : $as_post,
+                        $key,
+                        'LIKE',
+                        "%$search_val%",
+                        $post_meta === 'meta'
+                    );
 
         if ( isset( $meta[ 'required' ] ) )
-            foreach ( $meta[ 'required' ] as $key => $value )
-                $required[] = "$key = " . ( gettype( $value ) == 'string' ) ? "'$value'" : $value;
-                // $formatted[] = [
-                //     'key' => $key,
-                //     'value' => $value,
-                //     'compare' => '='
-                // ];
+            foreach ( $meta[ 'required' ] as $post_meta => $key_values )
+                foreach ( $key_values as $key => $values ) {
+                    $values = is_array( $values ) ? $values : [ '=', $values ];
+                    $and[] = $this->_add_where_match(
+                        $post_meta === 'meta' ? $as_meta : $as_post,
+                        $key,
+                        $values[ 0 ],
+                        $values[ 1 ],
+                        $post_meta === 'meta'
+                    );
+                }
 
-        global $wpdb;
-
-        $where_req = implode( ' AND ', $required );
+        $where_req = implode( ' AND ', $and );
         $where_or = implode( ' OR ', $or );
 
         $sql = "
@@ -107,13 +127,47 @@ class ClassSearch extends Routable {
 
         return $sql;
     }
-    
-    public function _search_where( $where, &$wp_query ) {
-        global $wpdb;
-        if ( $search_term = $wp_query->get( 'search_prod_title' ) ) {
-            $where .= ' AND ' . $wpdb->posts . '.post_title LIKE \'%' . esc_sql( like_escape( $search_term ) ) . '%\'';
-        }
-        return $where;
+
+    /**
+     * Formats a where clause depending on whether it's meta or on the type of value
+     * and returns it
+     * 
+     * @param   $as         string          mysql table prefix
+     * @param   $key        string          the key to match on
+     * @param   $comparison string          the type of comparison
+     * @param   $value      string|int      value
+     * @param   $is_meta    bool            if checking a meta value
+     * @return              string          formatted where clause
+     */
+    private function _add_where_match(
+        string $as,
+        string $key,
+        string $comparison,
+        $value,
+        bool $is_meta
+    ):string {
+        // If not working with digits and not comparing, wrap in quotes for SQL
+        if ( gettype( $value ) !== 'integer')
+            $value = "'$value'";
+        
+        if ( $is_meta )
+            return  "( $as.meta_key = '$key' AND $as.meta_value $comparison $value )";
+        else
+            return "$as.$key = $value";
+    }
+
+    private function _send_success( array $data ) {
+        return json_encode( [
+            'result' => 200,
+            'data' => $data,
+        ] );
+    }
+
+    private function _send_error( string $error, int $error_code = 400 ) {
+        return json_encode( [
+            'result' => $error_code,
+            'message' => $error
+        ] );
     }
 
     protected array $route_map = [
