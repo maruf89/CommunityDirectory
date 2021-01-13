@@ -227,8 +227,8 @@ final class ClassCommunityDirectory {
         add_filter( "${prefix}modal-location-select.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}modal-openstreetmap.php", array( $instance, 'load_template' ), 10, 1 );
 
-        add_filter( "${prefix}search/offer-need.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}search/entity.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}search/cd-offers-needs.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}search/cd-entity.php", array( $instance, 'load_template' ), 10, 1 );
     }
 
     public function load_entity_actions_and_filters( ClassEntity $instance ) {

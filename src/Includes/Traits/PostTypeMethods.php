@@ -98,4 +98,20 @@ trait PostTypeMethods {
         
         return array_merge( $entities, $results );
     }
+
+    /**
+     * Formats entity types based on second parameter
+     * 
+     * @param $results          array           the rows to format
+     * @param $format           ?string         an entity field to format the key, 'instance' to return Entity instances (default: 'id')
+     * @return                  array           formatted
+     */
+    public static function format( array $results, string $format = 'id' ) {
+        if ( !count( $results ) ) return $results;
+        
+        if ( $format === 'instance' ) return self::format_to_instances( $results );
+        if ( gettype( $format ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $format is a string
+        return self::format_row_locations( $results, $format );
+    }
 }

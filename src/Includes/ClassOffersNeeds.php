@@ -12,13 +12,14 @@ namespace Maruf89\CommunityDirectory\Includes;
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
 use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity};
 use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
-use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
+use Maruf89\CommunityDirectory\Includes\Traits\{PostTypeMethods, Searchable};
 
 class ClassOffersNeeds extends Routable implements ISearchable {
 
-    use PostTypeMethods;
+    use PostTypeMethods, Searchable;
 
     private static ClassOffersNeeds $instance;
+    private static string $instance_class = OfferNeed::class;
 
     protected string $router_ns = 'offers-needs';
     
@@ -436,7 +437,9 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     public function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                'post' => [],
+                'post' => [
+                    'post_title'
+                ],
                 'meta' => [
                     ClassACF::$offers_needs_hashtag_title,
                     ClassACF::$offers_needs_description,
@@ -444,6 +447,10 @@ class ClassOffersNeeds extends Routable implements ISearchable {
             ],
             'required' => [
                 'meta' => [],
+                'post' => [
+                    'post_type' => static::$post_type,
+                    'post_status' => 'publish',
+                ]
             ]
         ];
 
@@ -452,19 +459,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
         return $fields;
     }
 
-    public function render_search_results( array $items, string $search ):string {
-        ob_start();
-
-        foreach ( $items as $ON ) {
-            $template_file = apply_filters( 'community_directory_template_search/offer-need.php', '' );
-            load_template( $template_file, false, array(
-                'instance'  => OfferNeed::get_instance( null, null, $ON ),
-                'search'    => $search,
-            ) );
-        }
-
-        return ob_get_clean();
-    }
+    
 
     /**
      * @param       $array          array       the array to fill

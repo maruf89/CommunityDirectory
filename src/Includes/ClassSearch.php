@@ -81,13 +81,8 @@ class ClassSearch extends Routable {
         $as_meta = 'meta';
         $post_type = $type_class::$post_type;
         
-        $or = [
-            "$as_post.post_title LIKE '%$search_val%'"
-        ];
-        $and = [
-            "$as_post.post_type = '$post_type'",
-            "$as_post.post_status = 'publish'"
-        ];
+        $or = [];
+        $and = [];
 
         if ( isset( $meta[ $search_type ] ) )
             foreach ( $meta[ $search_type ] as $post_meta => $keys )

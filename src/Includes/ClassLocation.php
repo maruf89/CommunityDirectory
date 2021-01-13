@@ -17,6 +17,7 @@ class ClassLocation extends Routable {
     use PostTypeMethods;
     
     private static ClassLocation $instance;
+    private static string $instance_class = Location::class;
 
     public static function get_instance() {
         if ( !isset( self::$instance ) ) {

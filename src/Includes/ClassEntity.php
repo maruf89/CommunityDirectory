@@ -11,13 +11,14 @@ namespace Maruf89\CommunityDirectory\Includes;
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
 use Maruf89\CommunityDirectory\Includes\instances\{Entity, Location};
 use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
-use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
+use Maruf89\CommunityDirectory\Includes\Traits\{PostTypeMethods, Searchable};
 
 class ClassEntity extends Routable implements ISearchable {
 
-    use PostTypeMethods;
+    use PostTypeMethods, Searchable;
     
     private static ClassEntity $instance;
+    private static string $instance_class = Entity::class;
 
     protected string $router_ns = 'entity';
     
@@ -108,7 +109,9 @@ class ClassEntity extends Routable implements ISearchable {
     public function get_meta_search_fields():array {
         $fields = [
             'search' => [
-                'post' => [],
+                'post' => [
+                    'post_title'
+                ],
                 'meta' => [
                     ClassACF::$entity_location_name,
                     ClassACF::$entity_about,
@@ -116,18 +119,17 @@ class ClassEntity extends Routable implements ISearchable {
             ],
             'email' => ClassACF::$entity_email,
             'required' => [
-                'post' => [],
                 'meta' => [],
+                'post' => [
+                    'post_type' => static::$post_type,
+                    'post_status' => 'publish',
+                ]
             ]
         ];
 
         $fields[ 'required' ][ 'meta' ][ ClassACF::$entity_active ] = [ '=', 'true' ];
         
         return $fields;
-    }
-
-    public function render_search_results( array $items, string $search ):string {
-
     }
 
     //////////////////////////////
@@ -156,22 +158,6 @@ class ClassEntity extends Routable implements ISearchable {
         ";
 
         return $sql_only ? $sql : $wpdb->get_results( $sql );
-    }
-
-    /**
-     * Formats entity types based on second parameter
-     * 
-     * @param $results          array           the rows to format
-     * @param $format           ?string         an entity field to format the key, 'instance' to return Entity instances (default: 'id')
-     * @return                  array           formatted
-     */
-    public static function format( array $results, string $format = 'id' ) {
-        if ( !count( $results ) ) return $results;
-        
-        if ( $format === 'instance' ) return self::format_to_instances( $results );
-        if ( gettype( $format ) === 'boolean' ) return self::format_row_locations( $results );
-        // Otherwise $format is a string
-        return self::format_row_locations( $results, $format );
     }
 
     public static function format_to_instances( $rows ) {

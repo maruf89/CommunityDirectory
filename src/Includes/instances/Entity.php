@@ -454,7 +454,7 @@ class Entity extends Instance {
     public static function get_instance(
         int $post_id = null,
         int $author_id = null,
-        \WP_Post $post = null
+        object $post = null
     ):?Entity {
         if ( !$post_id && !$author_id && !$post ) return null;
         
