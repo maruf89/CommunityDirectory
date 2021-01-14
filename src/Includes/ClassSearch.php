@@ -33,8 +33,8 @@ class ClassSearch extends Routable {
 
     public function search( string $search, string $type = '' ) {
         switch ( $type ) {
-            case '':
-                $type_class = null;
+            case 'location':
+                $type_class = ClassLocation::get_instance();
                 break;
             case 'entity':
                 $type_class = ClassEntity::get_instance();
@@ -45,12 +45,15 @@ class ClassSearch extends Routable {
         }
 
         if ( $type_class ) {
-            $meta_search = $this->_format_meta_search(
-                $type_class->get_meta_search_fields(), 'search', $search, $type_class
+            $search_sql = $this->_format_search_sql(
+                $type_class->get_search_fields(), 'search', $search
             );
 
+            if ( $search_sql instanceof \WP_Error )
+                return $this->_send_error( $search_sql );
+
             global $wpdb;
-            $results = $wpdb->get_results( $meta_search );
+            $results = $wpdb->get_results( $search_sql );
             $count = count( $results );
             $id_search = [];
 
@@ -71,53 +74,62 @@ class ClassSearch extends Routable {
     	return $this->_send_success( $results );
     }
 
-    private function _format_meta_search( array $meta, string $search_type = 'search', string $search_query, $type_class ):string {
+    private function _format_search_sql(
+        array $search_fields,
+        string $search_by_key = 'search',
+        string $search_query
+    ) {
         global $wpdb;
         $search_val = $wpdb->_real_escape( $search_query );
         
         $formatted = [ 'relation' => 'OR' ];
 
-        $as_post = 'post';
-        $as_meta = 'meta';
-        $post_type = $type_class::$post_type;
+        $as = [
+            'posts' => 'post',
+            'postmeta' => 'meta',
+            'users' => 'user',
+        ];
         
         $or = [];
         $and = [];
 
-        if ( isset( $meta[ $search_type ] ) )
-            foreach ( $meta[ $search_type ] as $post_meta => $keys )
+        if ( isset( $search_fields[ $search_by_key ] ) )
+            foreach ( $search_fields[ $search_by_key ] as $table => $keys )
                 foreach ( $keys as $key )
                     $or[] = $this->_add_where_match(
-                        $post_meta === 'meta' ? $as_meta : $as_post,
+                        $as[ $table ],
                         $key,
                         'LIKE',
-                        "%$search_val%",
-                        $post_meta === 'meta'
+                        "%$search_val%"
                     );
+        else
+            return ClassErrorHandler::handle_exception( new \WP_Error( 400, "Invalid search_by_key: $search_by_key" ) );
 
-        if ( isset( $meta[ 'required' ] ) )
-            foreach ( $meta[ 'required' ] as $post_meta => $key_values )
+        if ( isset( $search_fields[ 'required' ] ) )
+            foreach ( $search_fields[ 'required' ] as $table => $key_values )
                 foreach ( $key_values as $key => $values ) {
                     $values = is_array( $values ) ? $values : [ '=', $values ];
                     $and[] = $this->_add_where_match(
-                        $post_meta === 'meta' ? $as_meta : $as_post,
+                        $as[ $table ],
                         $key,
                         $values[ 0 ],
-                        $values[ 1 ],
-                        $post_meta === 'meta'
+                        $values[ 1 ]
                     );
                 }
 
+        $from_join_on = implode(
+            ' ',
+            $this->_add_from_join_on( $search_fields, $search_by_key, $as, 'posts' )
+        );
+                
         $where_req = implode( ' AND ', $and );
         $where_or = implode( ' OR ', $or );
 
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS $as_post.ID
-            FROM $wpdb->posts AS $as_post
-            INNER JOIN $wpdb->postmeta AS $as_meta
-            ON ( $as_post.ID = $as_meta.post_id )
+            SELECT SQL_CALC_FOUND_ROWS " . $as[ 'posts' ] . ".ID
+            $from_join_on
             WHERE $where_req AND $where_or
-            GROUP BY $as_post.ID
+            GROUP BY " . $as[ 'posts' ] . ".ID
         ";
 
         return $sql;
@@ -131,24 +143,63 @@ class ClassSearch extends Routable {
      * @param   $key        string          the key to match on
      * @param   $comparison string          the type of comparison
      * @param   $value      string|int      value
-     * @param   $is_meta    bool            if checking a meta value
      * @return              string          formatted where clause
      */
     private function _add_where_match(
         string $as,
         string $key,
         string $comparison,
-        $value,
-        bool $is_meta
+        $value
     ):string {
         // If not working with digits and not comparing, wrap in quotes for SQL
         if ( gettype( $value ) !== 'integer')
             $value = "'$value'";
         
-        if ( $is_meta )
+        if ( $as === 'meta' )
             return  "( $as.meta_key = '$key' AND $as.meta_value $comparison $value )";
         else
-            return "$as.$key = $value";
+            return "$as.$key $comparison $value";
+    }
+
+    private function _add_from_join_on(
+        array $search_fields,
+        string $search_by_key,
+        array $as_arr,
+        string $primary_table
+    ) {
+        global $wpdb;
+        $primary_as = $as_arr[ $primary_table ];
+        $from_join_on = [];
+
+        $join_map = [
+            'posts_postmeta' => [ 'ID', 'post_id' ],
+            'posts_users' => [ 'post_author', 'ID' ]
+        ];
+
+        foreach ( $as_arr as $table => $as ) {
+            if ( $as === $primary_as ) {
+                $_table = $wpdb->$table;
+                array_unshift( $from_join_on, "FROM $_table AS $as" );
+            }
+                
+            else {
+                $join_field_key = "${primary_table}_${table}";
+                if ( !isset( $join_map[ $join_field_key ] ) )
+                    return ClassErrorHandler::handle_exception(
+                        new \WP_Error( 500, "Illegal _add_from_join_on: $join_field_key" )
+                    );
+
+                $_table = $wpdb->$table;
+                list( $primary_field, $secondary_field ) = $join_map[ $join_field_key ];
+                $from_join_on[] = "
+                    INNER JOIN $_table AS $as
+                    ON ( $primary_as.$primary_field = $as.$secondary_field )
+                ";
+            }
+                
+        }
+        
+        return $from_join_on;
     }
 
     private function _send_success( array $data ) {
@@ -158,10 +209,10 @@ class ClassSearch extends Routable {
         ] );
     }
 
-    private function _send_error( string $error, int $error_code = 400 ) {
+    private function _send_error( \WP_Error $error ) {
         return json_encode( [
-            'result' => $error_code,
-            'message' => $error
+            'result' => $error->get_error_code(),
+            'message' => $error->get_error_message()
         ] );
     }
 

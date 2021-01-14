@@ -434,27 +434,27 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     /**
      * ISearchable Implementation
      */
-    public function get_meta_search_fields():array {
+    public function get_search_fields():array {
         $fields = [
             'search' => [
-                'post' => [
+                'posts' => [
                     'post_title'
                 ],
-                'meta' => [
+                'postmeta' => [
                     ClassACF::$offers_needs_hashtag_title,
                     ClassACF::$offers_needs_description,
                 ]
             ],
             'required' => [
-                'meta' => [],
-                'post' => [
+                'postmeta' => [],
+                'posts' => [
                     'post_type' => static::$post_type,
                     'post_status' => 'publish',
                 ]
             ]
         ];
 
-        $fields[ 'required' ][ 'meta' ][ ClassACF::$offers_needs_active ] = [ '=', 'true' ];
+        $fields[ 'required' ][ 'postmeta' ][ ClassACF::$offers_needs_active ] = [ '=', 'true' ];
         
         return $fields;
     }

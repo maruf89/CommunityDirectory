@@ -106,28 +106,31 @@ class ClassEntity extends Routable implements ISearchable {
         register_post_type( $post_type, $custom_post_type_args );
     }
 
-    public function get_meta_search_fields():array {
+    public function get_search_fields():array {
         $fields = [
             'search' => [
-                'post' => [
+                'posts' => [
                     'post_title'
                 ],
-                'meta' => [
+                'postmeta' => [
                     ClassACF::$entity_location_name,
                     ClassACF::$entity_about,
+                ],
+                'users' => [
+                    'display_name'
                 ]
             ],
             'email' => ClassACF::$entity_email,
             'required' => [
-                'meta' => [],
-                'post' => [
+                'postmeta' => [],
+                'posts' => [
                     'post_type' => static::$post_type,
                     'post_status' => 'publish',
                 ]
             ]
         ];
 
-        $fields[ 'required' ][ 'meta' ][ ClassACF::$entity_active ] = [ '=', 'true' ];
+        $fields[ 'required' ][ 'postmeta' ][ ClassACF::$entity_active ] = [ '=', 'true' ];
         
         return $fields;
     }

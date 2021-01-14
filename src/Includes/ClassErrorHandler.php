@@ -27,8 +27,9 @@ class ClassErrorHandler {
         self::$logger = $logger;
     }
 
-    public static function handle_exception( \WP_Error $error ) {
-        if ( self::$logger ) self::$logger->handle_exception( $error );
+    public static function handle_exception( \WP_Error $error ):\WP_Error {
+        if ( isset( self::$logger ) &&  self::$logger ) self::$logger->handle_exception( $error );
+        return $error;
     }
     
 }
