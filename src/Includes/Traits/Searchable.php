@@ -10,11 +10,17 @@ trait Searchable {
 
         $template_file = apply_filters( "community_directory_template_search/$post_type.php", '' );
 
-        foreach ( $items as $item )
+        foreach ( $items as $item ) {
+            $instance = static::$instance_class::get_instance( null, null, $item );
+
+            // If it doesn't have a valid link, skip it
+            if ( !$instance::get_display_link( $instance ) ) continue;
+            
             load_template( $template_file, false, array(
-                'instance'  => static::$instance_class::get_instance( null, null, $item ),
+                'instance'  => $instance,
                 'search'    => $search,
             ) );
+        }
 
         return ob_get_clean();
     }
