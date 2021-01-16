@@ -35,9 +35,12 @@ class ClassLocationsWidget extends \WP_Widget {
 
         $locations = apply_filters( 'community_directory_get_locations', [], null, array( 'active_inhabitants' => '> 0' ) );
         $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
+
         $template_file = apply_filters( $template_filter, '' );
+        $single_template = apply_filters( 'community_directory_template_elements/location-single.php', '' );
         load_template( $template_file, false, array(
-            'locations' => $locations
+            'locations' => $locations,
+            'single_template' => $single_template
         ) );
     }
             

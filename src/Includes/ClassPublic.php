@@ -220,7 +220,7 @@ class ClassPublic {
      */
     public function load_template( string $src ):string {
         // get name of current filter
-        // Will look something like: "community_directory_template_location-list.php"
+        // Will look something like: "community_directory_template_something-list.php"
         $current = current_filter();
         $file = substr( $current, static::$_template_hook_prefix_len );
 
@@ -232,7 +232,7 @@ class ClassPublic {
      */
     public function load_admin_template( string $src ):string {
         // get name of current filter
-        // Will look something like: "community_directory_template_location-list.php"
+        // Will look something like: "community_directory_template_something-list.php"
         $current = current_filter();
         $file = substr( $current, static::$_template_hook_admin_prefix_len );
 

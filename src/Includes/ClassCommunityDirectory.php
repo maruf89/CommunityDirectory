@@ -217,7 +217,6 @@ final class ClassCommunityDirectory {
         list( $prefix, $len ) = ClassPublic::get_template_hook_prefix();
         add_filter( "${prefix}location/location-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}location/location-map.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}elements/location-single-no-photo.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}elements/location-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-and-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-and-needs-list.php", array( $instance, 'load_template' ), 10, 1 );

@@ -1,8 +1,9 @@
 <?php
 
-$locations = $args['locations'];
+$locations = $args[ 'locations' ];
+$single_template = $args[ 'single_template' ];
 
-$filtered = array_filter( $locations, function ( $location ) {
+$filtered_locations = array_filter( $locations, function ( $location ) {
     return $location->has_coords();
 });
 ?>
@@ -10,10 +11,12 @@ $filtered = array_filter( $locations, function ( $location ) {
 <div class="map widget-map" id="LocationMap">
     <?php foreach ( $locations as $location ): ?>
 
-        <a class="marker"
+        <div class="marker"
            data-lat="<?= $location->coords[ 'lat' ] ?>"
            data-lon="<?= $location->coords[ 'lon' ] ?>"
-        ></a>
+        >
+            <?= load_template( $single_template, false, array( 'location' => $location ) ) ?>
+        </div>
 
     <?php endforeach; ?>
 </div>

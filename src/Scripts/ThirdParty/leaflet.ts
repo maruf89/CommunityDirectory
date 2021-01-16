@@ -8,6 +8,14 @@ export const OSM_ATTRIB = '&copy; <a href="https://www.openstreetmap.org/copyrig
 // @ts-ignore
 export const LEAFLET_LOADED = !!window.L;
 
+export const elMarker = L.Marker.extend({
+    options: {
+        data: {
+            el: 'attach an element'
+        }
+    }
+});
+
 export const mapInstances = [];
 
 if ( LEAFLET_LOADED ) {

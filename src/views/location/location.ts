@@ -1,4 +1,4 @@
-import { LatLngTuple } from 'leaflet';
+import { LatLngTuple, Marker } from 'leaflet';
 import { mapInstances, LEAFLET_LOADED, MB_ATTR } from 'ThirdParty/leaflet';
 
 let $:JQueryStatic;
@@ -13,25 +13,44 @@ export default function(_$:JQueryStatic) {
 }
 
 function initMap($map:JQuery<HTMLElement>) {
-    // var buttonTriggerer = event.target;
-    var data = $map[0].dataset;
-    // var locationId = +data.locationId;
-    // var $map = $modal.find('#modalLocationMap');
-    
+    const data = $map[0].dataset;
+    let popup = L.popup();
     // // Use passed in coords or default coords
-    var coords:any = ((data.coords && data.coords.split(',') || cdData.map.defaultCoords).map(str => +str))
-    const markers:any = $map.children('.marker')
-        .map((_, el) => [[+el.dataset.lat, +el.dataset.lon]])
+    const center:any = ((data.coords && data.coords.split(',') || cdData.map.defaultCoords).map(str => +str))
+
+    const mapOpenPopup = ($element, e) => {
+        popup
+            .setLatLng(e.latlng)
+            .setContent($element.html())
+            .openOn(e.target);
+        map.setView(e.latlng)
+
+        setTimeout(() => {
+            const centerPoint = map.getSize().divideBy(2);
+            const targetPoint = centerPoint.subtract([0, 60]);
+            const targetLatLng = map.containerPointToLatLng(targetPoint);
+            map.panTo(targetLatLng);
+        }, 250);
+    };
+    
+    const markers:Marker[] = $map.children('.marker')
+        .map((_, el) => {
+            const marker =  L.marker([+el.dataset.lat, +el.dataset.lon]);
+            marker.bindPopup(popup)
+            marker.on('click', mapOpenPopup.bind(null, jQuery(el)))
+            return marker;
+        })
         .toArray();
 
-    // var editMap = data.columnEdit == 'true';        
-    // var popup = editMap && L.popup();
-    // var mapId = $modal.find('.map')[0].id;
+    const markerGroup = L.featureGroup(markers);
+
     let hasInitiated = $map.hasClass('loaded');
     const map = hasInitiated ? mapInstances[0] : L.map($map[0].id, {
-        center: coords,
+        center: center,
         zoom: 13
     });
+
+    
 
     // If first time loading, initiate the map and bind all listeners
     if (!hasInitiated) {
@@ -51,12 +70,8 @@ function initMap($map:JQuery<HTMLElement>) {
         hasInitiated = true;
     }
 
-    const addMarker = coords => {
-        map.setView(coords, 13);
-        var marker = L.marker(coords);
-        map.data.markers.push(marker);
-        marker.addTo(map);
-    }
-
-    markers.forEach(addMarker);
+    markerGroup.addTo(map);
+    map.fitBounds(markerGroup.getBounds());
 }
+
+

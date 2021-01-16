@@ -1,5 +1,5 @@
 import { mapInstances, MB_ATTR } from 'ThirdParty/leaflet.ts';
-import { getLocations } from 'Scripts/rest';
+import { getLocations, update } from 'Scripts/rest';
 
 let $:JQueryStatic;
 
@@ -43,18 +43,8 @@ export const defineEntityLocationModal = function ( event:Event ) {
     var onSubmit = function () {
         if ($(this).hasClass('disabled')) return;
 
-        $.ajax({
-            type: 'POST',
-            url: cdData.restBase + 'entity/update-entity',
-            data: {
-                entity: entityId,
-                location_id: +$select[0].value,
-            },
-            beforeSend: function ( xhr ) {
-                xhr.setRequestHeader( 'X-WP-Nonce', cdData.wp_nonce );
-            },
-            dataType: 'json'
-        }).then(function () {
+        update.entity.updateLocation(entityId, +$select[0].value)
+        .then(function () {
             $columnWrapper.empty();
             $columnWrapper[0].innerHTML = $select[0].options[$select[0].value].innerText;
             tb_remove();
@@ -65,13 +55,13 @@ export const defineEntityLocationModal = function ( event:Event ) {
     $modal.on('click', '.submit', onSubmit);
 }
 
-export const defineCoordsModal = function ( event ) {
+export const defineCoordsModal = function ( event:Event ) {
     var $modal = $('#modalMap');
 
     if ( !$modal[0] ) alert('#modalMap must be present in the markup');
     
-    var buttonTriggerer = event.target;
-    var data = event.target.dataset;
+    var buttonTriggerer:HTMLElement = event.target as HTMLElement;
+    var data = buttonTriggerer.dataset;
     var locationId = +data.locationId;
     var $map = $modal.find('#modalLocationMap');
     
@@ -99,19 +89,8 @@ export const defineCoordsModal = function ( event ) {
     }
 
     var onSubmit = function () {
-        $.ajax({
-            type: 'POST',
-            url: cdData.restBase + 'location/update-coords',
-            data: {
-                location_id: locationId,
-                lat: coords[0],
-                lon: coords[1]
-            },
-            beforeSend: function ( xhr ) {
-                xhr.setRequestHeader( 'X-WP-Nonce', cdData.wp_nonce );
-            },
-            dataType: 'json'
-        }).then(function (success) {
+        update.location.updateCoords(locationId, coords[0], coords[1])
+        .then(success => {
             if ( success ) {
                 closePopup();
                 addMarker(coords);

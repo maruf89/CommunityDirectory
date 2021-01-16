@@ -15,7 +15,7 @@ interface cdData {
     }
     map: {
         accessToken:string
-        defaultCoords:[string, string]
+        defaultCoords:[number, number]
     },
     wp_nonce:string
     edit_others_entities:boolean
