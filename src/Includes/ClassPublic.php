@@ -16,10 +16,13 @@ use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 class ClassPublic {
     private static string $_template_hook_prefix = 'community_directory_template_';
+    private static string $_template_hook_admin_prefix = 'community_directory_admin_template_';
     private static int $_template_hook_prefix_len;
+    private static int $_template_hook_admin_prefix_len;
 
     public function __construct() {
         static::$_template_hook_prefix_len = strlen( static::$_template_hook_prefix );
+        static::$_template_hook_admin_prefix_len = strlen( static::$_template_hook_admin_prefix );
     }
     
     /**
@@ -28,7 +31,12 @@ class ClassPublic {
      * @since      2020.11
      */
     public function enqueue_styles() {
-        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+        wp_enqueue_style(
+            COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory.css',
+            array(),
+             WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
+             'all'
+        );
     }
 
     /**
@@ -40,19 +48,49 @@ class ClassPublic {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';//'.min';
 
-        // Core JS
-        wp_enqueue_script( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/js/community-directory' . $suffix . '.js', array( 'jquery' ), COMMUNITY_DIRECTORY_VERSION, false );
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_script(
+                'leaflet_js',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.js', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
+        }
 
-        wp_localize_script( 'community_directory_admin_js', 'cdData',
-            array(
+        // Core JS
+        wp_enqueue_script(
+            COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory' . $suffix . '.js',
+            array( 'jquery' ),
+            WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
+            'all'
+        );
+
+
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_style(
+                'leaflet_css',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.css', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
+        }
+        
+    }
+
+    public function global_js_variables() {?>
+        <script type="text/javascript">
+            window.cdData = <?= json_encode( array(
                 'restBase' => '/wp-json/wp/v2/',
                 'postType' => array(
                     'entity' => ClassEntity::$post_type,
                     'location' => ClassLocation::$post_type,
-                )
-            )
-        );
-        
+                ),
+                'map' => array(
+                    'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
+                    'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),
+                ),
+            )); ?>
+        </script><?php
     }
 
     /**
@@ -168,7 +206,14 @@ class ClassPublic {
         return $template;
     }
 
-    public static function get_template_hook_prefix():string { return static::$_template_hook_prefix; }
+    public static function get_template_hook_prefix( string $type = ''):array {
+        switch( $type ) {
+            case 'admin':
+                return [ static::$_template_hook_admin_prefix, static::$_template_hook_admin_prefix_len ];
+            default:
+                return [ static::$_template_hook_prefix, static::$_template_hook_prefix_len ];
+        }
+    }
 
     /**
      * Is loaded via a filter call
@@ -180,6 +225,18 @@ class ClassPublic {
         $file = substr( $current, static::$_template_hook_prefix_len );
 
         return COMMUNITY_DIRECTORY_TEMPLATES_PATH . $file;
+    }
+
+    /**
+     * Is loaded via a filter call
+     */
+    public function load_admin_template( string $src ):string {
+        // get name of current filter
+        // Will look something like: "community_directory_template_location-list.php"
+        $current = current_filter();
+        $file = substr( $current, static::$_template_hook_admin_prefix_len );
+
+        return COMMUNITY_DIRECTORY_ADMIN_PATH . 'views/' . $file;
     }
 
 }

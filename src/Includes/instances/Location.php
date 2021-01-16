@@ -58,20 +58,9 @@ class Location extends Instance {
         return get_the_post_thumbnail_url( $this->post_id, $size );
     }
 
-    /////////////////////////////////////
-    /////////////   Update   ////////////
-    /////////////////////////////////////
-
-    public function set_coords( float $lat, float $lon ):bool {
-
-    }
-
-    public function set_status( string $status ):bool {
-
-    }
-
-    public function update_row( array $changes ):bool {
-
+    public function has_coords():bool {
+        return gettype($this->coords['lat']) === 'double' &&
+               gettype($this->coords['lon']) === 'double';
     }
 
     /////////////////////////////////////

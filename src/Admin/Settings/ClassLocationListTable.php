@@ -415,7 +415,7 @@ class ClassLocationListTable extends \WP_List_Table {
     private function require_coords_select( string $modal_id = '', array $coords = null, bool $edit = false ) {
         if ( $this->coord_modal_loaded ) return;
 
-        $template_file = apply_filters( 'community_directory_template_modal-openstreetmap.php', '' );
+        $template_file = apply_filters( 'community_directory_admin_template_modals/openstreetmap.php', '' );
         load_template( $template_file, false, array(
             'modal_id'  => $modal_id,
         ) );

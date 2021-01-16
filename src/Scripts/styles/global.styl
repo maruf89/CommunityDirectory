@@ -1,0 +1,23 @@
+.retina
+    display: none;
+    
+@media only screen and ( -webkit-min-device-pixel-ratio: 1.3 ),
+       only screen and (    min--moz-device-pixel-ratio: 1.3 ),
+       only screen and (      -o-min-device-pixel-ratio: 2.6/2 ), /* returns 1.3, see Dev.Opera */
+       only screen and (         min-device-pixel-ratio: 1.3 ),
+       only screen and ( min-resolution: 124.8dpi ),
+       only screen and ( min-resolution: 1.3dppx )
+        
+    .non-retina,
+    .non-retina-inline-block,
+    .non-retina-inline
+        display none !important
+
+    .retina
+        display block !important
+
+    .retina-inline-block
+        display inline-block !important
+
+    .retina-inline
+        display inline !important

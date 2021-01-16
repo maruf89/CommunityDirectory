@@ -158,6 +158,7 @@ final class ClassCommunityDirectory {
     public function load_assets_actions_and_filters( ClassPublic $instance) {
         add_action( 'wp_enqueue_scripts', array( $instance, 'enqueue_styles' ) );
         add_action( 'wp_enqueue_scripts', array( $instance, 'enqueue_scripts' ) );
+        add_action ( 'wp_head', [ $instance, 'global_js_variables'] );
     }
 
     /**
@@ -213,8 +214,9 @@ final class ClassCommunityDirectory {
     }
 
     public function load_template_actions_and_filters( ClassPublic $instance ) {
-        $prefix = ClassPublic::get_template_hook_prefix();
-        add_filter( "${prefix}location-list.php", array( $instance, 'load_template' ), 10, 1 );
+        list( $prefix, $len ) = ClassPublic::get_template_hook_prefix();
+        add_filter( "${prefix}location/location-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}location/location-map.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}elements/location-single-no-photo.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}elements/location-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-and-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
@@ -224,11 +226,12 @@ final class ClassCommunityDirectory {
         add_filter( "${prefix}elements/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}modal-location-select.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}modal-openstreetmap.php", array( $instance, 'load_template' ), 10, 1 );
-
         add_filter( "${prefix}search/cd-offers-needs.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}search/cd-entity.php", array( $instance, 'load_template' ), 10, 1 );
+
+        list( $admin_prefix, $len ) = ClassPublic::get_template_hook_prefix( 'admin' );
+        add_filter( "${admin_prefix}modals/location-select.php", array( $instance, 'load_admin_template' ), 10, 1 );
+        add_filter( "${admin_prefix}modals/openstreetmap.php", array( $instance, 'load_admin_template' ), 10, 1 );
     }
 
     public function load_entity_actions_and_filters( ClassEntity $instance ) {

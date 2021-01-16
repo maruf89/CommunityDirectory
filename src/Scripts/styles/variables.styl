@@ -1,0 +1,23 @@
+/************************/
+/*****    !FONTS    *****/
+/************************/
+$font-light-val         = 'Open Sans', 'HelveticaNeue-Light', 'Helvetica Neue Light', Helvetica, sans-serif
+$font-italic-val        = 'Open Sans', $font-light-val
+$font-regular-val       = 'Open Sans', 'Helvetica Neue', Helvetica, sans-serif
+$font-bold-val          = 'Open Sans', 'Helvetica Neue Bold', Helvetica, sans-serif
+$font-title-val         = 'Museo 700', 'Helvetica Neue Bold', sans-serif
+
+$font-light(size = null, base = null, lineheight = null)
+    font-mixin($font-light-val, 300, size, base, lineheight)
+
+$font-regular(size = null, base = null, lineheight = null)
+    font-mixin($font-regular-val, 400, size, base, lineheight)
+
+$font-italic(size = null, base = null, lineheight = null)
+    font-mixin($font-italic-val, 400, size, base, lineheight, italic)
+
+$font-bold(size = null, base = null, lineheight = null)
+    font-mixin($font-bold-val, 700, size, base, lineheight)
+
+$font-title(size = null, base = null, lineheight = null)
+    font-mixin($font-title-val, 700, size, base, lineheight)

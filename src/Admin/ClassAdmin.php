@@ -2,7 +2,6 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-use Stylus\Stylus;
 use Maruf89\CommunityDirectory\Includes\ClassEntity;
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
 use Maruf89\CommunityDirectory\Includes\ClassOffersNeeds;
@@ -40,22 +39,15 @@ class ClassAdmin {
      */
     public function enqueue_styles( $hook_suffix ) {
 
-        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';// '.min';
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-        if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-            $stylus = new Stylus();
-            $stylus->setReadDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css/styl' );
-            $stylus->setWriteDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css' );
-            $stylus->assign( 'base-font-size', '14px' );
-            $stylus->parseFiles(true);
-        }
 
-        wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+        wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
 
         if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
             wp_enqueue_style(
                 'leaflet_css',
-                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.css', array(),
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet.css', array(),
                 COMMUNITY_DIRECTORY_VERSION,
                 'all'
             );
@@ -84,7 +76,7 @@ class ClassAdmin {
 
         wp_enqueue_script(
             'community_directory_admin_js',
-            COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/js/community-directory-admin' . $suffix . '.js', array(),
+            COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory-admin' . $suffix . '.js', array(),
             WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
             'all'
         );
