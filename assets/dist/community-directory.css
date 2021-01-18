@@ -55,6 +55,29 @@ body h6 {
 .widget-map .text {
   font-size: 14px;
 }
+.ps-parent {
+  overflow: hidden;
+  max-height: 24px;
+  transition: max-height 250ms ease-in;
+}
+.ps-parent.opened {
+  max-height: 1000px;
+}
+.ps-parent.opened > .selectit::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.ps-parent > .selectit::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.ps-parent > li {
+  max-height: 0;
+}
 @media only screen and (min-width: 992px) {
   .widget-map {
     min-height: 300px;

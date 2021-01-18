@@ -11,7 +11,7 @@ $single_template = $args[ 'single_template' ];
             <?php
                 load_template( $single_template, false, array(
                     'location' => $location,
-                    'style_class' => 'card'
+                        'style_class' => 'card'
                     )
                 );
             ?>

@@ -85,6 +85,9 @@ class ClassPublic {
                     'entity' => ClassEntity::$post_type,
                     'location' => ClassLocation::$post_type,
                 ),
+                'taxonomyType' => array(
+                    'productService' => ClassOffersNeeds::$taxonomy
+                ),
                 'map' => array(
                     'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
                     'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),

@@ -13,6 +13,9 @@ interface cdData {
     postType: {
         [name:string]:string
     }
+    taxonomyType: {
+        [name:string]:string
+    }
     map: {
         accessToken:string
         defaultCoords:[number, number]

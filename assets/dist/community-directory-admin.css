@@ -48,4 +48,27 @@
 .acf-field-open-street-map div[data-editor-config] {
   min-height: 200px;
 }
+.ps-parent {
+  overflow: hidden;
+  max-height: 24px;
+  transition: max-height 250ms ease-in;
+}
+.ps-parent.opened {
+  max-height: 1000px;
+}
+.ps-parent.opened > .selectit::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.ps-parent > .selectit::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.ps-parent > li {
+  max-height: 0;
+}
 
