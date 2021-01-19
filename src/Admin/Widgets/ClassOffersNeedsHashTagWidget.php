@@ -20,7 +20,7 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
             __( 'CD Offers & Needs Hashtag', 'community-directory' ),
                 
             // Widget description
-            array( 'description' => __( 'Community Directory: displays offers and needs', 'community-directory' ), ) 
+            array( 'description' => __( 'Displays Community Directory offers and needs as a hashtag list', 'community-directory' ), ) 
         );
     }
     

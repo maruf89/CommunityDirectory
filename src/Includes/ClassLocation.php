@@ -79,7 +79,7 @@ class ClassLocation extends Routable {
                 'page-attributes'
             ),
             'rewrite' => array(
-                'slug' => __( 'location', 'community-directory' ),
+                'slug' => \strtolower( __( 'Location', 'community-directory' ) ),
                 'with_front' => false,
             )
         );
@@ -98,13 +98,14 @@ class ClassLocation extends Routable {
      * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
      */
     function get(
-        array $results = [],
+        array $results = null,
         string $status_type = null,
         array $where_match = null,
         string $output = null
     ) {
         global $wpdb;
 
+        if ( null === $results ) $results = [];
         if ( null === $status_type ) $status_type = COMMUNITY_DIRECTORY_ENUM_ACTIVE;
         if ( null === $where_match ) $where_match = [];
         if ( null === $output ) $output = OBJECT;

@@ -95,7 +95,7 @@ class ClassEntity extends Routable implements ISearchable {
                 'custom_fields',
             ),
             'rewrite' => array(
-                'slug' => __( 'entity', 'community-directory' ),
+                'slug' => strtolower( __( 'Entity', 'community-directory' ) ),
                 'with_front' => false,
             ),
             'delete_with_user' => true,

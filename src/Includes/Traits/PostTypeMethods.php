@@ -23,13 +23,14 @@ trait PostTypeMethods {
      * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
      */
     function get(
-        array $results = [],
+        array $results = null,
         $post_status = null,
         array $where_match = null,
         string $output = null
     ) {
         global $wpdb;
 
+        if ( null === $results ) $results = [];
         if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
         if ( null === $where_match ) $where_match = [];
         if ( null === $output ) $output = OBJECT;

@@ -421,7 +421,7 @@ final class ClassCommunityDirectory {
                 'exclude_from_search'       => true,
                 'show_in_admin_all_list'    => true,
                 'show_in_admin_status_list' => true,
-                'label_count'               => _n_noop( 'Inactive <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', 'community-directory' ),
+                'label_count'               => _nx( 'Inactive', 'Inactive', 2, 'post_status', 'community-directory' ) . '<span class="count">(%s)</span>',
             )
         );
     }
@@ -441,16 +441,3 @@ final class ClassCommunityDirectory {
         define( 'NONCE_RANDVALUE', $created_nonce ); 
     }
 }
-
-$translations = [
-    __( 'm/d/y g:i a', 'community-directory' ),
-    __( 'm/d/Y g:i:s a', 'community-directory' ),
-    ngettext( 'Activated %d location', 'Activated %d locations', 2 ),
-    ngettext( '%d Inhabitant', '%d Inhabitants', 2 ),
-    ngettext( 'Activated %d entity', 'Activated %d entities', 2 ),
-    ngettext( 'Deactivated %d entity', 'Deactivated %d entities', 2 ),
-    ngettext( 'Activated %d location', 'Activated %d locations', 2 ),
-    ngettext( 'Deactivated %d location', 'Deactivated %d locations', 2 ),
-    ngettext( 'Deleted %d location', 'Deleted %d locations', 2 ),
-    ngettext( 'Draft', 'Drafts', 2 )
-];

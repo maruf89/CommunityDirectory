@@ -19,7 +19,7 @@ class ClassLocationsWidget extends \WP_Widget {
             __( 'CD Locations', 'community-directory' ),
                 
             // Widget description
-            array( 'description' => __( 'Community Directory: displays locations', 'community-directory' ), ) 
+            array( 'description' => __( 'Displays Community Directory locations on a map or as a list', 'community-directory' ), ) 
         );
     }
     

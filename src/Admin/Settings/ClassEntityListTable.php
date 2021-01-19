@@ -108,7 +108,7 @@ class ClassEntityListTable extends \WP_List_Table {
     public function get_columns() {
         $columns = array(
             'cb'=> '<input type="checkbox" />',
-            'title' => __( 'Entity', 'community-directory' ),
+            'title' => __( 'Entities', 'community-directory' ),
             'location' => __( 'Location', 'community-directory' ),
             'status' => __( 'Status', 'community-directory' ),
             'author' => __( 'Author', 'community-directory' ),
