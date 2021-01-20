@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-01-19 10:30+0200\n"
-"PO-Revision-Date: 2021-01-19 10:30+0200\n"
+"POT-Creation-Date: 2021-01-20 13:19+0200\n"
+"PO-Revision-Date: 2021-01-20 13:20+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -15,7 +15,7 @@ msgstr ""
 "19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
 "1 : 2);\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
-"_n_noop:1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;"
+"_n_noop:1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:3c,1,2;_ex:1,2c;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -51,8 +51,8 @@ msgstr "Pažiūrėkit Žemėlapyje"
 #: Admin/ClassAdminPostDisplay.php:30
 #: Admin/Settings/ClassEntityListTable.php:112
 #: Admin/Settings/ClassLocationListTable.php:122
-#: Admin/Settings/ClassSettingsLocation.php:153 Includes/ClassLocation.php:43
-#: Includes/ClassLocation.php:82
+#: Admin/Settings/ClassSettingsLocation.php:153 Includes/ClassLocation.php:45
+#: Includes/ClassLocation.php:84
 msgid "Location"
 msgstr "Vieta"
 
@@ -76,7 +76,7 @@ msgstr "Redaguokite Savo Narystės Profilį"
 msgid "Profile Settings"
 msgstr "Profilio Nustatymai"
 
-#: Admin/Menus/ClassMenuItems.php:17 Includes/ClassLocation.php:56
+#: Admin/Menus/ClassMenuItems.php:17 Includes/ClassLocation.php:58
 msgid "Community Directory Locations"
 msgstr "Bendruomenių katalogų vietos"
 
@@ -415,9 +415,9 @@ msgid "%d locations have be reindexed"
 msgstr ""
 
 #: Admin/Settings/ClassSettingsLocation.php:32
-#: Admin/Settings/ClassSettingsLocation.php:92 Includes/ClassLocation.php:39
-#: Includes/ClassLocation.php:42 Includes/ClassLocation.php:52
-#: Includes/ClassLocation.php:53
+#: Admin/Settings/ClassSettingsLocation.php:92 Includes/ClassLocation.php:41
+#: Includes/ClassLocation.php:44 Includes/ClassLocation.php:54
+#: Includes/ClassLocation.php:55
 msgid "Locations"
 msgstr "Vietos"
 
@@ -610,15 +610,15 @@ msgstr "BK Vietos"
 msgid "Displays Community Directory locations on a map or as a list"
 msgstr "Rodo Bendruomenės Katalogo vietos arba žemėlapyje arba saraše"
 
-#: Admin/Widgets/ClassLocationsWidget.php:55
+#: Admin/Widgets/ClassLocationsWidget.php:65
 msgid "How do you want to display the Locations?"
 msgstr "Kaip norite rodyti vietas?"
 
-#: Admin/Widgets/ClassLocationsWidget.php:63
+#: Admin/Widgets/ClassLocationsWidget.php:73
 msgid "List as Blocks"
 msgstr "Blokais saraše"
 
-#: Admin/Widgets/ClassLocationsWidget.php:73
+#: Admin/Widgets/ClassLocationsWidget.php:83
 msgid "On a map"
 msgstr "Žemėlapyje"
 
@@ -870,7 +870,7 @@ msgstr "Apibūdinimas"
 msgid "Describe what it is you're offering or seeking."
 msgstr "Apibūdinkite, ką siūlote ar ieškote."
 
-#: Includes/ClassACF.php:347 views/elements/offer-need-single.php:24
+#: Includes/ClassACF.php:347 views/offer-need/offer-need-single.php:24
 msgid "Urgency"
 msgstr "Skubumas"
 
@@ -914,7 +914,7 @@ msgstr ""
 "Čia galite įkelti PDF failą, vaizdą ar dokumentą su papildoma informacija ar "
 "kainomis."
 
-#: Includes/ClassACF.php:411 views/elements/offer-need-single.php:21
+#: Includes/ClassACF.php:411 views/offer-need/offer-need-single.php:21
 msgid "Category"
 msgstr "Kategoria"
 
@@ -927,15 +927,16 @@ msgid "Location Manager"
 msgstr "Vietos Valdas"
 
 #: Includes/ClassCommunityDirectory.php:424
+#, php-format
 msgctxt "post_status"
-msgid "Inactive"
-msgid_plural "Inactive"
-msgstr[0] "Neaktyvu"
-msgstr[1] "Neaktyvūs"
-msgstr[2] "Neaktyvūs"
+msgid "Inactive<span class=\"count\">(%s)</span>"
+msgid_plural "Neaktyvūs<span class=\"count\">(%s)</span>"
+msgstr[0] "Neaktyvu <span class=“count”>(%s)</span>"
+msgstr[1] "Neaktyvūs <span class=“count”>(%s)</span>"
+msgstr[2] "Neaktyvūs <span class=“count”>(%s)</span>"
 
-#: Includes/ClassEntity.php:53 Includes/instances/Entity.php:477
-#: Includes/instances/Entity.php:492 views/elements/location-single.php:3
+#: Includes/ClassEntity.php:55 Includes/instances/Entity.php:486
+#: Includes/instances/Entity.php:501 views/location/location-single.php:3
 msgid "location"
 msgstr "vieta"
 
@@ -979,45 +980,46 @@ msgstr "Šiukšliadėžėje Nerasta Narių"
 msgid "Community Directory Entities"
 msgstr "Bendruomenės Katalogo Nariai"
 
-#: Includes/ClassLocation.php:44
+#: Includes/ClassLocation.php:46
 msgid "Add Location"
 msgstr "Pridėkite Vietą"
 
-#: Includes/ClassLocation.php:45
+#: Includes/ClassLocation.php:47
 msgid "Add New Location"
 msgstr "Pridėkite Naują Vietą"
 
-#: Includes/ClassLocation.php:46
+#: Includes/ClassLocation.php:48
 msgid "Edit Location"
 msgstr "Redaguokite Vieta"
 
-#: Includes/ClassLocation.php:47
+#: Includes/ClassLocation.php:49
 msgid "New Location"
 msgstr "Nauja Vieta"
 
-#: Includes/ClassLocation.php:48
+#: Includes/ClassLocation.php:50
 msgid "View Location"
 msgstr "Peržiūrėkite vietą"
 
-#: Includes/ClassLocation.php:49
+#: Includes/ClassLocation.php:51
 msgid "Search Location"
 msgstr "Ieškokite Vietą"
 
-#: Includes/ClassLocation.php:50
+#: Includes/ClassLocation.php:52
 msgid "No Locations Found"
 msgstr "Nerasta vietų"
 
-#: Includes/ClassLocation.php:51
+#: Includes/ClassLocation.php:53
 msgid "No Locations Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Vietų"
 
-#: Includes/ClassLocation.php:400
+#: Includes/ClassLocation.php:402
 #, php-format
 msgid "Successfully deleted %s location(s)"
 msgstr "Sėkmingai ištrinta %s vietą(-os)"
 
 #: Includes/ClassOffersNeeds.php:51 Includes/ClassOffersNeeds.php:54
 #: Includes/ClassOffersNeeds.php:64 Includes/ClassOffersNeeds.php:65
+#: Includes/ClassPublic.php:140
 msgid "Offers & Needs"
 msgstr "Pasiūlymai ir Poreikiai"
 
@@ -1457,13 +1459,29 @@ msgstr "menas ir amatai"
 msgid "give away"
 msgstr "atiduodu"
 
-#: Includes/ClassPublic.php:126
+#: Includes/ClassPublic.php:127
 msgid "My Profile"
 msgstr "Mano Profilis"
 
-#: Includes/ClassPublic.php:132
+#: Includes/ClassPublic.php:133
 msgid "Edit Profile"
 msgstr "Redaguokite profilį"
+
+#: Includes/ClassPublic.php:146
+msgid "Create New"
+msgstr "Sukurkit Naują"
+
+#: Includes/ClassPublic.php:152
+msgid "View Mine"
+msgstr "Pažiūrėkite į Savo"
+
+#: Includes/ClassShortcodes.php:124
+msgid "Uh oh…"
+msgstr "Blemba…"
+
+#: Includes/ClassShortcodes.php:125
+msgid "You should'nt be seeing this page. Something went wrong."
+msgstr "Kažkas netaip. Šitas neturėtų būti rodomas."
 
 #: Includes/ClassUWPForms.php:65 Includes/ClassUWPForms.php:83
 msgid "My location isn't listed"
@@ -1657,15 +1675,15 @@ msgctxt "search"
 msgid "Products and Services"
 msgstr "Produktus ar Paslaugas"
 
-#: Includes/helpers/misc.php:274
+#: Includes/helpers/misc.php:288
 msgid "pending"
 msgstr "laukiama"
 
-#: Includes/helpers/misc.php:276
+#: Includes/helpers/misc.php:290
 msgid "publish"
 msgstr "paskelbta"
 
-#: Includes/helpers/misc.php:278
+#: Includes/helpers/misc.php:292
 msgid "draft"
 msgstr "juodraštis"
 
@@ -1677,7 +1695,7 @@ msgstr "Pasiūlymai"
 msgid "Needs"
 msgstr "Poreikiai"
 
-#: views/elements/location-single.php:10
+#: views/location/location-single.php:10
 #, php-format
 msgid "%d Inhabitant"
 msgid_plural "%d Inhabitants"
@@ -1685,67 +1703,70 @@ msgstr[0] "%d Gyventojas"
 msgstr[1] "%d Gyventojai"
 msgstr[2] "%d Gyventojų"
 
-#: views/elements/offer-need-single.php:5
-msgid "Offer Type"
-msgstr "Pasiūlymo Tipas"
+#: views/offer-need/offer-need-hashtag-list.php:9
+msgid "Latest Offers"
+msgstr "Naujausi Pasiūlymai"
 
-#: views/elements/offer-need-single.php:6
-msgid "Type of Need"
-msgstr "Poreikio Tipas"
+#: views/offer-need/offer-need-hashtag-list.php:10
+msgid "Latest Needs"
+msgstr "Naujausi Poreikiai"
 
-#: views/elements/offer-need-single.php:29
-msgid "Additional Attachment"
-msgstr "Papildomi Priedai"
-
-#: views/offers-and-needs-no-results.php:8
+#: views/offer-need/offer-need-no-results.php:8
 msgid "Maybe you have a need you would like to make public? Make it known."
 msgstr "Gal turite poreikį, kurį norėtumėte paviešinti? Pranešk apie tai."
 
-#: views/offers-and-needs-no-results.php:10
+#: views/offer-need/offer-need-no-results.php:10
 msgid "Maybe you have something to offer? Make it known."
 msgstr "Gal turite ką pasiūlyti? Pranešk apie tai."
 
-#: views/offers-and-needs-no-results.php:14
+#: views/offer-need/offer-need-no-results.php:14
 #, php-format
 msgid "Create one <a href=\"%s\">here</a>."
 msgstr "Sukurkite vieną <a href='%s'>čia</a>."
 
-#: views/offers-and-needs-no-results.php:17
+#: views/offer-need/offer-need-no-results.php:17
 #, php-format
 msgid "Register your account <a href=\"%s\">here</a> to get started."
 msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href='%s'>čia</a>."
 
-#: views/offers-and-needs-no-results.php:24
+#: views/offer-need/offer-need-no-results.php:24
 #, php-format
 msgid "No %s."
 msgstr "Nėra %s."
 
-#: views/offers_needs_hashtag_list.php:9
-msgid "Latest Offers"
-msgstr "Naujausi Pasiūlymai"
+#: views/offer-need/offer-need-single.php:5
+msgid "Offer Type"
+msgstr "Pasiūlymo Tipas"
 
-#: views/offers_needs_hashtag_list.php:10
-msgid "Latest Needs"
-msgstr "Naujausi Poreikiai"
+#: views/offer-need/offer-need-single.php:6
+msgid "Type of Need"
+msgstr "Poreikio Tipas"
 
-#: views/single-cd-entity.php:5
-msgid "Preferred Method of Contact"
-msgstr "Pageidaujamas Susisiekimo Būdas"
+#: views/offer-need/offer-need-single.php:29
+msgid "Additional Attachment"
+msgstr "Papildomi Priedai"
 
-#: views/single-cd-location.php:23
+#~ msgctxt "post_status"
+#~ msgid "Inactive"
+#~ msgid_plural "Inactive"
+#~ msgstr[0] "Neaktyvu"
+#~ msgstr[1] "Neaktyvūs"
+#~ msgstr[2] "Neaktyvūs"
+
+#~ msgid "Preferred Method of Contact"
+#~ msgstr "Pageidaujamas Susisiekimo Būdas"
+
 #, php-format
-msgid "Offers in %s"
-msgstr "Pasiūlymai - %s"
+#~ msgid "Offers in %s"
+#~ msgstr "Pasiūlymai - %s"
 
-#: views/single-cd-location.php:27
 #, php-format
-msgid "Needs in %s"
-msgstr "Poreikiai - %s"
+#~ msgid "Needs in %s"
+#~ msgstr "Poreikiai - %s"
 
-#: views/single-cd-location.php:33
 #, php-format
-msgid "Entities in %s"
-msgstr "Nariai - %s"
+#~ msgid "Entities in %s"
+#~ msgstr "Nariai - %s"
 
 #, fuzzy
 #~| msgid "Location"
@@ -1764,13 +1785,6 @@ msgstr "Nariai - %s"
 #~ msgstr[0] "Neaktyvu"
 #~ msgstr[1] "Neaktyvu"
 #~ msgstr[2] "Neaktyvu"
-
-#, php-format
-#~ msgid "Inactive <span class=\"count\">(%s)</span>"
-#~ msgid_plural "Inactive <span class=\"count\">(%s)</span>"
-#~ msgstr[0] "Neaktyvus <span class=“count”>(%s)</span>"
-#~ msgstr[1] "Neaktyvus <span class=“count”>(%s)</span>"
-#~ msgstr[2] "Neaktyvus <span class=“count”>(%s)</span>"
 
 #~ msgctxt "instrumental"
 #~ msgid "Location"
