@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-01-20 13:19+0200\n"
-"PO-Revision-Date: 2021-01-20 13:20+0200\n"
+"POT-Creation-Date: 2021-01-20 13:31+0200\n"
+"PO-Revision-Date: 2021-01-20 13:31+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -1675,6 +1675,21 @@ msgctxt "search"
 msgid "Products and Services"
 msgstr "Produktus ar Paslaugas"
 
+#: Includes/Translations/_translations.php:44
+#, php-format
+msgid "Needs in %s"
+msgstr "Poreikiai - %s"
+
+#: Includes/Translations/_translations.php:45
+#, php-format
+msgid "Offers in %s"
+msgstr "Pasiūlymai - %s"
+
+#: Includes/Translations/_translations.php:46
+#, php-format
+msgid "Entities in %s"
+msgstr "Nariai - %s"
+
 #: Includes/helpers/misc.php:288
 msgid "pending"
 msgstr "laukiama"
@@ -1755,18 +1770,6 @@ msgstr "Papildomi Priedai"
 
 #~ msgid "Preferred Method of Contact"
 #~ msgstr "Pageidaujamas Susisiekimo Būdas"
-
-#, php-format
-#~ msgid "Offers in %s"
-#~ msgstr "Pasiūlymai - %s"
-
-#, php-format
-#~ msgid "Needs in %s"
-#~ msgstr "Poreikiai - %s"
-
-#, php-format
-#~ msgid "Entities in %s"
-#~ msgstr "Nariai - %s"
 
 #, fuzzy
 #~| msgid "Location"

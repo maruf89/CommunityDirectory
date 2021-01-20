@@ -40,3 +40,7 @@ _nx( 'Inhabitant', 'Inhabitants', 1, 'instrumental', 'community-directory' );
 
 _n__noop( 'Product or Service', 'Products and/or Services', 'community-directory' );
 _x( 'Products and Services', 'search', 'community-directory' );
+
+__( 'Needs in %s', 'community-directory' );
+__( 'Offers in %s', 'community-directory' );
+__( 'Entities in %s', 'community-directory' );
