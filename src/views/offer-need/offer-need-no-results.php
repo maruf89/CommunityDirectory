@@ -9,7 +9,7 @@ if ( $type === 'need' )
 else
     $message = __( 'Maybe you have something to offer? Make it known.', 'community-directory' );
 
-if ( is_entity_user() ) {
+if ( cd_is_entity_user() ) {
     $link = community_directory_offer_need_link( 'create' );
     $link_msg = sprintf( __( 'Create one <a href="%s">here</a>.', 'community-directory' ), $link );
 } else {

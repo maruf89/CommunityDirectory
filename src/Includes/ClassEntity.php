@@ -22,8 +22,9 @@ class ClassEntity extends Routable implements ISearchable {
 
     protected string $router_ns = 'entity';
     
+    public static string $name = 'entity';
     public static string $role_entity = 'entity_subscriber';
-    public static string $post_type = 'cd-entity';
+    public static string $post_type;
     public static int $post_type_menu_position = 28;
     public static string $post_meta_loc_name = '_cd_location_display_name';
     public static string $post_meta_loc_id = '_cd_location_id';
@@ -39,6 +40,7 @@ class ClassEntity extends Routable implements ISearchable {
     }
 
     public function __construct() {
+        static::$post_type = ClassPublic::get_post_type_prefix() . static::$name;
         parent::__construct( $this );
     }
 
@@ -51,8 +53,6 @@ class ClassEntity extends Routable implements ISearchable {
      */
     public static function register_post_type() {
         $loc_prefix = __( 'location', 'community-directory' );
-        $post_type = self::$post_type;
-
         
         $custom_post_type_args = array(
             'label' => __( 'Entities', 'community-directory' ),
@@ -78,7 +78,7 @@ class ClassEntity extends Routable implements ISearchable {
             'show_in_menu' => true,//COMMUNITY_DIRECTORY_NAME,
             'capability_type' => array( 'entity', 'entities' ),
             'map_meta_cap'        => false,
-            'menu_position' => self::$post_type_menu_position,
+            'menu_position' => static::$post_type_menu_position,
             'capabilities' => array(
                 'edit_post'          => 'edit_entity', 
                 'read_post'          => 'read_entity', 
@@ -103,7 +103,7 @@ class ClassEntity extends Routable implements ISearchable {
         );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( $post_type, $custom_post_type_args );
+        register_post_type( static::$post_type, $custom_post_type_args );
     }
 
     public function get_search_fields():array {

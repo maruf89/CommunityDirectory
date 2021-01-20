@@ -16,6 +16,9 @@ class Location extends Instance {
     public static string $post_type = 'cd-location';
 
     protected bool $_cd_loaded = false;
+    protected array $_featured = [
+        'sizes' => []
+    ];
 
     protected int $location_id;
     protected string $display_name;
@@ -55,12 +58,13 @@ class Location extends Instance {
     }
 
     public function get_featured( $size = 'medium' ):string {
-        return get_the_post_thumbnail_url( $this->post_id, $size );
-    }
+        if ( isset( $this->_featured[ 'sizes' ][ $size ] ) ) return $this->_featured[ 'sizes' ][ $size ];
 
-    public function has_coords():bool {
-        return gettype($this->coords['lat']) === 'double' &&
-               gettype($this->coords['lon']) === 'double';
+        $id = $this->_featured[ 'id' ] =  isset( $this->_featured[ 'id' ] ) ?
+            $this->_featured[ 'id' ] : get_post_thumbnail_id( $this->post_id );
+
+        return $this->_featured[ 'sizes' ][ $size ] =
+            arr_val_or_null( wp_get_attachment_image_src( $id, $size ), 0, '' );
     }
 
     /////////////////////////////////////

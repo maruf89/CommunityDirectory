@@ -12,9 +12,10 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
+use Maruf89\CommunityDirectory\Includes\instances\{Entity, OfferNeed};
 
 class ClassPublic {
+    private static string $_post_type_prefix = 'cd-';
     private static string $_template_hook_prefix = 'community_directory_template_';
     private static string $_template_hook_admin_prefix = 'community_directory_admin_template_';
     private static int $_template_hook_prefix_len;
@@ -134,6 +135,25 @@ class ClassPublic {
                 102,
                 $top->ID
             );
+
+            $ON_top = community_directory_custom_nav_menu_item(
+                __( 'Offers & Needs', 'community-directory' ),
+                OfferNeed::get_view_all_link(),
+                200
+            );
+            $items[] = $ON_top;
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'Create New', 'community-directory' ),
+                OfferNeed::get_create_link(),
+                201,
+                $ON_top->ID
+            );
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'View Mine', 'community-directory' ),
+                OfferNeed::get_view_all_link(),
+                202,
+                $ON_top->ID
+            );
         }
 
         return $items;
@@ -192,13 +212,19 @@ class ClassPublic {
     
             // The name of custom post type single template
             $template_name = "single-$post_type.php";
-    
-            // A specific single template for my custom post type exists in theme folder? Or it also doesn't exist in my plugin?
-            if ( $template === get_stylesheet_directory() . '/' . $template_name
-                 || !file_exists( $plugin_path . $template_name ) ) {
-    
+
+            $theme_template_name = apply_filters(
+                static::$_template_hook_prefix . 'single-post-type',
+                $template_name,
+                $post_type,
+                \substr( $post_type, strlen( static::$_post_type_prefix ) )
+            );
+
+            if ( \file_exists( $theme_template_name ) ||
+                 !file_exists( $plugin_path . $template_name )
+            ) {
                 //Then return "single.php" or "single-my-custom-post-type.php" from theme directory.
-                return $template;
+                return $theme_template_name;
             }
     
             // If not, return my plugin custom post type template.
@@ -208,6 +234,8 @@ class ClassPublic {
         //This is not my custom post type, do nothing with $template
         return $template;
     }
+
+    public static function get_post_type_prefix():string { return static::$_post_type_prefix; }
 
     public static function get_template_hook_prefix( string $type = ''):array {
         switch( $type ) {

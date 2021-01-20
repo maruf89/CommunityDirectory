@@ -25,7 +25,7 @@ class ClassLocationsWidget extends \WP_Widget {
     
     private static array $templates = [
         'list' => 'community_directory_template_location/location-list.php',
-        'map' => 'community_directory_template_location/location-map.php',
+        'map' => 'community_directory_template_map/instance-map.php',
     ];
     
     // Creating widget front-end
@@ -33,15 +33,25 @@ class ClassLocationsWidget extends \WP_Widget {
         $type = isset( $instance[ 'type' ] ) ? $instance[ 'type' ] : 'list';
         $template_filter = static::$templates[ $type ];
 
-        $locations = apply_filters( 'community_directory_get_locations', [], null, array( 'active_inhabitants' => '> 0' ) );
-        $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
+        $instances = apply_filters( 'community_directory_get_locations', [], null, array( 'active_inhabitants' => '> 0' ) );
+        $instances = apply_filters( 'community_directory_format_locations', $instances, 'instance' );
+
+        if ( $type === 'list' )
+            \usort( $instances, 'cd_sort_instances_by_has_photo' );
+        else if ( $type === 'map' ) {
+            $instances = \array_filter( $instances, 'cd_filter_instances_by_has_coords' );
+            if ( !count( $instances ) ) return;
+        }
 
         $template_file = apply_filters( $template_filter, '' );
-        $single_template = apply_filters( 'community_directory_template_elements/location-single.php', '' );
-        load_template( $template_file, false, array(
-            'locations' => $locations,
-            'single_template' => $single_template
-        ) );
+        $single_template = apply_filters( 'community_directory_template_location/location-single.php', '' );
+
+        $args = array(
+            'instances' => $instances,
+            'single_template' => $single_template,
+        );
+        
+        load_template( $template_file, false, $args );
     }
             
     private static int $idIncrement = 1;

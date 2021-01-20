@@ -8,7 +8,7 @@
  *
  * @return      string      Installation type.
  */
-function community_directory_get_installation_type() {
+function community_directory_get_installation_type():string {
     // *. Single Site
     if (!is_multisite()) {
         return "single";

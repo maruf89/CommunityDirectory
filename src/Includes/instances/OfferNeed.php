@@ -277,6 +277,16 @@ class OfferNeed extends Instance {
         return admin_url( "post.php?post=$post_id&action=edit" );
     }
 
+    public static function get_create_link():string {
+        $post_type = ClassOffersNeeds::$post_type;
+        return admin_url( "post-new.php?post_type=$post_type");
+    }
+
+    public static function get_view_all_link():string {
+        $post_type = ClassOffersNeeds::$post_type;
+        return admin_url( "edit.php?post_type=$post_type");
+    }
+
     /**
      * Here we're hacking the wp_post field by setting the `post_excerpt` field as the `type` (offer|need)
      * Upon updating the type field, we update the post_excerpt
@@ -328,7 +338,7 @@ class OfferNeed extends Instance {
      */
     public static function set_post_props_on_save( array $sanitized, array $unsanitized, array $unprocessed ) {
         $status = [ 'publish', 'inactive' ];
-        if ( !in_array( $sanitized[ 'post_status' ], $status ) || $sanitized[ 'post_type' ] !== self::$post_type )
+        if ( !in_array( $sanitized[ 'post_status' ], $status ) || $sanitized[ 'post_type' ] !== ClassOffersNeeds::$post_type )
             return $sanitized;
 
         $Entity = Entity::get_instance( null, $sanitized[ 'post_author' ] );

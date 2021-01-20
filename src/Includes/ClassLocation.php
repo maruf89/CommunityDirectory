@@ -27,10 +27,12 @@ class ClassLocation extends Routable {
         return self::$instance;
     }
 
-    public static string $post_type = 'cd-location';
+    public static string $name = 'location';
+    public static string $post_type;
     protected string $router_ns = 'location';
 
     public function __construct() {
+        static::$post_type = ClassPublic::get_post_type_prefix() . static::$name;
         parent::__construct( $this );
     }
 
@@ -85,7 +87,7 @@ class ClassLocation extends Routable {
         );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( self::$post_type, $custom_post_type_args );
+        register_post_type( static::$post_type, $custom_post_type_args );
     }
 
     /**

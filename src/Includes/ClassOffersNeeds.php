@@ -23,7 +23,8 @@ class ClassOffersNeeds extends Routable implements ISearchable {
 
     protected string $router_ns = 'offers-needs';
     
-    public static string $post_type = 'cd-offers-needs';
+    public static string $name = 'offers-needs';
+    public static string $post_type;
     public static string $taxonomy = 'cd-product-service-type';
     public static int $post_type_menu_position = 28;
 
@@ -38,6 +39,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     }
 
     public function __construct() {
+        static::$post_type = ClassPublic::get_post_type_prefix() . static::$name;
         parent::__construct( $this );
     }
 
@@ -45,8 +47,6 @@ class ClassOffersNeeds extends Routable implements ISearchable {
      * Register's the Entity post type
      */
     public static function register_post_type() {
-        $post_type = self::$post_type;
-        
         $custom_post_type_args = array(
             'label' => __( 'Offers & Needs', 'community-directory' ),
             'labels' =>
@@ -97,7 +97,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
             'taxonomies' => array( self::$taxonomy )
         );
 
-        register_post_type( $post_type, $custom_post_type_args );
+        register_post_type( static::$post_type, $custom_post_type_args );
     }
 
     /**
@@ -274,7 +274,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
             if ( !empty($_GET['post_mime_type']) && wp_match_mime_types($mime_type, $_GET['post_mime_type']) )
                 $class = ' class="current"';
             if ( !empty( $num_posts[$mime_type] ) )
-                $views[$mime_type] = "<a href='upload.php?post_mime_type=$mime_type'$class>" . sprintf( translate_nooped_plural( $label[2], $num_posts[$mime_type] ), $num_posts[$mime_type] ) . '</a>';
+                $views[$mime_type] = "<a href='upload.php?post_mime_type=$mime_type'$class>" . sprintf( translate_nooped_plural( $label[2], $num_posts[$mime_type] ), 'community-directory' ) . '</a>';
         }
         $views['detached'] = '<a href="upload.php?detached=1"' . ( $detached ? ' class="current"' : '' ) . '>' . sprintf( '%s <span class="count">(%s)</span>', __( 'Unattached', 'community-directory' ), 'detached files', $total_orphans ) . '</a>';
         return $views;

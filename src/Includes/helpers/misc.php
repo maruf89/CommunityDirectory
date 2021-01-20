@@ -1,5 +1,7 @@
 <?php
 
+use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
+
 /**
  * Converts the first and last variables to display name
  */
@@ -225,7 +227,19 @@ function community_directory_get_post_var_by_field( $var_to_get, $where_key, $wh
     return $post;
 }
 
-function community_directory_bool_to_status( $action, string $what_for = 'entity', string $type = 'enum' ):string {
+/**
+ * Given a a satus active type (true|false|1|2|3|4), the type it's for, and the type of return value, returns the status
+ * 
+ * @param   $action     boolean|int         true = 1 = active, false = 2 = inactive
+ * @param   $what_for   string              (entity|location|offer_need)
+ * @param   $type       string              (enum|post)
+ * @return              string
+ */
+function community_directory_bool_to_status(
+    $action,
+    string $what_for = 'entity',
+    string $type = 'enum'
+):string {
     if ( gettype( $action ) === 'boolean' ) $action = $action ? 1 : 0;
 
     switch ( $what_for ) {
@@ -338,6 +352,16 @@ function community_directory_settings_get( string $key = '', string $default_val
 
     return empty( $key ) ? $settings :
         ( isset( $settings[ $key ] ) ? $settings[ $key ] : $default_value );
+}
+
+function cd_sort_instances_by_has_photo( $a,  $b ):int {
+    if ( !!$a->get_featured() ) return -1;
+    if ( !!$b->get_featured() ) return 1;
+    return 0;
+}
+
+function cd_filter_instances_by_has_coords( Instance $instance ):bool {
+    return $instance->has_coords();
 }
 
 if ( !function_exists( 'arr_val_or_null' ) ) {

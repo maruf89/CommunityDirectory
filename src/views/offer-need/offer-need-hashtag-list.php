@@ -1,6 +1,6 @@
 <?php
 
-$offers_needs = $args[ 'offers_and_needs' ];
+$instances = $args[ 'instances' ];
 
 $type = $args[ 'attrs' ][ 'type' ];
 
@@ -17,15 +17,15 @@ if ( $show_title ) {
         <h3><?= $title ?></h3>
     <?php endif; ?>
     <ul class="cd-<?= $type ?>-list list-inline">
-        <?php foreach ( $offers_needs as $num => $offer_need ): ?>
+        <?php foreach ( $instances as $num => $instance ): ?>
             <?php
-                $link = $offer_need->get_link();
+                $link = $instance->get_link();
                 if ( empty( $link ) ) continue;
                 $even_odd = ( $num % 2 ) === 1 ? 'even' : 'odd';
             ?>
-            <li class="<?= "$type-$offer_need->ID $even_odd list-inline-item" ?>" >
+            <li class="<?= "$type-$instance->ID $even_odd list-inline-item" ?>" >
                 <a href="<?= $link ?>">
-                    <?= $offer_need->get_acf_hashtag_title() ?>
+                    <?= $instance->get_acf_hashtag_title() ?>
                 </a>
             </li>
         <?php endforeach; ?>

@@ -210,11 +210,14 @@ class Entity extends Instance {
      * Returns the featured image
      */
     public function get_featured( string $type = 'src' ) {
-        if ( !$this->load_acf_from_db() || !isset( $this->acf_data[ClassACF::$entity_picture] ) || !$this->acf_data[ClassACF::$entity_picture] ) return '';
+        if ( !$this->load_acf_from_db() ||
+             !isset( $this->acf_data[ClassACF::$entity_picture] ) ||
+             !$this->acf_data[ClassACF::$entity_picture]
+        ) return '';
 
         $img_arr = $this->acf_data[ClassACF::$entity_picture];
         switch ( $type ) {
-            case 'src': return $img_arr['url'];
+            case 'src': return $img_arr[ 'url' ];
             case 'raw':
             default: return $img_arr;
         }
@@ -407,6 +410,12 @@ class Entity extends Instance {
             if ( $data = get_fields( $this->post_id ) ) {
                 $this->acf_data = $data;
             }
+
+            if ( isset( $data[ ClassACF::$entity_gmap_loc ] ))
+                $this->coords = array(
+                    'lat' => $data[ ClassACF::$entity_gmap_loc ][ 'lat' ],
+                    'lon' => $data[ ClassACF::$entity_gmap_loc ][ 'lng' ],
+                );
             
             return $this->_acf_loaded = !!$data;
         }

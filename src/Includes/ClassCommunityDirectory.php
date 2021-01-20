@@ -216,15 +216,14 @@ final class ClassCommunityDirectory {
     public function load_template_actions_and_filters( ClassPublic $instance ) {
         list( $prefix, $len ) = ClassPublic::get_template_hook_prefix();
         add_filter( "${prefix}location/location-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}location/location-map.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}elements/location-single.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offers-and-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offers-and-needs-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offers_needs_hashtag_list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}elements/offer-need-single.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}elements/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}entity-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}entity-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}map/instance-map.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}location/location-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offer-need/offer-need-no-results.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offer-need/offer-need-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offer-need/offer-need-hashtag-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offer-need/offer-need-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}entity/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}entity/entity-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}search/cd-offers-needs.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}search/cd-entity.php", array( $instance, 'load_template' ), 10, 1 );
 
@@ -249,6 +248,7 @@ final class ClassCommunityDirectory {
     }
 
     public function load_offers_needs_actions_and_filters( ClassOffersNeeds $instance ) {
+        add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
         add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
         add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
@@ -421,7 +421,7 @@ final class ClassCommunityDirectory {
                 'exclude_from_search'       => true,
                 'show_in_admin_all_list'    => true,
                 'show_in_admin_status_list' => true,
-                'label_count'               => _nx( 'Inactive', 'Inactive', 2, 'post_status', 'community-directory' ) . '<span class="count">(%s)</span>',
+                'label_count'               => _nx_noop( 'Inactive<span class="count">(%s)</span>', 'Neaktyvūs<span class="count">(%s)</span>', 'post_status', 'community-directory' ),
             )
         );
     }

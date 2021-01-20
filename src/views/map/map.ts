@@ -6,7 +6,7 @@ let $:JQueryStatic;
 export default function(_$:JQueryStatic) {
     $ = _$;
 
-    const $Map = $('#LocationMap');
+    const $Map = $('#InstanceMap');
     if (!LEAFLET_LOADED || !$Map.length) return;
 
     initMap($Map);
@@ -15,7 +15,8 @@ export default function(_$:JQueryStatic) {
 function initMap($map:JQuery<HTMLElement>) {
     const data = $map[0].dataset;
     let popup = L.popup();
-    // // Use passed in coords or default coords
+    // Use passed in coords or default coords
+    // @ts-ignore
     const center:any = ((data.coords && data.coords.split(',') || cdData.map.defaultCoords).map(str => +str))
 
     const mapOpenPopup = ($element, e) => {

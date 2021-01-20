@@ -43,6 +43,14 @@ abstract class Instance {
         return null;
     }
 
+    public function has_coords():bool {
+        return $this->load_from_db() &&
+               isset( $this->coords ) &&
+               is_array( $this->coords ) &&
+               gettype($this->coords['lat']) === 'double' &&
+               gettype($this->coords['lon']) === 'double';
+    }
+
     /////////////////////////////////////
     /////////////   Update   ////////////
     /////////////////////////////////////

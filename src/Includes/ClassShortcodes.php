@@ -26,7 +26,7 @@ class ClassShortcodes {
         $count = isset( $attrs[ 'count' ] ) && !empty( $attrs[ 'count' ] )
             ? $attrs[ 'count' ] : 20;
 
-        $offers_and_needs = apply_filters(
+        $instances = apply_filters(
             'community_directory_get_latest_offers_needs',
             array(),
             $type,
@@ -34,17 +34,18 @@ class ClassShortcodes {
             $location_id
         );
 
-        $offers_and_needs = ClassOffersNeeds::format_to_instances( $offers_and_needs );
+        $instances = ClassOffersNeeds::format_to_instances( $instances );
 
-        if ( !count( $offers_and_needs ) ) {
-            $template_file = apply_filters( 'community_directory_template_offers-and-needs-no-results.php', '' );
+        if ( !count( $instances ) ) {
+            $template_file = apply_filters( 'community_directory_template_offer-need/offer-need-no-results.php', '' );
             load_template( $template_file, false, array(
                 'attrs' => $attrs,
             ) );
         } else {
-            $template_file = apply_filters( 'community_directory_template_offers-and-needs-list.php', '' );
+            $template_file = apply_filters( 'community_directory_template_offer-need/offer-need-list.php', '' );
+            $single_template = 
             load_template( $template_file, false, array(
-                'offers_and_needs' => $offers_and_needs,
+                'instances' => $instances,
                 'attrs' => $attrs,
             ) );
         }
@@ -60,7 +61,7 @@ class ClassShortcodes {
         $count = isset( $attrs[ 'count' ] ) && !empty( $attrs[ 'count' ] )
             ? (int) $attrs[ 'count' ] : 20;
 
-        $offers_and_needs = apply_filters(
+        $instances = apply_filters(
             'community_directory_get_latest_offers_needs',
             array(),
             $type,
@@ -68,24 +69,31 @@ class ClassShortcodes {
             $location_id
         );
 
-        if ( count( $offers_and_needs ) ) {
-            $offers_and_needs = ClassOffersNeeds::format_to_instances( $offers_and_needs );
+        if ( count( $instances ) ) {
+            $instances = ClassOffersNeeds::format_to_instances( $instances );
             
-            $template_file = apply_filters( 'community_directory_template_offers_needs_hashtag_list.php', '' );
+            $template_file = apply_filters( 'community_directory_template_offer-need/offer-need-hashtag-list.php', '' );
             load_template( $template_file, false, array(
-                'offers_and_needs' => $offers_and_needs,
+                'instances' => $instances,
                 'attrs' => array( 'type' => $type ),
             ) );
         }
     }
+    
+    private static array $templates = [
+        'entity-list' => 'community_directory_template_entity/entity-list.php',
+        'entity-map' => 'community_directory_template_map/instance-map.php',
+    ];
 
     public function list_entities( array $attrs ) {
-        $location_id = isset( $attrs[ 'location_id' ] ) && !empty( $attrs[ 'location_id' ] )
-            ? (int) $attrs[ 'location_id' ] : null;
-        $show_title = isset( $attrs[ 'show_title' ] ) && !empty( $attrs[ 'show_title' ] )
-            ? (bool) $attrs[ 'show_title' ] : false;
+        $location_id = $attrs[ 'location_id' ] ?? null;
+        $show_title = $attrs[ 'show_title' ] ?? false;
+        $type = $attrs[ 'type' ] ?? 'list';
 
-        $entities = apply_filters(
+        if ( !isset( static::$templates[ "entity-$type" ] ) ) die( 'Invalid type passed to `list_entities` shortcode, must be one of (list|map)' );
+        $template_filter = static::$templates[ "entity-$type" ];
+
+        $instances = apply_filters(
             'community_directory_get_entities',
             array(),
             'publish',
@@ -94,15 +102,28 @@ class ClassShortcodes {
             null
         );
 
-        if ( count( $entities ) ) {
-            $entities = ClassEntity::format_to_instances( $entities );
-            $template_file = apply_filters( 'community_directory_template_entity-list.php', '' );
+        if ( count( $instances ) ) {
+            $instances = ClassEntity::format_to_instances( $instances );
+
+            if ( $type === 'list' )
+                \usort( $instances, 'cd_sort_instances_by_has_photo' );
+            else if ( $type === 'map' ) {
+                $instances = \array_filter( $instances, 'cd_filter_instances_by_has_coords' );
+                if ( !count( $instances ) ) return;
+            }
+            
+            $template_file = apply_filters( $template_filter, '' );
+            $single_template = apply_filters( 'community_directory_template_entity/entity-single.php', '' );
             load_template( $template_file, false, array(
-                'entities' => $entities,
+                'instances' => $instances,
                 'show_title' => $show_title,
+                'single_template' => $single_template,
             ) );
         } else {
-            // ToDo: We shouldn't get here, but just in case show a template saying there are no entities here
+            ?>
+                <h1><?= __( 'Uh oh…', 'community-directory' ) ?></h1>
+                <p><?= __( 'You should\'nt be seeing this page. Something went wrong.', 'community-directory' ) ?></p>
+            <?php
         }
     }
 
