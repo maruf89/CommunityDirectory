@@ -17,6 +17,7 @@ export const elMarker = L.Marker.extend({
 });
 
 export const mapInstances = [];
+export const mapboxUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + cdData.map.accessToken;
 
 if ( LEAFLET_LOADED ) {
     L.Map.addInitHook(function () {

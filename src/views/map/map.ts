@@ -1,5 +1,5 @@
 import { LatLngTuple, Marker } from 'leaflet';
-import { mapInstances, LEAFLET_LOADED, MB_ATTR } from 'ThirdParty/leaflet';
+import { mapInstances, LEAFLET_LOADED, MB_ATTR, mapboxUrl } from 'ThirdParty/leaflet';
 
 let $:JQueryStatic;
 
@@ -51,16 +51,13 @@ function initMap($map:JQuery<HTMLElement>) {
         zoom: 13
     });
 
-    
-
     // If first time loading, initiate the map and bind all listeners
     if (!hasInitiated) {
-        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + cdData.map.accessToken, {
-            maxZoom: 18,
-            attribution: MB_ATTR,
-            id: 'mapbox/streets-v11',
+        L.tileLayer(mapboxUrl, {
+            id: 'mapbox/streets-v8',
             tileSize: 512,
             zoomOffset: -1,
+            attribution: MB_ATTR
         }).addTo(map);
 
         map.data = {

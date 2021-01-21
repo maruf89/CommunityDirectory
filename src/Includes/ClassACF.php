@@ -153,7 +153,7 @@ class ClassACF {
 			'type' => 'text',
 			'instructions' => __( 'This is how you will appear in the directory under your city or town.', 'community-directory' ),
 			'required' => 1,
-			'placeholder' => __( 'Hillsdale Farms', 'community-directory' ),
+			'placeholder' => _x( 'Higgleby Ranch or Mary\'s Woodlands', 'placeholder', 'community-directory' ),
 			'maxlength' => '50',
         );
 
@@ -177,7 +177,8 @@ class ClassACF {
 			'label' => __( 'Bio', 'community-directory' ),
 			'name' => self::$entity_about,
 			'type' => 'textarea',
-			'instructions' => __( 'Write something about yourself or about your place. Don\'t know what to write about? Write about what you do, the history of your place, or what you would like to see more of around you.', 'community-directory' ),
+            'instructions' => __( 'Write something about yourself or about your place. Don\'t know what to write about? Write about what you do, the history of your place, or what you would like to see more of around you.', 'community-directory' ),
+            'placeholder' => _x( 'At Higgleby Ranch we pride ourselves in our livestock. We raise cattle, and train horses, as well as invite families to visit with their children where they can play with the animals and ride our ponies.', 'placeholder', 'community-directory' ),
 			'required' => 0,
 			'maxlength' => '2000',
         );
@@ -187,7 +188,8 @@ class ClassACF {
 			'label' => __( 'Contact Method', 'community-directory' ),
 			'name' => self::$entity_contact_method,
 			'type' => 'text',
-			'instructions' => __( 'What is the best way to get in contact with you?', 'community-directory' ),
+            'instructions' => __( 'What is the best way to get in contact with you?', 'community-directory' ),
+            'placeholder' => _x( 'Email or Phone', 'placeholder', 'community-directory' ),
 			'required' => 1,
 		);
 
@@ -264,14 +266,6 @@ class ClassACF {
 
     public static function generate_required_offers_needs_fields( $fields_arr ) {
         $fields_arr[] = array(
-            'key' => self::$offers_needs_active_key,
-            'label' => __( 'Hash Tag Title', 'community-directory' ),
-            'name' => self::$offers_needs_active,
-            'type' => 'text',
-            'instructions' => __( 'Enter the hash tag title that sums up your offer or need in 49 characters or less. Example: #FreshlySqueezedAppleJuice', 'community-directory' ),
-            'maxlength' => 49,
-        );
-        $fields_arr[] = array(
             'key'       => self::$offers_needs_active_key,
 			'label'     => __( 'Is Active', 'community-directory' ),
 			'name'      => self::$offers_needs_active,
@@ -293,7 +287,8 @@ class ClassACF {
             'label' => __( 'Hash Tag Title', 'community-directory' ),
             'name' => self::$offers_needs_hashtag_title,
             'type' => 'text',
-            'instructions' => __( 'Enter the hash tag title that sums up your offer or need in 49 characters or less. Example: #FreshlySqueezedAppleJuice', 'community-directory' ),
+            'instructions' => __( 'Enter the hash tag title that sums up your offer or need in 49 characters or less.', 'community-directory' ),
+            'placeholder' => _x( '#FreshlySqueezedAppleJuice', 'placeholder', 'community-directory' ),
             'maxlength' => 49,
         );
         
@@ -335,6 +330,7 @@ class ClassACF {
             'name' => self::$offers_needs_description,
             'type' => 'wysiwyg',
             'instructions' => __( "Describe what it is you're offering or seeking.", 'community-directory' ),
+            'placeholder' => _x( 'We offer only freshly pressed apple juice, harvested from our own orchard, where we use only organic pesticides. We also offer apples if you like!', 'placeholder', 'community-directory' ),
             'required' => 1,
             'tabs' => 'all',
             'toolbar' => 'full',

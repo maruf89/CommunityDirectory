@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-01-20 13:31+0200\n"
-"PO-Revision-Date: 2021-01-20 13:31+0200\n"
+"POT-Creation-Date: 2021-01-21 12:07+0200\n"
+"PO-Revision-Date: 2021-01-21 12:15+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -454,7 +454,7 @@ msgstr "Neaktykuotos Vietos"
 #: Admin/Settings/ClassSettingsLocation.php:155
 #: Admin/Settings/ClassSettingsLocation.php:184
 #: Admin/Settings/ClassSettingsLocation.php:215 Includes/ClassACF.php:140
-#: Includes/ClassACF.php:282 Includes/instances/Entity.php:177
+#: Includes/ClassACF.php:276 Includes/instances/Entity.php:177
 #: Includes/instances/OfferNeed.php:148
 msgid "Active"
 msgstr "Aktyvu"
@@ -635,12 +635,12 @@ msgstr ""
 msgid "What to show"
 msgstr "Ką rodyti"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:64 Includes/ClassACF.php:308
+#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:64 Includes/ClassACF.php:303
 #: Includes/helpers/offer_need.php:9
 msgid "Offer"
 msgstr "Pasiūlymas"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:73 Includes/ClassACF.php:309
+#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:73 Includes/ClassACF.php:304
 #: Includes/helpers/offer_need.php:12
 msgid "Need"
 msgstr "Poreikis"
@@ -698,7 +698,7 @@ msgstr ""
 "Pasirinkite 'Aktyvus', kad jūsų profilis būtų matomas. Jei 'Neaktyvus', jūsų "
 "profilis nebus viešintas."
 
-#: Includes/ClassACF.php:141 Includes/ClassACF.php:283
+#: Includes/ClassACF.php:141 Includes/ClassACF.php:277
 #: Includes/ClassCommunityDirectory.php:418 Includes/instances/Entity.php:177
 #: Includes/instances/OfferNeed.php:148
 msgid "Inactive"
@@ -710,11 +710,12 @@ msgstr "Vietos Vardas"
 
 #: Includes/ClassACF.php:154
 msgid "This is how you will appear in the directory under your city or town."
-msgstr "Čia kas rodysis katalogo saraše."
+msgstr "Naudokite savo šeimos, ūkio or vietos vardą."
 
 #: Includes/ClassACF.php:156
-msgid "Hillsdale Farms"
-msgstr "Jono Ūkis"
+msgctxt "placeholder"
+msgid "Higgleby Ranch or Mary's Woodlands"
+msgstr "Pvz Mickevičių Sodyba arba Auksinis Dvaras"
 
 #: Includes/ClassACF.php:162
 msgid "Picture"
@@ -722,7 +723,7 @@ msgstr "Nuotrauka"
 
 #: Includes/ClassACF.php:165
 msgid "Upload a picture of yourselves"
-msgstr "Įkelkite nuotrauką savęs"
+msgstr "Užkelkite nuotrauką geriausią apibūdinančia jūsų vietą"
 
 #: Includes/ClassACF.php:177
 msgid "Bio"
@@ -738,99 +739,104 @@ msgstr ""
 "Parašykite apie tai, ką darote, savo vietos istoriją ar ką norėtumėte "
 "pamatyti daugiau aplink save."
 
-#: Includes/ClassACF.php:187
+#: Includes/ClassACF.php:181
+msgctxt "placeholder"
+msgid ""
+"At Higgleby Ranch we pride ourselves in our livestock. We raise cattle, and "
+"train horses, as well as invite families to visit with their children where "
+"they can play with the animals and ride our ponies."
+msgstr ""
+"Pvz Mickevičių Sodyboje auginame įvairias gėlės bei šilauoges ir braškes "
+"mainams arba pardavimui. Mums svarbu sveikata, tačiau mes nevartojam "
+"chemikalų augindami mūsų gėrybes. Mes draugiški, tačiau jei norite, galite "
+"mus aplankyti."
+
+#: Includes/ClassACF.php:188
 msgid "Contact Method"
 msgstr "Kontaktinis Būdas"
 
-#: Includes/ClassACF.php:190
+#: Includes/ClassACF.php:191
 msgid "What is the best way to get in contact with you?"
 msgstr "Koks yra geriausias būdas susisiekti su jumis?"
 
-#: Includes/ClassACF.php:196
+#: Includes/ClassACF.php:192
+msgctxt "placeholder"
+msgid "Email or Phone"
+msgstr "Pvz Emailu ar Telefonu"
+
+#: Includes/ClassACF.php:198
 msgid "Contact Email"
 msgstr "Kontaktinis Elektroninis Paštas"
 
-#: Includes/ClassACF.php:199
+#: Includes/ClassACF.php:201
 msgid "Add an e-mail by which others can reach you."
 msgstr "Pridėkite el. paštą, kuriuo kiti galėtų su jumis susisiekti."
 
-#: Includes/ClassACF.php:200
+#: Includes/ClassACF.php:202
 msgid "email@example.com"
 msgstr "pavyzdys@gmail.lt"
 
-#: Includes/ClassACF.php:205
+#: Includes/ClassACF.php:207
 msgid "Contact Telephone"
 msgstr "Kontaktinis Telefonas"
 
-#: Includes/ClassACF.php:208
+#: Includes/ClassACF.php:210
 msgid "Add a phone number by which you can be reached."
 msgstr "Pridėkite telefono numerį, kuriuo kiti galėtū su jumis susisiekti."
 
-#: Includes/ClassACF.php:209
+#: Includes/ClassACF.php:211
 msgid "248-851-6979"
 msgstr "8622-75624"
 
-#: Includes/ClassACF.php:214
+#: Includes/ClassACF.php:216
 msgid "Website"
 msgstr "Tinklapis"
 
-#: Includes/ClassACF.php:217
+#: Includes/ClassACF.php:219
 msgid "Do you have a website?"
 msgstr "Ar turite tinklapį?"
 
-#: Includes/ClassACF.php:218
+#: Includes/ClassACF.php:220
 msgid "www.website.com"
 msgstr "www.tinklapis.lt"
 
-#: Includes/ClassACF.php:223
+#: Includes/ClassACF.php:225
 msgid "Facebook"
 msgstr "Feisbukas"
 
-#: Includes/ClassACF.php:226
+#: Includes/ClassACF.php:228
 msgid "Are you reachable by Facebook?"
 msgstr "Ar esate pasiekami Feisbuku?"
 
-#: Includes/ClassACF.php:227
+#: Includes/ClassACF.php:229
 msgid "https://www.facebook.com/182837282"
 msgstr "https://www.facebook.com/182837282"
 
-#: Includes/ClassACF.php:233
+#: Includes/ClassACF.php:235
 msgid "Share My Location"
 msgstr "Viešinti Mano Vietą"
 
-#: Includes/ClassACF.php:236
+#: Includes/ClassACF.php:238
 msgid "Do you want to share your location with others?"
-msgstr "Ar norite pasidalinti savo buvimo vietą su kitais?"
+msgstr "Ar norėtumete žemėlapyje pažymėti vietą kurioje esate įsikurę?"
 
-#: Includes/ClassACF.php:241
+#: Includes/ClassACF.php:243
 msgid "Your Location"
 msgstr "Jūsų vieta"
 
-#: Includes/ClassACF.php:255
+#: Includes/ClassACF.php:257
 msgid "40.730610"
 msgstr "54.948047"
 
-#: Includes/ClassACF.php:256
+#: Includes/ClassACF.php:258
 msgid "-73.935242"
 msgstr "24.842121"
 
-#: Includes/ClassACF.php:268 Includes/ClassACF.php:293
-msgid "Hash Tag Title"
-msgstr "#Hashtag Pavadinimas"
-
-#: Includes/ClassACF.php:271 Includes/ClassACF.php:296
-msgid ""
-"Enter the hash tag title that sums up your offer or need in 49 characters or "
-"less. Example: #FreshlySqueezedAppleJuice"
-msgstr ""
-"Įveskite #hashtag pavadinimą, kuris apibudina jūsų pasiūlymą ar poreikį iki "
-"49 simbolių. Pavyzdys: #ŠviežiosSultys"
-
-#: Includes/ClassACF.php:276
+#: Includes/ClassACF.php:270
 msgid "Is Active"
 msgstr "Aktyvu"
 
-#: Includes/ClassACF.php:279
+#: Includes/ClassACF.php:273
 msgid ""
 "Select 'Active' to make your offer/need visible. If 'Inactive', your offer/"
 "need will not be visible to others."
@@ -838,43 +844,69 @@ msgstr ""
 "Pasirinkite 'Aktyvus', kad jūsų pasiųlymas/poreikis būtų matomas. Jei "
 "'Neaktyvus', jūsų profilis nebus viešintas."
 
-#: Includes/ClassACF.php:302
+#: Includes/ClassACF.php:287
+msgid "Hash Tag Title"
+msgstr "#Hashtag Pavadinimas"
+
+#: Includes/ClassACF.php:290
+msgid ""
+"Enter the hash tag title that sums up your offer or need in 49 characters or "
+"less."
+msgstr ""
+"Įveskite #hashtag pavadinimą, kuris apibudina jūsų pasiūlymą ar poreikį iki "
+"49 simbolių."
+
+#: Includes/ClassACF.php:291
+msgctxt "placeholder"
+msgid "#FreshlySqueezedAppleJuice"
+msgstr "#SviežiaiSpaustaObuoliųSunka"
+
+#: Includes/ClassACF.php:297
 msgid "Type"
 msgstr "Tipas"
 
-#: Includes/ClassACF.php:305
+#: Includes/ClassACF.php:300
 msgid "Is this something you are offering or you're looking for?"
 msgstr "Ar tai yra kažkas, ką siūlote ar ieškote?"
 
-#: Includes/ClassACF.php:318
+#: Includes/ClassACF.php:313
 msgid "Product or Service"
 msgstr "Produktas ar Paslauga"
 
-#: Includes/ClassACF.php:321
+#: Includes/ClassACF.php:316
 msgid "Is it a service or a product?"
 msgstr "Ar tai paslauga, ar produktas?"
 
-#: Includes/ClassACF.php:324
+#: Includes/ClassACF.php:319
 msgid "Service"
 msgstr "Paslauga"
 
-#: Includes/ClassACF.php:325
+#: Includes/ClassACF.php:320
 msgid "Product"
 msgstr "Produktas"
 
-#: Includes/ClassACF.php:334
+#: Includes/ClassACF.php:329
 msgid "Description"
 msgstr "Apibūdinimas"
 
-#: Includes/ClassACF.php:337
+#: Includes/ClassACF.php:332
 msgid "Describe what it is you're offering or seeking."
 msgstr "Apibūdinkite, ką siūlote ar ieškote."
 
-#: Includes/ClassACF.php:347 views/offer-need/offer-need-single.php:24
+#: Includes/ClassACF.php:333
+msgctxt "placeholder"
+msgid ""
+"We offer only freshly pressed apple juice, harvested from our own orchard, "
+"where we use only organic pesticides. We also offer apples if you like!"
+msgstr ""
+"Siūlomė šviežiai spaustą obuolių sultis bei džiovintų vaisių ir graikinių iš "
+"savo sodo. Iš džiovintų vaisių turim, braškes, razinas, ir daugiau!"
+
+#: Includes/ClassACF.php:343 views/offer-need/offer-need-single.php:24
 msgid "Urgency"
 msgstr "Skubumas"
 
-#: Includes/ClassACF.php:350
+#: Includes/ClassACF.php:346
 msgid ""
 "Is it time sensitive? Is it an urgent or very limited time offer, is it "
 "seasonal, or on-going?"
@@ -882,31 +914,31 @@ msgstr ""
 "Ar tai jautriai reaguoja į laiką? Ar tai skubus ar labai riboto laiko "
 "pasiūlymas, ar jis yra sezoninis, ar tęsiasi?"
 
-#: Includes/ClassACF.php:352
+#: Includes/ClassACF.php:348
 msgid "Urgent/Limited Time"
 msgstr "Skubus / Ribotas Laikas"
 
-#: Includes/ClassACF.php:353
+#: Includes/ClassACF.php:349
 msgid "Seasonal"
 msgstr "Sezoninis"
 
-#: Includes/ClassACF.php:354
+#: Includes/ClassACF.php:350
 msgid "Ongoing"
 msgstr "Tęsiantis"
 
-#: Includes/ClassACF.php:362
+#: Includes/ClassACF.php:358
 msgid "Image"
 msgstr "Nuotrauka"
 
-#: Includes/ClassACF.php:365
+#: Includes/ClassACF.php:361
 msgid "Do you have a featured image for this offer or need?"
 msgstr "Ar turite išskirtinį šio pasiūlymo ar poreikio vaizdą?"
 
-#: Includes/ClassACF.php:375
+#: Includes/ClassACF.php:371
 msgid "Additonal Attachments"
 msgstr "Papildomi priedai"
 
-#: Includes/ClassACF.php:378
+#: Includes/ClassACF.php:374
 msgid ""
 "Here you can upload a PDF, image, or document with additional information or "
 "prices."
@@ -914,7 +946,7 @@ msgstr ""
 "Čia galite įkelti PDF failą, vaizdą ar dokumentą su papildoma informacija ar "
 "kainomis."
 
-#: Includes/ClassACF.php:411 views/offer-need/offer-need-single.php:21
+#: Includes/ClassACF.php:407 views/offer-need/offer-need-single.php:21
 msgid "Category"
 msgstr "Kategoria"
 
@@ -1760,6 +1792,9 @@ msgstr "Poreikio Tipas"
 #: views/offer-need/offer-need-single.php:29
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
+
+#~ msgid "Hillsdale Farms"
+#~ msgstr "Jono Ūkis"
 
 #~ msgctxt "post_status"
 #~ msgid "Inactive"
