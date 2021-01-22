@@ -24,7 +24,7 @@ export function autofillHashtagTitle() {
         <HTMLInputElement> jQuery(`#acf-${cdData.pages.offersNeeds.acf.hashtag_title}`)[0];
 
     $titleInput.onkeyup = event => {
-        $hashtagTitleInput.value = hashtagify(event.target.value);
+        $hashtagTitleInput.value = hashtagify((<HTMLInputElement>event.target).value);
     }
 
 }

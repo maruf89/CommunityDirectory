@@ -17,7 +17,7 @@
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION' ) ) {
-    define( 'COMMUNITY_DIRECTORY_VERSION', '0.5' );
+    define( 'COMMUNITY_DIRECTORY_VERSION', '0.6' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM' ) ) {
