@@ -1,7 +1,7 @@
+import './index.styl';
 import initModals from 'Admin/views/modals/modals';
 import initSettings from 'Admin/Settings/settings';
-import './index.styl';
-import * as ServiceType from 'Scripts/OfferNeed/ProductServiceType';
+import { initPostPage } from 'Scripts/OfferNeed/PostPage';
 
 var onBodyLoaded = document.body.onload;
 document.body.onload = function (ev) {
@@ -16,5 +16,5 @@ document.body.onload = function (ev) {
 
     initModals($);
     initSettings($);    
-    if (ServiceType.isOfPostPage()) ServiceType.breadcrumbProductServices();
+    initPostPage();
 };

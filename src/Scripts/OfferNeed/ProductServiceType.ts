@@ -1,11 +1,34 @@
 import debounce from 'Scripts/Helper/debounce';
 
-/**
- * Returns whether on an OffersNeeds post type page (new post or edit post)
- */
-export function isOfPostPage():boolean {
-    return /post-(new-)?php/.test(document.body.className) &&
-           (new RegExp(`post-type-${cdData.postType.offersNeeds}`)).test(document.body.className);
+export function requireProductService() {
+    const $post = jQuery('#post');
+    const $taxonomyContainer = jQuery(`#${cdData.taxonomyType.productService}div`).addClass('focusable')
+    // The serialized form's key field
+    const productServiceKey = `tax_input[${cdData.taxonomyType.productService}][]`;
+    const validateHasTaxonomy = event => {
+        event.preventDefault();
+        var productServiceFields = jQuery('#post')
+            .serializeArray()
+            .filter(({name}) => name === productServiceKey)
+            .filter(({value}) => value != '0');
+
+        // Everything is valid
+        if (productServiceFields.length) return $post.trigger('submit');
+
+        console.log('missing tax');
+        // Otherwise…
+
+        jQuery([document.documentElement, document.body]).animate({
+            scrollTop: $taxonomyContainer.offset().top + -100
+        }, 250);
+
+        setTimeout(() => $taxonomyContainer.addClass('focus'), 250);
+        setTimeout(() => $taxonomyContainer.removeClass('focus'), 1250);
+
+        $post.one('submit', validateHasTaxonomy);
+    };
+
+    $post.one('submit', validateHasTaxonomy);
 }
 
 export const classNames = {
@@ -14,8 +37,7 @@ export const classNames = {
 };
 
 export function breadcrumbProductServices() {
-    const containerId = cdData.taxonomyType.productService;
-    const $container = jQuery(`#${containerId}checklist`);
+    const $container = jQuery(`#${cdData.taxonomyType.productService}checklist`);
     if (!$container.length) return;
 
     $container.children('li').each(applyChildBreadcrumb);

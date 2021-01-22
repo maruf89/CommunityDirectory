@@ -13,6 +13,11 @@ interface cdData {
     postType: {
         [name:string]:string
     }
+    pages?: {
+        [name:string]: {
+            acf: { [name:string]:string }
+        }
+    }
     taxonomyType: {
         [name:string]:string
     }

@@ -48,6 +48,10 @@ class ClassACF {
     public static $offers_needs_type = 'offer_need_type';
     public static $offers_needs_description_key = 'field_cd_offer_need_description';
     public static $offers_needs_description = 'offer_need_description';
+    public static $offers_needs_compensation_type_key = 'field_cd_offer_need_compensation_type';
+    public static $offers_needs_compensation_type = 'offer_need_compensation_type';
+    public static $offers_needs_compensation_key = 'field_cd_offer_need_compensation';
+    public static $offers_needs_compensation = 'offer_need_compensation';
     public static $offers_needs_urgency_key = 'field_cd_offer_need_urgency';
     public static $offers_needs_urgency = 'offer_need_urgency';
     public static $offers_needs_image_key = 'field_cd_offer_need_image';
@@ -217,7 +221,7 @@ class ClassACF {
 			'name' => self::$entity_website,
 			'type' => 'url',
 			'instructions' => __( 'Do you have a website?', 'community-directory' ),
-			'placeholder' => __( 'www.website.com', 'community-directory' ),
+			'placeholder' => __( 'https://www.website.com', 'community-directory' ),
         );
 
         $fields_arr[] = array(
@@ -337,6 +341,69 @@ class ClassACF {
             'media_upload' => 0,
             'delay' => 0,
         );
+
+        $fields_arr[] = array(
+			'key' => self::$offers_needs_compensation_type_key,
+			'label' => __( 'Compensation Type', 'community-directory' ),
+			'name' => self::$offers_needs_compensation_type,
+			'type' => 'checkbox',
+			'instructions' => __( 'Are you giving it away or you expect anything in return?', 'community-directory' ),
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => self::$offers_needs_type_key,
+						'operator' => '==',
+						'value' => 'offer',
+					),
+				),
+			),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'choices' => array(
+				'free' => _x( 'I ask for nothing', 'compensation type', 'community-directory' ),
+				'barter' => _x( 'Barter', 'compensation type', 'community-directory' ),
+				'payment' => _x( 'Payment', 'compensation type', 'community-directory' ),
+			),
+			'allow_custom' => 0,
+			'default_value' => array(
+			),
+			'layout' => 'horizontal',
+			'toggle' => 0,
+			'return_format' => 'array',
+			'save_custom' => 0,
+        );
+        
+		$fields_arr[] = array(
+			'key' => self::$offers_needs_compensation_key,
+			'label' => __( 'Compensation', 'community-directory' ),
+			'name' => self::$offers_needs_compensation,
+			'type' => 'textarea',
+			'instructions' => __( 'What do you ask for in exchange for your offer?', 'community-directory' ),
+			'required' => 1,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => self::$offers_needs_compensation_type_key,
+						'operator' => '==',
+						'value' => 'barter',
+					),
+				),
+				array(
+					array(
+						'field' => self::$offers_needs_compensation_type_key,
+						'operator' => '==',
+						'value' => 'payment',
+					),
+				),
+			),
+			'placeholder' => _x( 'Example: I\'m looking for vegetable seeds or gardening tools OR: In the attached PDF, you\'ll find our price sheet', 'placeholder', 'community-directory' ),
+			'maxlength' => 1000,
+			'rows' => 4,
+		);
 
         $fields_arr[] = array(
             'key' => self::$offers_needs_urgency_key,

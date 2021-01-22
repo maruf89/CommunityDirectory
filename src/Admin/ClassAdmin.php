@@ -2,10 +2,7 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-use Maruf89\CommunityDirectory\Includes\ClassEntity;
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
-use Maruf89\CommunityDirectory\Includes\ClassOffersNeeds;
-use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
+use Maruf89\CommunityDirectory\Includes\{ClassEntity, ClassLocation, ClassOffersNeeds, ClassRestEndPoints, ClassACF};
 
 /**
  * The admin-specific functionality of the plugin.
@@ -94,6 +91,13 @@ class ClassAdmin {
                     'entity' => ClassEntity::$post_type,
                     'location' => ClassLocation::$post_type,
                     'offersNeeds' => ClassOffersNeeds::$post_type
+                ),
+                'pages' => array(
+                    'offersNeeds' => array(
+                        'acf' => array(
+                            'hashtag_title' => ClassACF::$offers_needs_hashtag_title_key
+                        )
+                    )
                 ),
                 'taxonomyType' => array(
                     'productService' => ClassOffersNeeds::$taxonomy
