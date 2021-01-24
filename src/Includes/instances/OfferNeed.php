@@ -105,7 +105,7 @@ class OfferNeed extends Instance {
 
     public function get_link():string {
         $link = Entity::get_display_link( $this->get_entity() );
-        return empty( $link ) ? '' : "$link/#" . $this->get_id();
+        return empty( $link ) ? '' : "$link/#p-" . $this->get_id();
     }
 
     public function get_id():string {

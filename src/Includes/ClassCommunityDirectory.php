@@ -218,10 +218,10 @@ final class ClassCommunityDirectory {
         add_filter( "${prefix}location/location-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}map/instance-map.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}location/location-single.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offer-need/offer-need-no-results.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offer-need/offer-need-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offer-need/offer-need-hashtag-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offer-need/offer-need-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-needs/offers-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-needs/offers-needs-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-needs/offers-needs-hashtag-list.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-needs/offers-needs-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity/entity-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}search/cd-offers-needs.php", array( $instance, 'load_template' ), 10, 1 );

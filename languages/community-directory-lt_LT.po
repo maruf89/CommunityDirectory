@@ -942,7 +942,7 @@ msgstr ""
 "Už mano sunka prašau kitokių vaisiu, daržovių, ar sėklų arba prisegta rasite "
 "kainų sarašą"
 
-#: Includes/ClassACF.php:410 views/offer-need/offer-need-single.php:24
+#: Includes/ClassACF.php:410 views/offers-needs/offers-needs-single.php:24
 msgid "Urgency"
 msgstr "Skubumas"
 
@@ -986,7 +986,7 @@ msgstr ""
 "Čia galite įkelti PDF failą, vaizdą ar dokumentą su papildoma informacija ar "
 "kainomis."
 
-#: Includes/ClassACF.php:474 views/offer-need/offer-need-single.php:21
+#: Includes/ClassACF.php:474 views/offers-needs/offers-needs-single.php:21
 msgid "Category"
 msgstr "Kategoria"
 
@@ -1794,46 +1794,46 @@ msgstr[0] "%d Gyventojas"
 msgstr[1] "%d Gyventojai"
 msgstr[2] "%d Gyventojų"
 
-#: views/offer-need/offer-need-hashtag-list.php:9
+#: views/offers-needs/offers-needs-hashtag-list.php:9
 msgid "Latest Offers"
 msgstr "Naujausi Pasiūlymai"
 
-#: views/offer-need/offer-need-hashtag-list.php:10
+#: views/offers-needs/offers-needs-hashtag-list.php:10
 msgid "Latest Needs"
 msgstr "Naujausi Poreikiai"
 
-#: views/offer-need/offer-need-no-results.php:8
+#: views/offers-needs/offers-needs-no-results.php:8
 msgid "Maybe you have a need you would like to make public? Make it known."
 msgstr "Gal turite poreikį, kurį norėtumėte paviešinti? Pranešk apie tai."
 
-#: views/offer-need/offer-need-no-results.php:10
+#: views/offers-needs/offers-needs-no-results.php:10
 msgid "Maybe you have something to offer? Make it known."
 msgstr "Gal turite ką pasiūlyti? Pranešk apie tai."
 
-#: views/offer-need/offer-need-no-results.php:14
+#: views/offers-needs/offers-needs-no-results.php:14
 #, php-format
 msgid "Create one <a href=\"%s\">here</a>."
 msgstr "Sukurkite vieną <a href='%s'>čia</a>."
 
-#: views/offer-need/offer-need-no-results.php:17
+#: views/offers-needs/offers-needs-no-results.php:17
 #, php-format
 msgid "Register your account <a href=\"%s\">here</a> to get started."
 msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href='%s'>čia</a>."
 
-#: views/offer-need/offer-need-no-results.php:24
+#: views/offers-needs/offers-needs-no-results.php:24
 #, php-format
 msgid "No %s."
 msgstr "Nėra %s."
 
-#: views/offer-need/offer-need-single.php:5
+#: views/offers-needs/offers-needs-single.php:5
 msgid "Offer Type"
 msgstr "Pasiūlymo Tipas"
 
-#: views/offer-need/offer-need-single.php:6
+#: views/offers-needs/offers-needs-single.php:6
 msgid "Type of Need"
 msgstr "Poreikio Tipas"
 
-#: views/offer-need/offer-need-single.php:29
+#: views/offers-needs/offers-needs-single.php:29
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
 

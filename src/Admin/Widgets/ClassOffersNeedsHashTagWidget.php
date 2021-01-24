@@ -37,7 +37,7 @@ class ClassOffersNeedsHashTagWidget extends \WP_Widget {
 
         $instances = ClassOffersNeeds::format_to_instances( $instances );
 
-        $template_file = apply_filters( 'community_directory_template_offer-need/offer-need-hashtag-list.php', '' );
+        $template_file = apply_filters( 'community_directory_template_offers-needs/offers-needs-hashtag-list.php', '' );
         load_template( $template_file, false, array(
             'instances' => $instances,
             'attrs' => array( 'type' => $type ),
