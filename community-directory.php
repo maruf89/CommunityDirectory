@@ -55,10 +55,6 @@
   require 'vendor/autoload.php';
   use Maruf89\CommunityDirectory\Includes\ClassCommunityDirectory;
 
-  // if ( ! class_exists( 'CommunityDirectory' ) ) {
-  //   include_once dirname( __FILE__ ) . '/includes/class-community-directory.php';
-  // }
-
   function run_community_directory() {
     global $communitydirectory;
     $communitydirectory = new ClassCommunityDirectory();

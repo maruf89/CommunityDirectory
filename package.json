@@ -4,6 +4,10 @@
   "typings": "main.d.ts",
   "description": "Dev compiler for PrieMuses theme using CommunityDirectory",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maruf89/CommunityDirectory.git"
+  },
   "scripts": {
     "dev": "node_modules/webpack/bin/webpack.js --watch",
     "prod": "node_modules/webpack/bin/webpack.js"

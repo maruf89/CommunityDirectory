@@ -390,7 +390,6 @@ final class ClassCommunityDirectory {
         if ( $loaded = load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . 'plugins' . '/' . $domain . '-' . $locale . '.mo' ) ) {
 
         } else {
-            // die(basename( dirname(dirname(dirname( __FILE__ ) ))) . '/languages/');
             load_plugin_textdomain( $domain, FALSE, basename( dirname(dirname(dirname( __FILE__ ) ))) . '/languages/' );
         }
 

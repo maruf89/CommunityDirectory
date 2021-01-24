@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-01-22 13:44+0200\n"
-"PO-Revision-Date: 2021-01-22 13:49+0200\n"
+"POT-Creation-Date: 2021-01-24 12:08+0200\n"
+"PO-Revision-Date: 2021-01-24 15:25+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -834,7 +834,7 @@ msgstr "24.842121"
 
 #: Includes/ClassACF.php:274
 msgid "Is Active"
-msgstr "Aktyvu"
+msgstr "Paskelbtas"
 
 #: Includes/ClassACF.php:277
 msgid ""
@@ -1554,6 +1554,10 @@ msgstr "Blemba…"
 #: Includes/ClassShortcodes.php:125
 msgid "You should'nt be seeing this page. Something went wrong."
 msgstr "Kažkas netaip. Šitas neturėtų būti rodomas."
+
+#: Includes/ClassUWPForms.php:54
+msgid "Select your location"
+msgstr "Pasirinkite savo vietą"
 
 #: Includes/ClassUWPForms.php:65 Includes/ClassUWPForms.php:83
 msgid "My location isn't listed"
