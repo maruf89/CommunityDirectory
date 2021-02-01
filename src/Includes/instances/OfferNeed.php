@@ -377,7 +377,7 @@ class OfferNeed extends Instance {
      */
     public static function after_save( int $post_id ) {
         // if ( $post->post_status !== 'publish' || $update ) return;
-        $instance = static::get_instance( $post_id, null, $post );
+        $instance = static::get_instance( $post_id );
         $Location = $instance->get_location();
         $res = wp_set_post_terms( $post_id, [ $Location->taxonomy_id ], TaxonomyLocation::$taxonomy, true );
         
