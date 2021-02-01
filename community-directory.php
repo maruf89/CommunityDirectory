@@ -3,7 +3,7 @@
    Plugin Name: Community Directory
    Plugin URI: http://www.priemuses.lt
    description: A plugin to connect communities.
-   Version: 2020.11
+   Version: 2021.02
    Author: Marius V. Miliunas
    Author URI: http://www.maruf-hops-maps.com
    Text Domain: community-directory
@@ -17,14 +17,14 @@
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION' ) ) {
-    define( 'COMMUNITY_DIRECTORY_VERSION', '0.6.1' );
+    define( 'COMMUNITY_DIRECTORY_VERSION', '0.6.2' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM' ) ) {
     define( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM', '0' );
   }
   if ( ! defined( 'COMMUNITY_DIRECTORY_DB_VERSION' ) ) {
-    define( 'COMMUNITY_DIRECTORY_DB_VERSION', '0.0.2' );
+    define( 'COMMUNITY_DIRECTORY_DB_VERSION', '0.0.3' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_PATH' ) ) {
