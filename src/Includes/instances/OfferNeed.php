@@ -375,8 +375,8 @@ class OfferNeed extends Instance {
      * 
      * Adds the location tag to the post upon initial save to make it filterable by location
      */
-    public static function after_save( int $post_id, object $post, bool $update ) {
-        if ( $post->post_status !== 'publish' || $update ) return;
+    public static function after_save( int $post_id ) {
+        // if ( $post->post_status !== 'publish' || $update ) return;
         $instance = static::get_instance( $post_id, null, $post );
         $Location = $instance->get_location();
         $res = wp_set_post_terms( $post_id, [ $Location->taxonomy_id ], TaxonomyLocation::$taxonomy, true );
