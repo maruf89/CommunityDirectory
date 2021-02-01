@@ -306,7 +306,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
         $post_type = self::$post_type;
 
         $offer_need_type = '';
-        if ( $type == 'need' && $type == 'offer' )
+        if ( $type == 'need' || $type == 'offer' )
             $offer_need_type = "AND post_excerpt = '$type'";
 
         $where_status = '';
