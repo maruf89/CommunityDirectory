@@ -162,7 +162,7 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
             $location->update_cd_row( [ 'taxonomy_id' => $term_ids[ 'term_taxonomy_id' ] ] );
         }
 
-        $offers_needs = apply_filters( 'community_directory_get_offers_needs', [], '', null, null );
+        $offers_needs = apply_filters( 'community_directory_get_offers_needs', [], null, null, null );
 
         foreach( $offers_needs as $on ) OfferNeed::after_save( $on->ID );
     }
