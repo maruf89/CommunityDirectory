@@ -25,7 +25,7 @@ class OfferNeed extends Instance {
 
     protected int $entity_post_id;
     protected int $location_post_id;
-    protected ProductServiceTerm $category;
+    protected ?ProductServiceTerm $category;
 
     protected ?array $acf_data = null;
 
