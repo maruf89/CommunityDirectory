@@ -1,0 +1,27 @@
+@import './carot.styl'
+
+.d-icon
+
+    &:before
+        display inline-block
+        font normal 400 1em/1 dashicons
+        speak never
+        text-decoration none
+        text-transform none
+        text-rendering auto
+        -webkit-font-smoothing antialiased
+        -moz-osx-font-smoothing grayscale
+        vertical-align middle
+        text-align center
+        transition color 0.1s ease-in
+        padding-right 0.2em
+
+    &.location:before
+        content "\f230"
+
+    &.taxonomy:before,
+    &.product-service:before
+        content "\f323"
+
+
+    

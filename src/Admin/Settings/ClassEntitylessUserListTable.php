@@ -131,7 +131,6 @@ class ClassEntitylessUserListTable extends \WP_MS_Users_List_Table {
                     add_settings_error(
                         'single_action',
                         'single_action',
-                        /* translators: %d: Number of requests. */
                         __( 'Activated entity', 'community-directory' ),
                         'success'
                     );
@@ -142,7 +141,6 @@ class ClassEntitylessUserListTable extends \WP_MS_Users_List_Table {
                     add_settings_error(
                         'single_action',
                         'single_action',
-                        /* translators: %d: Number of requests. */
                         __( 'Deactivated Entity', 'community-directory' ),
                         'success'
                     );

@@ -10,7 +10,8 @@
 
 namespace Maruf89\CommunityDirectory\Admin\Settings;
 
-use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\instances\{Location, OfferNeed};
+use Maruf89\CommunityDirectory\Includes\TaxonomyLocation;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
@@ -112,20 +113,20 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
                 'type' => 'checkbox',
             ),
             array(
-                'name' => 'Reload Offers Needs',
-                'desc' => 'Call this just once after updating offers needs to include active/inactive field',
-                'id'   => 'reload_offers_needs',
-                'type' => 'button',
-                'action' => 'reload_offers_needs',
-                'text' => __( 'Reload', 'community-directory' ),
-            ),
-            array(
                 'name' => __( 'Reindex Active/Inactive Entities', 'community-directory' ),
                 'desc' => __( 'Clicking this button updates the active/inactive inhabitants to reflect the actual count for each location (workaround)' ),
                 'id'   => 'reindex_inhabitants',
                 'type' => 'button',
                 'action' => 'reindex_inhabitants',
                 'text' => __( 'Reindex', 'community-directory' ),
+            ),
+            array(
+                'name' => 'Add Location Tags',
+                'desc' => 'Update DB. Loads location tags for each location and attaches them to each offer/need',
+                'id'   => 'add_location_tags',
+                'type' => 'button',
+                'action' => 'add_location_tags',
+                'text' => 'Go!',
             ),
 
             array( 'type' => 'sectionend', 'id' => 'general-options' ),
@@ -139,13 +140,31 @@ class ClassSettingsGeneral extends AbstractClassSettingsPage {
     }
 
     /**
-     * To be called once - sets all offers needs to active => true
+     * To be called once - Loads location tags for each location and attach them to each offer/need
      */
-    public function action_reload_offers_needs() {
-        $offers_needs = apply_filters( 'community_directory_get_offers_needs', [], null, null, null );
-        $offers_needs = apply_filters( 'community_directory_format_offers_needs_to_instances', $offers_needs );
+    public function action_add_location_tags() {
+        global $wpdb;
 
-        foreach ( $offers_needs as $offer_need ) $offer_need->activate_deactivate( true );
+        $table_name = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $wpdb->query( "
+            ALTER TABLE $table_name
+            ADD COLUMN `taxonomy_id` BIGINT(20) UNSIGNED NOT NULL
+        " );
+        
+        $locations = apply_filters( 'community_directory_get_locations', [], '', null, null );
+        $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
+
+        foreach ( $locations as $location ) {
+            $term_ids = TaxonomyLocation::get_instance()->new_location_created( $location );
+            if ( $term_ids instanceof \WP_Error )
+                $term_ids = (array) get_term_by( 'slug', $location->slug, TaxonomyLocation::$taxonomy );
+
+            $location->update_cd_row( [ 'taxonomy_id' => $term_ids[ 'term_taxonomy_id' ] ] );
+        }
+
+        $offers_needs = apply_filters( 'community_directory_get_offers_needs', [], '', null, null );
+
+        foreach( $offers_needs as $on ) OfferNeed::after_save( $on->ID );
     }
 
     /**

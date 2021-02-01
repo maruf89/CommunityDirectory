@@ -201,7 +201,7 @@ return array(
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsUninstall' => $baseDir . '/src/Admin/Settings/ClassSettingsUninstall.php',
     'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassUWPFormBuilder' => $baseDir . '/src/Admin/Settings/ClassUWPFormBuilder.php',
     'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassLocationsWidget' => $baseDir . '/src/Admin/Widgets/ClassLocationsWidget.php',
-    'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassOffersNeedsHashTagWidget' => $baseDir . '/src/Admin/Widgets/ClassOffersNeedsHashTagWidget.php',
+    'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassOffersNeedsWidget' => $baseDir . '/src/Admin/Widgets/ClassOffersNeedsWidget.php',
     'Maruf89\\CommunityDirectory\\Email\\ClassTransactionalMailer' => $baseDir . '/src/Email/ClassTransactionalMailer.php',
     'Maruf89\\CommunityDirectory\\Email\\Interfaces\\IMailer' => $baseDir . '/src/Email/Interfaces/IMailer.php',
     'Maruf89\\CommunityDirectory\\Includes\\Abstracts\\Instance' => $baseDir . '/src/Includes/Abstracts/Instance.php',

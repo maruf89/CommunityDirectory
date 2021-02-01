@@ -5,7 +5,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 use Maruf89\CommunityDirectory\Admin\{ClassAdmin, ClassAdminPostDisplay, ClassAccount};
 use Maruf89\CommunityDirectory\Admin\Menus\{ClassAdminMenus, ClassMenuItems};
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
-use Maruf89\CommunityDirectory\Admin\Widgets\{ClassLocationsWidget, ClassOffersNeedsHashTagWidget};
+use Maruf89\CommunityDirectory\Admin\Widgets\{ClassLocationsWidget, ClassOffersNeedsWidget};
 use Maruf89\CommunityDirectory\Email\ClassTransactionalMailer;
 
 
@@ -36,11 +36,15 @@ final class ClassCommunityDirectory {
     protected ClassRestEndPoints $rest_end_points;
     protected ClassSearch $search;
 
+    protected TaxonomyProductService $product_service_type;
+    protected TaxonomyLocation $location_type;
+
     protected ClassUWPFormBuilder $uwp_form_builder;
     protected ClassAdminPostDisplay $admin_post_display;
     protected ClassAccount $account;
 
     protected ClassLocationsWidget $locations_widget;
+    protected ClassOffersNeedsWidget $offers_needs_widget;
 
     public static function init() {
         if (self::$instance === null) self::$instance = new self;
@@ -58,6 +62,9 @@ final class ClassCommunityDirectory {
         $this->location = ClassLocation::get_instance();
         $this->offers_needs = ClassOffersNeeds::get_instance();
         $this->rest_end_points = ClassRestEndPoints::get_instance();
+
+        $this->product_service_type = TaxonomyProductService::get_instance();
+        $this->location_type = TaxonomyLocation::get_instance();
         
         $this->init_hooks();
 
@@ -84,6 +91,8 @@ final class ClassCommunityDirectory {
         $this->load_entity_actions_and_filters( $this->entity );
         $this->load_acf_actions_and_filters( $this->acf );
         $this->load_offers_needs_actions_and_filters( $this->offers_needs );
+
+        $this->load_taxonomy_actions_and_filters( [ $this->product_service_type, $this->location_type ] );
 
         $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
         $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
@@ -143,11 +152,13 @@ final class ClassCommunityDirectory {
         add_action( 'init', array( $this->entity, 'register_post_type' ) );
         add_action( 'init', array( $this->offers_needs, 'register_post_type' ) );
         add_action( 'init', array( $this, 'register_post_status' ) );
-        add_action( 'after_setup_theme', array( $this->offers_needs, 'register_taxonomy_terms' ) );
         add_action( 'rest_api_init', array( $this->rest_end_points, 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
         add_action( 'community_directory_language_file_add_string', array( $this, 'register_string' ), 10, 1 );
         add_action( 'widgets_init', array( $this, 'load_widgets' ) );
+
+        // Called upon activation
+        add_action( 'community_directory_register_activated', array( $this, 'register_activated' ) );
     }
 
     /**
@@ -203,7 +214,7 @@ final class ClassCommunityDirectory {
 
     public function load_shortcodes( ClassShortcodes $instance ) {
         add_shortcode( 'community_directory_list_offers_needs', array( $instance, 'list_offers_needs' ) );
-        add_shortcode( 'community_directory_list_offers_needs_hashtag_list', array( $instance, 'list_offers_needs_hashtag' ) );
+
         add_shortcode( 'community_directory_list_entities', array( $instance, 'list_entities' ) );
     }
 
@@ -220,8 +231,8 @@ final class ClassCommunityDirectory {
         add_filter( "${prefix}location/location-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-needs/offers-needs-no-results.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-needs/offers-needs-list.php", array( $instance, 'load_template' ), 10, 1 );
-        add_filter( "${prefix}offers-needs/offers-needs-hashtag-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}offers-needs/offers-needs-single.php", array( $instance, 'load_template' ), 10, 1 );
+        add_filter( "${prefix}offers-needs/offers-needs-minified-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity/entity-single.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}entity/entity-list.php", array( $instance, 'load_template' ), 10, 1 );
         add_filter( "${prefix}search/cd-offers-needs.php", array( $instance, 'load_template' ), 10, 1 );
@@ -256,13 +267,22 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_get_offers_needs', array( $instance, 'get' ), 10, 4 );
         add_filter(
             'community_directory_get_latest_offers_needs',
-            array( $instance, 'get_latest' ), 10, 5 );
+            array( $instance, 'get_latest' ), 10, 3 );
         add_filter( 'community_directory_format_offers_needs_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
+        add_filter( 'community_directory_register_taxonomy_cpt_cd-product-service-type', array( $instance, 'add_post_type' ), 10, 1 );
+        add_filter( 'community_directory_register_taxonomy_cpt_cd-location-type', array( $instance, 'add_post_type' ), 10, 1 );
+    }
+
+    public function load_taxonomy_actions_and_filters( array $instances ) {
+        foreach( $instances as $instance ) {
+            add_action( 'after_setup_theme', array( $instance, 'register_taxonomy_terms' ) );
+        }
     }
 
     // OfferNeed
     public function load_instance_offers_needs_actions_and_filters( string $class_name ) {
         // On saving the type, sets the excerpt field to (offer|need)
+        $post_type = ClassOffersNeeds::$post_type;
         add_filter(
             'acf/update_value/key=' . ClassACF::$offers_needs_type_key,
             array( $class_name, 'update_post_excerpt_with_type' ), 10, 3 );
@@ -271,6 +291,7 @@ final class ClassCommunityDirectory {
             array( $class_name, 'acf_activation_changed' ), 10, 3 );
 
         add_action( 'wp_insert_post_data', array( $class_name, 'set_post_props_on_save' ), 10, 3 );
+        add_action( "save_post_$post_type", array( $class_name, 'after_save' ), 10, 3 );
     }
 
     // Entity
@@ -427,12 +448,16 @@ final class ClassCommunityDirectory {
 
     public function load_widgets() {
         register_widget( $this->locations_widget = new ClassLocationsWidget() );
-        register_widget( $this->offers_needs_hashtag_widget = new ClassOffersNeedsHashTagWidget() );
+        register_widget( $this->offers_needs_widget = new ClassOffersNeedsWidget() );
     }
 
     public function register_error_handler() {
         // Triggers the error handler registration init in the constructor
         ClassErrorHandler::get_instance();
+    }
+
+    public function register_activated() {
+        $this->product_service_type->register_activated();
     }
 
     public function custom_nonce_value () {

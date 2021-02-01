@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-01-24 12:08+0200\n"
-"PO-Revision-Date: 2021-01-24 15:25+0200\n"
+"POT-Creation-Date: 2021-02-01 14:25+0200\n"
+"PO-Revision-Date: 2021-02-01 14:25+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -51,8 +51,8 @@ msgstr "Pažiūrėkit Žemėlapyje"
 #: Admin/ClassAdminPostDisplay.php:30
 #: Admin/Settings/ClassEntityListTable.php:112
 #: Admin/Settings/ClassLocationListTable.php:122
-#: Admin/Settings/ClassSettingsLocation.php:153 Includes/ClassLocation.php:45
-#: Includes/ClassLocation.php:84
+#: Admin/Settings/ClassSettingsLocation.php:153 Includes/ClassLocation.php:40
+#: Includes/ClassLocation.php:46
 msgid "Location"
 msgstr "Vieta"
 
@@ -76,7 +76,7 @@ msgstr "Redaguokite Savo Narystės Profilį"
 msgid "Profile Settings"
 msgstr "Profilio Nustatymai"
 
-#: Admin/Menus/ClassMenuItems.php:17 Includes/ClassLocation.php:58
+#: Admin/Menus/ClassMenuItems.php:17 Includes/ClassLocation.php:59
 msgid "Community Directory Locations"
 msgstr "Bendruomenių katalogų vietos"
 
@@ -141,9 +141,9 @@ msgid "Documentation"
 msgstr "Dokumentacija"
 
 #: Admin/Settings/ClassEntityListTable.php:111
-#: Admin/Settings/ClassSettingsEntity.php:35 Includes/ClassEntity.php:58
-#: Includes/ClassEntity.php:61 Includes/ClassEntity.php:71
-#: Includes/ClassEntity.php:72
+#: Admin/Settings/ClassSettingsEntity.php:35 Includes/ClassEntity.php:56
+#: Includes/ClassEntity.php:59 Includes/ClassEntity.php:69
+#: Includes/ClassEntity.php:70
 msgid "Entities"
 msgstr "Nariai"
 
@@ -172,7 +172,15 @@ msgstr "Aktyvuokite Narius"
 msgid "Deactivate Entities"
 msgstr "Deaktyvuokite Narius"
 
-#: Admin/Settings/ClassEntityListTable.php:176
+#: Admin/Settings/ClassEntityListTable.php:148
+msgid "Delete Entities"
+msgstr "Ištrinkite Narius"
+
+#: Admin/Settings/ClassEntityListTable.php:149
+msgid "Delete Entities and User Accounts"
+msgstr "Ištrinkite Narius su jų Vartotojų Sąskaitas"
+
+#: Admin/Settings/ClassEntityListTable.php:178
 #: Admin/Settings/ClassEntitylessUserListTable.php:113
 #, php-format
 msgid "Activated %d entity"
@@ -181,7 +189,7 @@ msgstr[0] "Suaktyvuota %d narys"
 msgstr[1] "Suaktyvuota %d narai"
 msgstr[2] "Suaktyvuota %d narių"
 
-#: Admin/Settings/ClassEntityListTable.php:190
+#: Admin/Settings/ClassEntityListTable.php:192
 #, php-format
 msgid "Deactivated %d entity"
 msgid_plural "Deactivated %d entities"
@@ -189,45 +197,67 @@ msgstr[0] "Deaktyvuota %d narys"
 msgstr[1] "Deaktyvuota %d nariai"
 msgstr[2] "Deaktyvuota %d narių"
 
-#: Admin/Settings/ClassEntityListTable.php:212
-#: Admin/Settings/ClassEntitylessUserListTable.php:135
+#: Admin/Settings/ClassEntityListTable.php:206
+#: Admin/Settings/ClassEntityListTable.php:220
+#, php-format
+msgid "Deleted %d entity"
+msgid_plural "Deleted %d entities"
+msgstr[0] "Ištrinta %d narys"
+msgstr[1] "Ištrinta %d nariai"
+msgstr[2] "Ištrinta %d narių"
+
+#: Admin/Settings/ClassEntityListTable.php:242
+#: Admin/Settings/ClassEntitylessUserListTable.php:134
 msgid "Activated entity"
 msgstr "Aktyvūs Nariai"
 
-#: Admin/Settings/ClassEntityListTable.php:223
-#: Admin/Settings/ClassEntitylessUserListTable.php:146
+#: Admin/Settings/ClassEntityListTable.php:253
+#: Admin/Settings/ClassEntitylessUserListTable.php:144
 msgid "Deactivated Entity"
 msgstr "Neaktyvūs Nariai"
 
-#: Admin/Settings/ClassEntityListTable.php:236
+#: Admin/Settings/ClassEntityListTable.php:264
+#: Admin/Settings/ClassEntityListTable.php:275
+msgid "Deleted Entity"
+msgstr "Ištrintas Narys"
+
+#: Admin/Settings/ClassEntityListTable.php:288
 msgid "No entities found."
 msgstr "Nerasta Narių."
 
-#: Admin/Settings/ClassEntityListTable.php:254
+#: Admin/Settings/ClassEntityListTable.php:306
 #: Admin/Settings/ClassLocationListTable.php:309
 msgid "Activate"
 msgstr "Aktyvuokite"
 
-#: Admin/Settings/ClassEntityListTable.php:255
+#: Admin/Settings/ClassEntityListTable.php:307
 #: Admin/Settings/ClassLocationListTable.php:310
 msgid "Deactivate"
 msgstr "Deaktyvuokite"
 
-#: Admin/Settings/ClassEntityListTable.php:256
+#: Admin/Settings/ClassEntityListTable.php:308
 #: Admin/Settings/ClassLocationListTable.php:281
 msgid "Edit"
 msgstr "Redaguokite"
 
-#: Admin/Settings/ClassEntityListTable.php:290
+#: Admin/Settings/ClassEntityListTable.php:309
+msgid "Delete Entity"
+msgstr "Ištrinkite Narį"
+
+#: Admin/Settings/ClassEntityListTable.php:310
+msgid "Delete Entity & User"
+msgstr "Ištrinkite Narį bei Vartotoją"
+
+#: Admin/Settings/ClassEntityListTable.php:344
 msgid "Select Location"
 msgstr "Pasirinkite Vietą"
 
-#: Admin/Settings/ClassEntityListTable.php:313
+#: Admin/Settings/ClassEntityListTable.php:367
 #: Includes/Translations/_translations.php:3
 msgid "m/d/y g:i a"
 msgstr "d.m.y G:i"
 
-#: Admin/Settings/ClassEntityListTable.php:317
+#: Admin/Settings/ClassEntityListTable.php:371
 msgid "m/d/y g:i:s a"
 msgstr "d.m.Y G:i:s"
 
@@ -260,7 +290,11 @@ msgstr "Aktyvuokite Vietas"
 msgid "Deactivate Locations"
 msgstr "Išjungti Vietas"
 
-#: Admin/Settings/ClassLocationListTable.php:183
+#: Admin/Settings/ClassLocationListTable.php:152
+msgid "Delete Locations"
+msgstr "Ištrinkite Vietas"
+
+#: Admin/Settings/ClassLocationListTable.php:184
 #, php-format
 msgid "Activated %d location"
 msgid_plural "Activated %d locations"
@@ -268,7 +302,7 @@ msgstr[0] "Suaktyvuota %d vietą"
 msgstr[1] "Suaktyvuotos %d vietos"
 msgstr[2] "Suaktyvuota %d vietų"
 
-#: Admin/Settings/ClassLocationListTable.php:195
+#: Admin/Settings/ClassLocationListTable.php:196
 #, php-format
 msgid "Deactivated %d location"
 msgid_plural "Deactivated %d locations"
@@ -276,7 +310,7 @@ msgstr[0] "Deaktyvuota %d vietą"
 msgstr[1] "Deaktyvuota %d vietos"
 msgstr[2] "Deaktyvuota %d vietų"
 
-#: Admin/Settings/ClassLocationListTable.php:207
+#: Admin/Settings/ClassLocationListTable.php:208
 #, php-format
 msgid "Deleted %d location"
 msgid_plural "Deleted %d locations"
@@ -284,25 +318,21 @@ msgstr[0] "Ištrinta %d vietą"
 msgstr[1] "Ištrinta %d vietos"
 msgstr[2] "Ištrinta %d vietų"
 
-#: Admin/Settings/ClassLocationListTable.php:229
+#: Admin/Settings/ClassLocationListTable.php:230
 msgid "Activated location"
 msgstr "Aktyvios Vietos"
 
-#: Admin/Settings/ClassLocationListTable.php:240
+#: Admin/Settings/ClassLocationListTable.php:241
 msgid "Deactivated Location"
 msgstr "Išjungtos Vietos"
 
-#: Admin/Settings/ClassLocationListTable.php:251
+#: Admin/Settings/ClassLocationListTable.php:252
 msgid "Deleted location"
 msgstr "Ištrintos Vietos"
 
-#: Admin/Settings/ClassLocationListTable.php:262
+#: Admin/Settings/ClassLocationListTable.php:263
 msgid "No locations found."
 msgstr "Nerasta Vietų."
-
-#: Admin/Settings/ClassLocationListTable.php:280
-msgid "Rename (todo)"
-msgstr ""
 
 #: Admin/Settings/ClassLocationListTable.php:282
 msgid "Delete"
@@ -338,20 +368,20 @@ msgstr "Aktyvūs Nariai"
 msgid "Inactive Entities"
 msgstr "Neaktyvūs Nariai"
 
-#: Admin/Settings/ClassSettingsGeneral.php:30
+#: Admin/Settings/ClassSettingsGeneral.php:31
 msgid "General"
 msgstr "Bendra"
 
-#: Admin/Settings/ClassSettingsGeneral.php:71
-#: Admin/Settings/ClassSettingsGeneral.php:86
+#: Admin/Settings/ClassSettingsGeneral.php:72
+#: Admin/Settings/ClassSettingsGeneral.php:87
 msgid "General Settings"
 msgstr "Bendrieji Nustatymai"
 
-#: Admin/Settings/ClassSettingsGeneral.php:91
+#: Admin/Settings/ClassSettingsGeneral.php:92
 msgid "Add 'Locations' to the nav menu"
 msgstr "Prie naršymo meniu pridėkite 'Vietos'"
 
-#: Admin/Settings/ClassSettingsGeneral.php:92
+#: Admin/Settings/ClassSettingsGeneral.php:93
 msgid ""
 "Check this box if you would like Community Directory to add a link for the "
 "locations to the menu."
@@ -359,11 +389,11 @@ msgstr ""
 "Pažymėkite šį laukelį, jei norite, kad ištrinsite papildomą, bendruomenės "
 "katalogą visiškai pašalinsite visus jo duomenis."
 
-#: Admin/Settings/ClassSettingsGeneral.php:97
+#: Admin/Settings/ClassSettingsGeneral.php:98
 msgid "Add My Location to the nav menu"
 msgstr "Prie naršymo meniu pridėkite 'Mano vieta'"
 
-#: Admin/Settings/ClassSettingsGeneral.php:98
+#: Admin/Settings/ClassSettingsGeneral.php:99
 msgid ""
 "Check this box if you would like Community Directory to add a link for "
 "user's location to the menu."
@@ -371,33 +401,29 @@ msgstr ""
 "Pažymėkite šį laukelį, jei norite, kad bendruomenės katalogas į meniu "
 "pridėtų vartotojo vietos nuorodą."
 
-#: Admin/Settings/ClassSettingsGeneral.php:103
+#: Admin/Settings/ClassSettingsGeneral.php:104
 msgid "Menu Name Slug"
 msgstr "Meniu pavadinimo raktažodis (slug)"
 
-#: Admin/Settings/ClassSettingsGeneral.php:104
+#: Admin/Settings/ClassSettingsGeneral.php:105
 msgid "If menus active, enter the slug name of the menu to add these links to."
 msgstr ""
 "Jei meniu yra aktyvus, įveskite meniu šliužo pavadinimą, prie kurio norite "
 "pridėti šias nuorodas."
 
-#: Admin/Settings/ClassSettingsGeneral.php:109
+#: Admin/Settings/ClassSettingsGeneral.php:110
 msgid "Enable OpenStreetMap"
 msgstr "Įgalinkite 'OpenStreetMap'"
 
-#: Admin/Settings/ClassSettingsGeneral.php:110
+#: Admin/Settings/ClassSettingsGeneral.php:111
 msgid "If enabled, loads the OSM API."
 msgstr "Jei įgalint, kraus OSM API."
 
-#: Admin/Settings/ClassSettingsGeneral.php:120
-msgid "Reload"
-msgstr "Įkelt iš naujo"
-
-#: Admin/Settings/ClassSettingsGeneral.php:123
+#: Admin/Settings/ClassSettingsGeneral.php:116
 msgid "Reindex Active/Inactive Entities"
 msgstr "„Reindex“ aktyvūs / neaktyvūs subjektai"
 
-#: Admin/Settings/ClassSettingsGeneral.php:124
+#: Admin/Settings/ClassSettingsGeneral.php:117
 msgid ""
 "Clicking this button updates the active/inactive inhabitants to reflect the "
 "actual count for each location (workaround)"
@@ -405,19 +431,19 @@ msgstr ""
 "Spustelėjus šį mygtuką, atnaujinami aktyvūs / neaktyvūs gyventojai, kad jie "
 "atspindėtų faktinį kiekvienos vietos skaičių (laikina)"
 
-#: Admin/Settings/ClassSettingsGeneral.php:128
+#: Admin/Settings/ClassSettingsGeneral.php:121
 msgid "Reindex"
-msgstr ""
+msgstr "Perindeksuokite"
 
-#: Admin/Settings/ClassSettingsGeneral.php:207
+#: Admin/Settings/ClassSettingsGeneral.php:226
 #, php-format
 msgid "%d locations have be reindexed"
-msgstr ""
+msgstr "%d Vietos buvo perindeksuotos"
 
 #: Admin/Settings/ClassSettingsLocation.php:32
-#: Admin/Settings/ClassSettingsLocation.php:92 Includes/ClassLocation.php:41
-#: Includes/ClassLocation.php:44 Includes/ClassLocation.php:54
-#: Includes/ClassLocation.php:55
+#: Admin/Settings/ClassSettingsLocation.php:92 Includes/ClassLocation.php:42
+#: Includes/ClassLocation.php:45 Includes/ClassLocation.php:55
+#: Includes/ClassLocation.php:56
 msgid "Locations"
 msgstr "Vietos"
 
@@ -453,9 +479,9 @@ msgstr "Neaktykuotos Vietos"
 
 #: Admin/Settings/ClassSettingsLocation.php:155
 #: Admin/Settings/ClassSettingsLocation.php:184
-#: Admin/Settings/ClassSettingsLocation.php:215 Includes/ClassACF.php:144
-#: Includes/ClassACF.php:280 Includes/instances/Entity.php:177
-#: Includes/instances/OfferNeed.php:148
+#: Admin/Settings/ClassSettingsLocation.php:215 Includes/ClassACF.php:142
+#: Includes/ClassACF.php:278 Includes/instances/Entity.php:181
+#: Includes/instances/OfferNeed.php:151
 msgid "Active"
 msgstr "Aktyvu"
 
@@ -469,7 +495,7 @@ msgstr "Įterpkite Vietą"
 
 #: Admin/Settings/ClassSettingsLocation.php:188
 #: Admin/Settings/ClassSettingsLocation.php:216
-#: Includes/ClassOffersNeeds.php:223
+#: Includes/ClassOffersNeeds.php:184
 msgid "Pending"
 msgstr "Neaktyvuota"
 
@@ -622,25 +648,40 @@ msgstr "Blokais saraše"
 msgid "On a map"
 msgstr "Žemėlapyje"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:20
-msgid "CD Offers & Needs Hashtag"
-msgstr "BK Pasiūlymai ir Poreikiai Hashtag"
+#: Admin/Widgets/ClassOffersNeedsWidget.php:20
+msgid "CD Offers & Needs"
+msgstr "BK Pasiūlymai ir Poreikiai"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:23
-msgid "Displays Community Directory offers and needs as a hashtag list"
-msgstr ""
-"Rodo Bendruomenės Katalogo pasiųlymus ir poreikius saraše kaip “hashtags”"
+#: Admin/Widgets/ClassOffersNeedsWidget.php:23
+msgid "Displays Community Directory offers and needs as a list"
+msgstr "Rodo Bendruomenės Katalogo pasiųlymus ir poreikius"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:56
+#: Admin/Widgets/ClassOffersNeedsWidget.php:34
+msgid "Latest Offers"
+msgstr "Naujausi Pasiūlymai"
+
+#: Admin/Widgets/ClassOffersNeedsWidget.php:35
+msgid "Latest Needs"
+msgstr "Naujausi Poreikiai"
+
+#: Admin/Widgets/ClassOffersNeedsWidget.php:59
+msgid "Display Section Title"
+msgstr "Rodykite Titlą"
+
+#: Admin/Widgets/ClassOffersNeedsWidget.php:70
+msgid "Show condensed fields"
+msgstr "Rodyti sukondensuotą versiją"
+
+#: Admin/Widgets/ClassOffersNeedsWidget.php:75
 msgid "What to show"
 msgstr "Ką rodyti"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:64 Includes/ClassACF.php:307
+#: Admin/Widgets/ClassOffersNeedsWidget.php:83 Includes/ClassACF.php:295
 #: Includes/helpers/offer_need.php:9
 msgid "Offer"
 msgstr "Pasiūlymas"
 
-#: Admin/Widgets/ClassOffersNeedsHashTagWidget.php:73 Includes/ClassACF.php:308
+#: Admin/Widgets/ClassOffersNeedsWidget.php:92 Includes/ClassACF.php:296
 #: Includes/helpers/offer_need.php:12
 msgid "Need"
 msgstr "Poreikis"
@@ -670,27 +711,27 @@ msgstr " - Pamirštas Slaptažodis"
 msgid "Error: a required argument %s of type %s is missing argument"
 msgstr "Klaida: reikalaujančio argumento %s tipo %s trūksta"
 
-#: Includes/ClassACF.php:85
+#: Includes/ClassACF.php:83
 msgid "Community Directory Entity Fields"
 msgstr "Bendruomenės Katalogo Narių Laukai"
 
-#: Includes/ClassACF.php:102
+#: Includes/ClassACF.php:100
 msgid "The Community Directory generated form."
 msgstr "Bendruomenės Katalogo sugeneruota forma."
 
-#: Includes/ClassACF.php:111
+#: Includes/ClassACF.php:109
 msgid "Community Directory Offers & Needs Custom Fields"
 msgstr "Bendruomenės Katalogo Pasiūlymių ir Poreikių Laukai"
 
-#: Includes/ClassACF.php:129
+#: Includes/ClassACF.php:127
 msgid "The Community Directory generated form for Offers & Needs."
 msgstr "Bendruomenės Katalogo sugeneruota forma dėl Pasiųlymų ir Poreikių."
 
-#: Includes/ClassACF.php:138
+#: Includes/ClassACF.php:136
 msgid "Profile Active"
 msgstr "Aktyvus Profilis"
 
-#: Includes/ClassACF.php:141
+#: Includes/ClassACF.php:139
 msgid ""
 "Select 'Active' to make your profile visible. If 'Inactive', your profile "
 "will not be visible to others."
@@ -698,38 +739,38 @@ msgstr ""
 "Pasirinkite 'Aktyvus', kad jūsų profilis būtų matomas. Jei 'Neaktyvus', jūsų "
 "profilis nebus viešintas."
 
-#: Includes/ClassACF.php:145 Includes/ClassACF.php:281
-#: Includes/ClassCommunityDirectory.php:418 Includes/instances/Entity.php:177
-#: Includes/instances/OfferNeed.php:148
+#: Includes/ClassACF.php:143 Includes/ClassACF.php:279
+#: Includes/ClassCommunityDirectory.php:438 Includes/instances/Entity.php:181
+#: Includes/instances/OfferNeed.php:151
 msgid "Inactive"
 msgstr "Neaktyvu"
 
-#: Includes/ClassACF.php:155
+#: Includes/ClassACF.php:153
 msgid "Location Name"
 msgstr "Vietos Vardas"
 
-#: Includes/ClassACF.php:158
+#: Includes/ClassACF.php:156
 msgid "This is how you will appear in the directory under your city or town."
 msgstr "Naudokite savo šeimos, ūkio or vietos vardą."
 
-#: Includes/ClassACF.php:160
+#: Includes/ClassACF.php:158
 msgctxt "placeholder"
 msgid "Higgleby Ranch or Mary's Woodlands"
 msgstr "Pvz Mickevičių Sodyba arba Auksinis Dvaras"
 
-#: Includes/ClassACF.php:166
+#: Includes/ClassACF.php:164
 msgid "Picture"
 msgstr "Nuotrauka"
 
-#: Includes/ClassACF.php:169
+#: Includes/ClassACF.php:167
 msgid "Upload a picture of yourselves"
 msgstr "Užkelkite nuotrauką geriausią apibūdinančia jūsų vietą"
 
-#: Includes/ClassACF.php:181
+#: Includes/ClassACF.php:179
 msgid "Bio"
 msgstr "Apie"
 
-#: Includes/ClassACF.php:184
+#: Includes/ClassACF.php:182
 msgid ""
 "Write something about yourself or about your place. Don't know what to write "
 "about? Write about what you do, the history of your place, or what you would "
@@ -739,7 +780,7 @@ msgstr ""
 "Parašykite apie tai, ką darote, savo vietos istoriją ar ką norėtumėte "
 "pamatyti daugiau aplink save."
 
-#: Includes/ClassACF.php:185
+#: Includes/ClassACF.php:183
 msgctxt "placeholder"
 msgid ""
 "At Higgleby Ranch we pride ourselves in our livestock. We raise cattle, and "
@@ -751,92 +792,92 @@ msgstr ""
 "chemikalų augindami mūsų gėrybes. Mes draugiški, tačiau jei norite, galite "
 "mus aplankyti."
 
-#: Includes/ClassACF.php:192
+#: Includes/ClassACF.php:190
 msgid "Contact Method"
 msgstr "Kontaktinis Būdas"
 
-#: Includes/ClassACF.php:195
+#: Includes/ClassACF.php:193
 msgid "What is the best way to get in contact with you?"
 msgstr "Koks yra geriausias būdas susisiekti su jumis?"
 
-#: Includes/ClassACF.php:196
+#: Includes/ClassACF.php:194
 msgctxt "placeholder"
 msgid "Email or Phone"
 msgstr "Pvz Emailu ar Telefonu"
 
-#: Includes/ClassACF.php:202
+#: Includes/ClassACF.php:200
 msgid "Contact Email"
 msgstr "Kontaktinis Elektroninis Paštas"
 
-#: Includes/ClassACF.php:205
+#: Includes/ClassACF.php:203
 msgid "Add an e-mail by which others can reach you."
 msgstr "Pridėkite el. paštą, kuriuo kiti galėtų su jumis susisiekti."
 
-#: Includes/ClassACF.php:206
+#: Includes/ClassACF.php:204
 msgid "email@example.com"
 msgstr "pavyzdys@gmail.lt"
 
-#: Includes/ClassACF.php:211
+#: Includes/ClassACF.php:209
 msgid "Contact Telephone"
 msgstr "Kontaktinis Telefonas"
 
-#: Includes/ClassACF.php:214
+#: Includes/ClassACF.php:212
 msgid "Add a phone number by which you can be reached."
 msgstr "Pridėkite telefono numerį, kuriuo kiti galėtū su jumis susisiekti."
 
-#: Includes/ClassACF.php:215
+#: Includes/ClassACF.php:213
 msgid "248-851-6979"
 msgstr "8622-75624"
 
-#: Includes/ClassACF.php:220
+#: Includes/ClassACF.php:218
 msgid "Website"
 msgstr "Tinklapis"
 
-#: Includes/ClassACF.php:223
+#: Includes/ClassACF.php:221
 msgid "Do you have a website?"
 msgstr "Ar turite tinklapį?"
 
-#: Includes/ClassACF.php:224
+#: Includes/ClassACF.php:222
 msgid "https://www.website.com"
 msgstr "https://www.tinklapis.lt"
 
-#: Includes/ClassACF.php:229
+#: Includes/ClassACF.php:227
 msgid "Facebook"
 msgstr "Feisbukas"
 
-#: Includes/ClassACF.php:232
+#: Includes/ClassACF.php:230
 msgid "Are you reachable by Facebook?"
 msgstr "Ar esate pasiekami Feisbuku?"
 
-#: Includes/ClassACF.php:233
+#: Includes/ClassACF.php:231
 msgid "https://www.facebook.com/182837282"
 msgstr "https://www.facebook.com/182837282"
 
-#: Includes/ClassACF.php:239
+#: Includes/ClassACF.php:237
 msgid "Share My Location"
 msgstr "Viešinti Mano Vietą"
 
-#: Includes/ClassACF.php:242
+#: Includes/ClassACF.php:240
 msgid "Do you want to share your location with others?"
 msgstr "Ar norėtumete žemėlapyje pažymėti vietą kurioje esate įsikurę?"
 
-#: Includes/ClassACF.php:247
+#: Includes/ClassACF.php:245
 msgid "Your Location"
 msgstr "Jūsų vieta"
 
-#: Includes/ClassACF.php:261
+#: Includes/ClassACF.php:259
 msgid "40.730610"
 msgstr "54.948047"
 
-#: Includes/ClassACF.php:262
+#: Includes/ClassACF.php:260
 msgid "-73.935242"
 msgstr "24.842121"
 
-#: Includes/ClassACF.php:274
+#: Includes/ClassACF.php:272
 msgid "Is Active"
 msgstr "Paskelbtas"
 
-#: Includes/ClassACF.php:277
+#: Includes/ClassACF.php:275
 msgid ""
 "Select 'Active' to make your offer/need visible. If 'Inactive', your offer/"
 "need will not be visible to others."
@@ -844,56 +885,39 @@ msgstr ""
 "Pasirinkite 'Aktyvus', kad jūsų pasiųlymas/poreikis būtų matomas. Jei "
 "'Neaktyvus', jūsų profilis nebus viešintas."
 
-#: Includes/ClassACF.php:291
-msgid "Hash Tag Title"
-msgstr "#Hashtag Pavadinimas"
-
-#: Includes/ClassACF.php:294
-msgid ""
-"Enter the hash tag title that sums up your offer or need in 49 characters or "
-"less."
-msgstr ""
-"Įveskite #hashtag pavadinimą, kuris apibudina jūsų pasiūlymą ar poreikį iki "
-"49 simbolių."
-
-#: Includes/ClassACF.php:295
-msgctxt "placeholder"
-msgid "#FreshlySqueezedAppleJuice"
-msgstr "#SviežiaiSpaustaObuoliųSunka"
-
-#: Includes/ClassACF.php:301
+#: Includes/ClassACF.php:289
 msgid "Type"
 msgstr "Tipas"
 
-#: Includes/ClassACF.php:304
+#: Includes/ClassACF.php:292
 msgid "Is this something you are offering or you're looking for?"
 msgstr "Ar tai yra kažkas, ką siūlote ar ieškote?"
 
-#: Includes/ClassACF.php:317
+#: Includes/ClassACF.php:305
 msgid "Product or Service"
 msgstr "Produktas ar Paslauga"
 
-#: Includes/ClassACF.php:320
+#: Includes/ClassACF.php:308
 msgid "Is it a service or a product?"
 msgstr "Ar tai paslauga, ar produktas?"
 
-#: Includes/ClassACF.php:323
+#: Includes/ClassACF.php:311
 msgid "Service"
 msgstr "Paslauga"
 
-#: Includes/ClassACF.php:324
+#: Includes/ClassACF.php:312
 msgid "Product"
 msgstr "Produktas"
 
-#: Includes/ClassACF.php:333
+#: Includes/ClassACF.php:321
 msgid "Description"
 msgstr "Apibūdinimas"
 
-#: Includes/ClassACF.php:336
+#: Includes/ClassACF.php:324
 msgid "Describe what it is you're offering or seeking."
 msgstr "Apibūdinkite, ką siūlote ar ieškote."
 
-#: Includes/ClassACF.php:337
+#: Includes/ClassACF.php:325
 msgctxt "placeholder"
 msgid ""
 "We offer only freshly pressed apple juice, harvested from our own orchard, "
@@ -902,38 +926,38 @@ msgstr ""
 "Siūlomė šviežiai spaustą obuolių sultis bei džiovintų vaisių ir graikinių iš "
 "savo sodo. Iš džiovintų vaisių turim, braškes, razinas, ir daugiau!"
 
-#: Includes/ClassACF.php:347
+#: Includes/ClassACF.php:335
 msgid "Compensation Type"
 msgstr "Kompensacijos Tipas"
 
-#: Includes/ClassACF.php:350
+#: Includes/ClassACF.php:338
 msgid "Are you giving it away or you expect anything in return?"
 msgstr "Ar jūs atiduodate savo pasiūlymą? Jei ne, kuo tikites gauti atgal?"
 
-#: Includes/ClassACF.php:367
+#: Includes/ClassACF.php:355
 msgctxt "compensation type"
 msgid "I ask for nothing"
 msgstr "Atiduodu"
 
-#: Includes/ClassACF.php:368
+#: Includes/ClassACF.php:356
 msgctxt "compensation type"
 msgid "Barter"
 msgstr "Mainas"
 
-#: Includes/ClassACF.php:369
+#: Includes/ClassACF.php:357
 msgctxt "compensation type"
 msgid "Payment"
 msgstr "Pinigais"
 
-#: Includes/ClassACF.php:382
+#: Includes/ClassACF.php:370
 msgid "Compensation"
 msgstr "Kompensacija"
 
-#: Includes/ClassACF.php:385
+#: Includes/ClassACF.php:373
 msgid "What do you ask for in exchange for your offer?"
 msgstr "Ko prašote kompensacijai?"
 
-#: Includes/ClassACF.php:403
+#: Includes/ClassACF.php:391
 msgctxt "placeholder"
 msgid ""
 "Example: I'm looking for vegetable seeds or gardening tools OR: In the "
@@ -942,11 +966,11 @@ msgstr ""
 "Už mano sunka prašau kitokių vaisiu, daržovių, ar sėklų arba prisegta rasite "
 "kainų sarašą"
 
-#: Includes/ClassACF.php:410 views/offers-needs/offers-needs-single.php:24
+#: Includes/ClassACF.php:398 views/offers-needs/offers-needs-single.php:28
 msgid "Urgency"
 msgstr "Skubumas"
 
-#: Includes/ClassACF.php:413
+#: Includes/ClassACF.php:401
 msgid ""
 "Is it time sensitive? Is it an urgent or very limited time offer, is it "
 "seasonal, or on-going?"
@@ -954,31 +978,31 @@ msgstr ""
 "Ar tai jautriai reaguoja į laiką? Ar tai skubus ar labai riboto laiko "
 "pasiūlymas, ar jis yra sezoninis, ar tęsiasi?"
 
-#: Includes/ClassACF.php:415
+#: Includes/ClassACF.php:403
 msgid "Urgent/Limited Time"
 msgstr "Skubus / Ribotas Laikas"
 
-#: Includes/ClassACF.php:416
+#: Includes/ClassACF.php:404
 msgid "Seasonal"
 msgstr "Sezoninis"
 
-#: Includes/ClassACF.php:417
+#: Includes/ClassACF.php:405
 msgid "Ongoing"
 msgstr "Tęsiantis"
 
-#: Includes/ClassACF.php:425
+#: Includes/ClassACF.php:413
 msgid "Image"
 msgstr "Nuotrauka"
 
-#: Includes/ClassACF.php:428
+#: Includes/ClassACF.php:416
 msgid "Do you have a featured image for this offer or need?"
 msgstr "Ar turite išskirtinį šio pasiūlymo ar poreikio vaizdą?"
 
-#: Includes/ClassACF.php:438
+#: Includes/ClassACF.php:426
 msgid "Additonal Attachments"
 msgstr "Papildomi priedai"
 
-#: Includes/ClassACF.php:441
+#: Includes/ClassACF.php:429
 msgid ""
 "Here you can upload a PDF, image, or document with additional information or "
 "prices."
@@ -986,19 +1010,19 @@ msgstr ""
 "Čia galite įkelti PDF failą, vaizdą ar dokumentą su papildoma informacija ar "
 "kainomis."
 
-#: Includes/ClassACF.php:474 views/offers-needs/offers-needs-single.php:21
+#: Includes/ClassACF.php:462 views/offers-needs/offers-needs-single.php:24
 msgid "Category"
 msgstr "Kategoria"
 
-#: Includes/ClassActivator.php:152
+#: Includes/ClassActivator.php:153
 msgid "Entity Subscriber"
 msgstr "Narystės Prenumeratorius"
 
-#: Includes/ClassActivator.php:174
+#: Includes/ClassActivator.php:175
 msgid "Location Manager"
 msgstr "Vietos Valdas"
 
-#: Includes/ClassCommunityDirectory.php:424
+#: Includes/ClassCommunityDirectory.php:444
 #, php-format
 msgctxt "post_status"
 msgid "Inactive<span class=\"count\">(%s)</span>"
@@ -1007,527 +1031,481 @@ msgstr[0] "Neaktyvu <span class=“count”>(%s)</span>"
 msgstr[1] "Neaktyvūs <span class=“count”>(%s)</span>"
 msgstr[2] "Neaktyvūs <span class=“count”>(%s)</span>"
 
-#: Includes/ClassEntity.php:55 Includes/instances/Entity.php:486
-#: Includes/instances/Entity.php:501 views/location/location-single.php:3
+#: Includes/ClassEntity.php:53 views/location/location-single.php:3
 msgid "location"
 msgstr "vieta"
 
-#: Includes/ClassEntity.php:62 Includes/ClassEntity.php:98
+#: Includes/ClassEntity.php:54 Includes/ClassEntity.php:60
 msgid "Entity"
 msgstr "Narys"
 
-#: Includes/ClassEntity.php:63
+#: Includes/ClassEntity.php:61
 msgid "Add Entity"
 msgstr "Pridėkite Narį"
 
-#: Includes/ClassEntity.php:64
+#: Includes/ClassEntity.php:62
 msgid "Add New Entity"
 msgstr "Pridėkite Naują Nari"
 
-#: Includes/ClassEntity.php:65
+#: Includes/ClassEntity.php:63
 msgid "Edit Entity"
 msgstr "Redaguokite Narį"
 
-#: Includes/ClassEntity.php:66
+#: Includes/ClassEntity.php:64
 msgid "New Entity"
 msgstr "Naujas Narys"
 
-#: Includes/ClassEntity.php:67
+#: Includes/ClassEntity.php:65
 msgid "View Entity"
 msgstr "Peržiūrėkite Nari"
 
-#: Includes/ClassEntity.php:68
+#: Includes/ClassEntity.php:66
 msgid "Search Entity"
 msgstr "Ieškokite Narių"
 
-#: Includes/ClassEntity.php:69
+#: Includes/ClassEntity.php:67
 msgid "No Entities Found"
 msgstr "Nerasta Narių"
 
-#: Includes/ClassEntity.php:70
+#: Includes/ClassEntity.php:68
 msgid "No Entities Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Narių"
 
-#: Includes/ClassEntity.php:75
+#: Includes/ClassEntity.php:73
 msgid "Community Directory Entities"
 msgstr "Bendruomenės Katalogo Nariai"
 
-#: Includes/ClassLocation.php:46
+#: Includes/ClassLocation.php:47
 msgid "Add Location"
 msgstr "Pridėkite Vietą"
 
-#: Includes/ClassLocation.php:47
+#: Includes/ClassLocation.php:48
 msgid "Add New Location"
 msgstr "Pridėkite Naują Vietą"
 
-#: Includes/ClassLocation.php:48
+#: Includes/ClassLocation.php:49
 msgid "Edit Location"
 msgstr "Redaguokite Vieta"
 
-#: Includes/ClassLocation.php:49
+#: Includes/ClassLocation.php:50
 msgid "New Location"
 msgstr "Nauja Vieta"
 
-#: Includes/ClassLocation.php:50
+#: Includes/ClassLocation.php:51
 msgid "View Location"
 msgstr "Peržiūrėkite vietą"
 
-#: Includes/ClassLocation.php:51
+#: Includes/ClassLocation.php:52
 msgid "Search Location"
 msgstr "Ieškokite Vietą"
 
-#: Includes/ClassLocation.php:52
+#: Includes/ClassLocation.php:53
 msgid "No Locations Found"
 msgstr "Nerasta vietų"
 
-#: Includes/ClassLocation.php:53
+#: Includes/ClassLocation.php:54
 msgid "No Locations Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Vietų"
 
-#: Includes/ClassLocation.php:402
+#: Includes/ClassLocation.php:406
 #, php-format
 msgid "Successfully deleted %s location(s)"
 msgstr "Sėkmingai ištrinta %s vietą(-os)"
 
-#: Includes/ClassOffersNeeds.php:51 Includes/ClassOffersNeeds.php:54
-#: Includes/ClassOffersNeeds.php:64 Includes/ClassOffersNeeds.php:65
+#: Includes/ClassOffersNeeds.php:50
+msgid "offer-need"
+msgstr "pasiulymas-poreikis"
+
+#: Includes/ClassOffersNeeds.php:52 Includes/ClassOffersNeeds.php:55
+#: Includes/ClassOffersNeeds.php:65 Includes/ClassOffersNeeds.php:66
 #: Includes/ClassPublic.php:140
 msgid "Offers & Needs"
 msgstr "Pasiūlymai ir Poreikiai"
 
-#: Includes/ClassOffersNeeds.php:55
+#: Includes/ClassOffersNeeds.php:56
 msgid "Offer or Need"
 msgstr "Pasiūlymas ar Poreikis"
 
-#: Includes/ClassOffersNeeds.php:56
+#: Includes/ClassOffersNeeds.php:57
 msgid "Add Offer or Need"
 msgstr "Pridėkite Pasiūlymą ar Poreikį"
 
-#: Includes/ClassOffersNeeds.php:57
+#: Includes/ClassOffersNeeds.php:58
 msgid "Add New Offer or Need"
 msgstr "Pridėk Naują Pasiūlymą ar Poreikį"
 
-#: Includes/ClassOffersNeeds.php:58
+#: Includes/ClassOffersNeeds.php:59
 msgid "Edit Offer or Need"
 msgstr "Redaguokite Pasiūlymą ar Poreikį"
 
-#: Includes/ClassOffersNeeds.php:59
+#: Includes/ClassOffersNeeds.php:60
 msgid "New Offer or Need"
 msgstr "Nauas Pasiūlymas ar Poreikis"
 
-#: Includes/ClassOffersNeeds.php:60
+#: Includes/ClassOffersNeeds.php:61
 msgid "View Offer or Need"
 msgstr "Peržiūrėkite Pasiūlymą ar Poreikį"
 
-#: Includes/ClassOffersNeeds.php:61
+#: Includes/ClassOffersNeeds.php:62
 msgid "Search Offer or Need"
 msgstr "Ieškokite Pasiūlymų ar Poreikių"
 
-#: Includes/ClassOffersNeeds.php:62
+#: Includes/ClassOffersNeeds.php:63
 msgid "No Offers & Needs Found"
 msgstr "Jokių Pasiūlymų ir Poreikių Rasta"
 
-#: Includes/ClassOffersNeeds.php:63
+#: Includes/ClassOffersNeeds.php:64
 msgid "No Offers & Needs Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Pasiūlymų ir Poreikių"
 
-#: Includes/ClassOffersNeeds.php:68
+#: Includes/ClassOffersNeeds.php:69
 msgid "Community Directory Offers & Needs"
 msgstr "Bendruomenės Katalogo Pasiūlymai ir Poreikiai"
 
-#: Includes/ClassOffersNeeds.php:91
-msgid "offer-need"
-msgstr "pasiulymas-poreikis"
-
-#: Includes/ClassOffersNeeds.php:111 Includes/ClassOffersNeeds.php:114
-#: Includes/ClassOffersNeeds.php:124
-msgid "Product & Service Types"
-msgstr "Produktų ir Paslaugų Tipai"
-
-#: Includes/ClassOffersNeeds.php:115
-msgid "Product & Service Type"
-msgstr "Produktų ir Paslaugų Tipas"
-
-#: Includes/ClassOffersNeeds.php:116
-msgid "Search Product & Service Types"
-msgstr "Ieškoti Produktų ir Paslaugų Tipų"
-
-#: Includes/ClassOffersNeeds.php:117
-msgid "All Product & Service Types"
-msgstr "Visi Produktų ir Paslaugų Tipai"
-
-#: Includes/ClassOffersNeeds.php:118
-msgid "Parent Product & Service Type"
-msgstr "Pagrindinio Produkto ir Paslaugos Tipas"
-
-#: Includes/ClassOffersNeeds.php:119
-msgid "Parent Product & Service Type:"
-msgstr "Pagrindinio Produkto ir Paslaugos Tipas:"
-
-#: Includes/ClassOffersNeeds.php:120
-msgid "Edit Product & Service Type"
-msgstr "Redaguokite Produktų ir Paslaugų Tipą"
-
-#: Includes/ClassOffersNeeds.php:121
-msgid "Update Product & Service Type"
-msgstr "Atnaujinkite Produktų ir Paslaugų Tipą"
-
-#: Includes/ClassOffersNeeds.php:122
-msgid "Add New Product & Service Type"
-msgstr "Pridėkite Naują Produktų ir Paslaugų Tipą"
-
-#: Includes/ClassOffersNeeds.php:123
-msgid "New Product & Service Type Name"
-msgstr "Naujas Produktų ir Paslaugų Tipas"
-
-#: Includes/ClassOffersNeeds.php:133
-msgid "product-service-type"
-msgstr "produkto-paslaugos-tipas"
-
-#: Includes/ClassOffersNeeds.php:201 Includes/ClassOffersNeeds.php:269
+#: Includes/ClassOffersNeeds.php:162 Includes/ClassOffersNeeds.php:230
 msgid "All"
 msgstr "Visi"
 
-#: Includes/ClassOffersNeeds.php:209
+#: Includes/ClassOffersNeeds.php:170
 msgid "Published"
 msgstr "Paskelbta"
 
-#: Includes/ClassOffersNeeds.php:216
+#: Includes/ClassOffersNeeds.php:177
 msgid "Draft"
 msgid_plural "Drafts"
 msgstr[0] "Juodraštis"
 msgstr[1] "Juodraščiai"
 msgstr[2] "Juodraščių"
 
-#: Includes/ClassOffersNeeds.php:230
+#: Includes/ClassOffersNeeds.php:191
 msgid "Trash"
 msgstr "Šiukšlinė"
 
-#: Includes/ClassOffersNeeds.php:269
+#: Includes/ClassOffersNeeds.php:230
 msgid "uploaded files"
 msgstr "įkelti failai"
 
-#: Includes/ClassOffersNeeds.php:279
+#: Includes/ClassOffersNeeds.php:240
 msgid "Unattached"
 msgstr "Atjungta"
 
-#: Includes/ClassOffersNeeds.php:579
+#: Includes/ClassOffersNeeds.php:411
 msgid "food & drink"
 msgstr "maistas ir gėrimai"
 
-#: Includes/ClassOffersNeeds.php:580
+#: Includes/ClassOffersNeeds.php:412
 msgid "ingredients"
 msgstr "ingredientai"
 
-#: Includes/ClassOffersNeeds.php:581
+#: Includes/ClassOffersNeeds.php:413
 msgid "vegetables"
 msgstr "daržovės"
 
-#: Includes/ClassOffersNeeds.php:582
+#: Includes/ClassOffersNeeds.php:414
 msgid "fruit"
 msgstr "vaisiai"
 
-#: Includes/ClassOffersNeeds.php:583
+#: Includes/ClassOffersNeeds.php:415
 msgid "meat"
 msgstr "mėsa"
 
-#: Includes/ClassOffersNeeds.php:584
+#: Includes/ClassOffersNeeds.php:416
 msgid "mushrooms"
 msgstr "grybai"
 
-#: Includes/ClassOffersNeeds.php:585
+#: Includes/ClassOffersNeeds.php:417
 msgid "grains"
 msgstr "grūdai, kruopai"
 
-#: Includes/ClassOffersNeeds.php:586
+#: Includes/ClassOffersNeeds.php:418
 msgid "dairy products"
 msgstr "pieno produktai"
 
-#: Includes/ClassOffersNeeds.php:587
+#: Includes/ClassOffersNeeds.php:419
 msgid "desert"
 msgstr "desertai"
 
-#: Includes/ClassOffersNeeds.php:588
+#: Includes/ClassOffersNeeds.php:420
 msgid "fish"
 msgstr "žuvis"
 
-#: Includes/ClassOffersNeeds.php:589
+#: Includes/ClassOffersNeeds.php:421
 msgid "drinks"
 msgstr "gėrimai"
 
-#: Includes/ClassOffersNeeds.php:590
+#: Includes/ClassOffersNeeds.php:422
 msgid "services"
 msgstr "paslaugos"
 
-#: Includes/ClassOffersNeeds.php:591
+#: Includes/ClassOffersNeeds.php:423
 msgid "catering"
 msgstr "maitinimas"
 
-#: Includes/ClassOffersNeeds.php:592
+#: Includes/ClassOffersNeeds.php:424
 msgid "other"
 msgstr "kitas"
 
-#: Includes/ClassOffersNeeds.php:593
+#: Includes/ClassOffersNeeds.php:425
 msgid "home & construction"
 msgstr "namas ir buitis"
 
-#: Includes/ClassOffersNeeds.php:594
+#: Includes/ClassOffersNeeds.php:426
 msgid "furniture"
 msgstr "baldai"
 
-#: Includes/ClassOffersNeeds.php:595
+#: Includes/ClassOffersNeeds.php:427
 msgid "kitchen"
 msgstr "virtuvė"
 
-#: Includes/ClassOffersNeeds.php:596 Includes/ClassOffersNeeds.php:605
+#: Includes/ClassOffersNeeds.php:428 Includes/ClassOffersNeeds.php:437
 msgid "flowers"
 msgstr "gėlės"
 
-#: Includes/ClassOffersNeeds.php:597
+#: Includes/ClassOffersNeeds.php:429
 msgid "bathroom"
 msgstr "vonios kambarys"
 
-#: Includes/ClassOffersNeeds.php:598
+#: Includes/ClassOffersNeeds.php:430
 msgid "bedroom & sleeping"
 msgstr "miegamasis"
 
-#: Includes/ClassOffersNeeds.php:599
+#: Includes/ClassOffersNeeds.php:431
 msgid "handyman"
 msgstr "meistrai"
 
-#: Includes/ClassOffersNeeds.php:600
+#: Includes/ClassOffersNeeds.php:432
 msgid "cleaning"
 msgstr "valymas"
 
-#: Includes/ClassOffersNeeds.php:601
+#: Includes/ClassOffersNeeds.php:433
 msgid "carpentry"
 msgstr "staliai"
 
-#: Includes/ClassOffersNeeds.php:602
+#: Includes/ClassOffersNeeds.php:434
 msgid "plumbing"
 msgstr "santechnikai"
 
-#: Includes/ClassOffersNeeds.php:603
+#: Includes/ClassOffersNeeds.php:435
 msgid "electric work"
 msgstr "elektrikai"
 
-#: Includes/ClassOffersNeeds.php:604
+#: Includes/ClassOffersNeeds.php:436
 msgid "garden, farm, forest"
 msgstr "daržas, ūkis, miškas"
 
-#: Includes/ClassOffersNeeds.php:606
+#: Includes/ClassOffersNeeds.php:438
 msgid "seeds"
 msgstr "sėklos"
 
-#: Includes/ClassOffersNeeds.php:607
+#: Includes/ClassOffersNeeds.php:439
 msgid "trees & plants"
 msgstr "augalai ir medžiai"
 
-#: Includes/ClassOffersNeeds.php:608
+#: Includes/ClassOffersNeeds.php:440
 msgid "animals"
 msgstr "gyvūnai"
 
-#: Includes/ClassOffersNeeds.php:609
+#: Includes/ClassOffersNeeds.php:441
 msgid "equipment"
 msgstr "įranga"
 
-#: Includes/ClassOffersNeeds.php:610
+#: Includes/ClassOffersNeeds.php:442
 msgid "landscaping"
 msgstr "apželdinimas"
 
-#: Includes/ClassOffersNeeds.php:611
+#: Includes/ClassOffersNeeds.php:443
 msgid "farm help"
 msgstr "pagalbininkas"
 
-#: Includes/ClassOffersNeeds.php:612
+#: Includes/ClassOffersNeeds.php:444
 msgid "real-estate"
 msgstr "nekilnojamasis turtas"
 
-#: Includes/ClassOffersNeeds.php:613
+#: Includes/ClassOffersNeeds.php:445
 msgid "apartment"
 msgstr "butas"
 
-#: Includes/ClassOffersNeeds.php:614
+#: Includes/ClassOffersNeeds.php:446
 msgid "land"
 msgstr "žemė"
 
-#: Includes/ClassOffersNeeds.php:615
+#: Includes/ClassOffersNeeds.php:447
 msgid "rent"
 msgstr "nuoma"
 
-#: Includes/ClassOffersNeeds.php:616
+#: Includes/ClassOffersNeeds.php:448
 msgid "cottage"
 msgstr "sodas"
 
-#: Includes/ClassOffersNeeds.php:617
+#: Includes/ClassOffersNeeds.php:449
 msgid "realty"
 msgstr "nekilnojamas turtas"
 
-#: Includes/ClassOffersNeeds.php:618
+#: Includes/ClassOffersNeeds.php:450
 msgid "transportation"
 msgstr "transportas"
 
-#: Includes/ClassOffersNeeds.php:619
+#: Includes/ClassOffersNeeds.php:451
 msgid "bikes"
 msgstr "dviračiai"
 
-#: Includes/ClassOffersNeeds.php:620
+#: Includes/ClassOffersNeeds.php:452
 msgid "vehicles"
 msgstr "transporto priemonės"
 
-#: Includes/ClassOffersNeeds.php:621
+#: Includes/ClassOffersNeeds.php:453
 msgid "courier"
 msgstr "kurjerai"
 
-#: Includes/ClassOffersNeeds.php:622
+#: Includes/ClassOffersNeeds.php:454
 msgid "carpooling"
 msgstr "bendras važiavimas (carpooling)"
 
-#: Includes/ClassOffersNeeds.php:623
+#: Includes/ClassOffersNeeds.php:455
 msgid "technology"
 msgstr "technologija"
 
-#: Includes/ClassOffersNeeds.php:624
+#: Includes/ClassOffersNeeds.php:456
 msgid "phones"
 msgstr "telefonai"
 
-#: Includes/ClassOffersNeeds.php:625
+#: Includes/ClassOffersNeeds.php:457
 msgid "tablets"
 msgstr "plančetės"
 
-#: Includes/ClassOffersNeeds.php:626
+#: Includes/ClassOffersNeeds.php:458
 msgid "computers"
 msgstr "kompiuteriai"
 
-#: Includes/ClassOffersNeeds.php:627 Includes/ClassOffersNeeds.php:645
+#: Includes/ClassOffersNeeds.php:459 Includes/ClassOffersNeeds.php:477
 msgid "accessories"
 msgstr "aksesuarai"
 
-#: Includes/ClassOffersNeeds.php:628
+#: Includes/ClassOffersNeeds.php:460
 msgid "technical repair"
 msgstr "techninis remontas"
 
-#: Includes/ClassOffersNeeds.php:629
+#: Includes/ClassOffersNeeds.php:461
 msgid "web consulting & websites"
 msgstr "tinklapių konsultacija ir statyba"
 
-#: Includes/ClassOffersNeeds.php:630
+#: Includes/ClassOffersNeeds.php:462
 msgid "entertainment"
 msgstr "pramoga"
 
-#: Includes/ClassOffersNeeds.php:631
+#: Includes/ClassOffersNeeds.php:463
 msgid "books & movies"
 msgstr "knygos ir filmai"
 
-#: Includes/ClassOffersNeeds.php:632
+#: Includes/ClassOffersNeeds.php:464
 msgid "hunting & fishing"
 msgstr "medžioklė ir žvejyba"
 
-#: Includes/ClassOffersNeeds.php:633
+#: Includes/ClassOffersNeeds.php:465
 msgid "music"
 msgstr "muzika"
 
-#: Includes/ClassOffersNeeds.php:634
+#: Includes/ClassOffersNeeds.php:466
 msgid "games"
 msgstr "žaidimai"
 
-#: Includes/ClassOffersNeeds.php:635
+#: Includes/ClassOffersNeeds.php:467
 msgid "musical performance"
 msgstr "muzikinai pasirodymai"
 
-#: Includes/ClassOffersNeeds.php:636
+#: Includes/ClassOffersNeeds.php:468
 msgid "acting performance"
 msgstr "vaidybiniai ir dramos spektakliai"
 
-#: Includes/ClassOffersNeeds.php:637
+#: Includes/ClassOffersNeeds.php:469
 msgid "clothing"
 msgstr "apranga"
 
-#: Includes/ClassOffersNeeds.php:638
+#: Includes/ClassOffersNeeds.php:470
 msgid "men's clothing"
 msgstr "vyrų drabužiai"
 
-#: Includes/ClassOffersNeeds.php:639
+#: Includes/ClassOffersNeeds.php:471
 msgid "women's clothing"
 msgstr "moterų drabužiai"
 
-#: Includes/ClassOffersNeeds.php:640
+#: Includes/ClassOffersNeeds.php:472
 msgid "special occasion"
 msgstr "speciali apranga"
 
-#: Includes/ClassOffersNeeds.php:641
+#: Includes/ClassOffersNeeds.php:473
 msgid "children"
 msgstr "vaikai"
 
-#: Includes/ClassOffersNeeds.php:642
+#: Includes/ClassOffersNeeds.php:474
 msgid "children's clothing"
 msgstr "vaikų drabužiai"
 
-#: Includes/ClassOffersNeeds.php:643
+#: Includes/ClassOffersNeeds.php:475
 msgid "toys"
 msgstr "žaislai"
 
-#: Includes/ClassOffersNeeds.php:644
+#: Includes/ClassOffersNeeds.php:476
 msgid "school supplies"
 msgstr "mokyklos ištekliai"
 
-#: Includes/ClassOffersNeeds.php:646
+#: Includes/ClassOffersNeeds.php:478
 msgid "personal development & health"
 msgstr "asmeninis tobulėjimas ir sveikata"
 
-#: Includes/ClassOffersNeeds.php:647
+#: Includes/ClassOffersNeeds.php:479
 msgid "coaching, therapy, psychiatry"
 msgstr "koučingas ir terapija"
 
-#: Includes/ClassOffersNeeds.php:648
+#: Includes/ClassOffersNeeds.php:480
 msgid "doctor"
 msgstr "daktarai"
 
-#: Includes/ClassOffersNeeds.php:649
+#: Includes/ClassOffersNeeds.php:481
 msgid "beauty"
 msgstr "grožis"
 
-#: Includes/ClassOffersNeeds.php:650
+#: Includes/ClassOffersNeeds.php:482
 msgid "education"
 msgstr "edukacija"
 
-#: Includes/ClassOffersNeeds.php:651
+#: Includes/ClassOffersNeeds.php:483
 msgid "math"
 msgstr "matematika"
 
-#: Includes/ClassOffersNeeds.php:652
+#: Includes/ClassOffersNeeds.php:484
 msgid "science"
 msgstr "mokslas"
 
-#: Includes/ClassOffersNeeds.php:653
+#: Includes/ClassOffersNeeds.php:485
 msgid "spiritual"
 msgstr "dvasinis"
 
-#: Includes/ClassOffersNeeds.php:654
+#: Includes/ClassOffersNeeds.php:486
 msgid "healthy eating"
 msgstr "mitybas"
 
-#: Includes/ClassOffersNeeds.php:655
+#: Includes/ClassOffersNeeds.php:487
 msgid "sports & exercise"
 msgstr "sportas"
 
-#: Includes/ClassOffersNeeds.php:656
+#: Includes/ClassOffersNeeds.php:488
 msgid "work"
 msgstr "paslaugos"
 
-#: Includes/ClassOffersNeeds.php:657
+#: Includes/ClassOffersNeeds.php:489
 msgid "accounting"
 msgstr "buhalterija"
 
-#: Includes/ClassOffersNeeds.php:658
+#: Includes/ClassOffersNeeds.php:490
 msgid "legal"
 msgstr "juridinės paslaugos"
 
-#: Includes/ClassOffersNeeds.php:659
+#: Includes/ClassOffersNeeds.php:491
 msgid "arts & crafts"
 msgstr "menas ir amatai"
 
-#: Includes/ClassOffersNeeds.php:660
+#: Includes/ClassOffersNeeds.php:492
 msgid "give away"
 msgstr "atiduodu"
 
@@ -1547,11 +1525,11 @@ msgstr "Sukurkit Naują"
 msgid "View Mine"
 msgstr "Pažiūrėkite į Savo"
 
-#: Includes/ClassShortcodes.php:124
+#: Includes/ClassShortcodes.php:114
 msgid "Uh oh…"
 msgstr "Blemba…"
 
-#: Includes/ClassShortcodes.php:125
+#: Includes/ClassShortcodes.php:115
 msgid "You should'nt be seeing this page. Something went wrong."
 msgstr "Kažkas netaip. Šitas neturėtų būti rodomas."
 
@@ -1575,11 +1553,66 @@ msgstr "Jūsų vieta"
 msgid "Enter the name of village, town, or city you reside in."
 msgstr "Įveskite jūsų gyvenvietės pavadinimą."
 
+#: Includes/TaxonomyLocation.php:37
+msgid "Location Types"
+msgstr "Vietos Tipai"
+
+#: Includes/TaxonomyProductService.php:45
+#: Includes/TaxonomyProductService.php:48
+#: Includes/TaxonomyProductService.php:58
+msgid "Product & Service Types"
+msgstr "Produktų ir Paslaugų Tipai"
+
+#: Includes/TaxonomyProductService.php:49
+msgid "Product & Service Type"
+msgstr "Produktų ir Paslaugų Tipas"
+
+#: Includes/TaxonomyProductService.php:50
+msgid "Search Product & Service Types"
+msgstr "Ieškoti Produktų ir Paslaugų Tipų"
+
+#: Includes/TaxonomyProductService.php:51
+msgid "All Product & Service Types"
+msgstr "Visi Produktų ir Paslaugų Tipai"
+
+#: Includes/TaxonomyProductService.php:52
+msgid "Parent Product & Service Type"
+msgstr "Pagrindinio Produkto ir Paslaugos Tipas"
+
+#: Includes/TaxonomyProductService.php:53
+msgid "Parent Product & Service Type:"
+msgstr "Pagrindinio Produkto ir Paslaugos Tipas:"
+
+#: Includes/TaxonomyProductService.php:54
+msgid "Edit Product & Service Type"
+msgstr "Redaguokite Produktų ir Paslaugų Tipą"
+
+#: Includes/TaxonomyProductService.php:55
+msgid "Update Product & Service Type"
+msgstr "Atnaujinkite Produktų ir Paslaugų Tipą"
+
+#: Includes/TaxonomyProductService.php:56
+msgid "Add New Product & Service Type"
+msgstr "Pridėkite Naują Produktų ir Paslaugų Tipą"
+
+#: Includes/TaxonomyProductService.php:57
+msgid "New Product & Service Type Name"
+msgstr "Naujas Produktų ir Paslaugų Tipas"
+
+#: Includes/TaxonomyProductService.php:220
+#: Includes/Translations/_translations.php:5
+msgid "product-service-type"
+msgstr "produkto-paslaugos-tipas"
+
 #: Includes/Translations/_translations.php:4
 msgid "m/d/Y g:i:s a"
 msgstr "d.m.Y G:i:s"
 
-#: Includes/Translations/_translations.php:14
+#: Includes/Translations/_translations.php:6
+msgid "location-type"
+msgstr "vietos-tipas"
+
+#: Includes/Translations/_translations.php:16
 msgctxt "nominative"
 msgid "Entity"
 msgid_plural "Entities"
@@ -1587,7 +1620,7 @@ msgstr[0] "Narys"
 msgstr[1] "Nariai"
 msgstr[2] "Nariai"
 
-#: Includes/Translations/_translations.php:15
+#: Includes/Translations/_translations.php:17
 msgctxt "accusative"
 msgid "Entity"
 msgid_plural "Entities"
@@ -1595,7 +1628,7 @@ msgstr[0] "Narį"
 msgstr[1] "Narius"
 msgstr[2] "Narių"
 
-#: Includes/Translations/_translations.php:16
+#: Includes/Translations/_translations.php:18
 msgctxt "dative"
 msgid "Entity"
 msgid_plural "Entities"
@@ -1603,7 +1636,7 @@ msgstr[0] "Narui"
 msgstr[1] "Nariams"
 msgstr[2] "Narių"
 
-#: Includes/Translations/_translations.php:17
+#: Includes/Translations/_translations.php:19
 msgctxt "genitive"
 msgid "Entity"
 msgid_plural "Entities"
@@ -1611,7 +1644,7 @@ msgstr[0] "Nario"
 msgstr[1] "Narių"
 msgstr[2] "Narių"
 
-#: Includes/Translations/_translations.php:18
+#: Includes/Translations/_translations.php:20
 msgctxt "instrumental"
 msgid "Entity"
 msgid_plural "Entities"
@@ -1619,12 +1652,12 @@ msgstr[0] "Nariu"
 msgstr[1] "Nariais"
 msgstr[2] "Nariais"
 
-#: Includes/Translations/_translations.php:19
+#: Includes/Translations/_translations.php:21
 msgctxt "search"
 msgid "Entities"
 msgstr "Narius"
 
-#: Includes/Translations/_translations.php:21
+#: Includes/Translations/_translations.php:23
 msgctxt "nominative"
 msgid "Location"
 msgid_plural "Locations"
@@ -1632,7 +1665,7 @@ msgstr[0] "Vieta"
 msgstr[1] "Vietos"
 msgstr[2] "Vietų"
 
-#: Includes/Translations/_translations.php:22
+#: Includes/Translations/_translations.php:24
 msgctxt "accusative"
 msgid "Location"
 msgid_plural "Locations"
@@ -1640,7 +1673,7 @@ msgstr[0] "Vietą"
 msgstr[1] "Vietas"
 msgstr[2] "Vietų"
 
-#: Includes/Translations/_translations.php:23
+#: Includes/Translations/_translations.php:25
 msgctxt "dative"
 msgid "Location"
 msgid_plural "Locations"
@@ -1648,7 +1681,7 @@ msgstr[0] "Vietai"
 msgstr[1] "Vietom"
 msgstr[2] "Vietom"
 
-#: Includes/Translations/_translations.php:24
+#: Includes/Translations/_translations.php:26
 msgctxt "genitive"
 msgid "Location"
 msgid_plural "Locations"
@@ -1656,12 +1689,12 @@ msgstr[0] "Vietos"
 msgstr[1] "Vietų"
 msgstr[2] "Vietų"
 
-#: Includes/Translations/_translations.php:25
+#: Includes/Translations/_translations.php:27
 msgctxt "search"
 msgid "Locations"
 msgstr "Vietas"
 
-#: Includes/Translations/_translations.php:27
+#: Includes/Translations/_translations.php:29
 msgctxt "nominative"
 msgid "Offer & Need"
 msgid_plural "Offers & Needs"
@@ -1669,7 +1702,7 @@ msgstr[0] "Pasiūlymas ir Poreikis"
 msgstr[1] "Pasiūlymai ir Poreikiai"
 msgstr[2] "Pasiūlymų ir Poreikių"
 
-#: Includes/Translations/_translations.php:28
+#: Includes/Translations/_translations.php:30
 msgctxt "accusative"
 msgid "Offer & Need"
 msgid_plural "Offers & Needs"
@@ -1677,7 +1710,7 @@ msgstr[0] "Pasiūlymą ir Poreikį"
 msgstr[1] "Pasiūlymus ir Poreikius"
 msgstr[2] "Pasiūlymų ir Poreikių"
 
-#: Includes/Translations/_translations.php:29
+#: Includes/Translations/_translations.php:31
 msgctxt "dative"
 msgid "Offer & Need"
 msgid_plural "Offers & Needs"
@@ -1685,7 +1718,7 @@ msgstr[0] "Pasiūlymui ir Poreikiui"
 msgstr[1] "Pasiūlymam ir Poreikiam"
 msgstr[2] "Pasiūlymam ir Poreikiam"
 
-#: Includes/Translations/_translations.php:30
+#: Includes/Translations/_translations.php:32
 msgctxt "genitive"
 msgid "Offer & Need"
 msgid_plural "Offers & Needs"
@@ -1693,7 +1726,7 @@ msgstr[0] "Pasiūlymo ir Poreikio"
 msgstr[1] "Pasiūlymų ir Poreikių"
 msgstr[2] "Pasiūlymų ir Poreikių"
 
-#: Includes/Translations/_translations.php:31
+#: Includes/Translations/_translations.php:33
 msgctxt "with"
 msgid "Offer & Need"
 msgid_plural "Offers & Needs"
@@ -1701,12 +1734,12 @@ msgstr[0] "Pasiūlymu ir Poreikiu"
 msgstr[1] "Pasiūlymais ir Poreikiais"
 msgstr[2] "Pasiūlymais ir Poreikiais"
 
-#: Includes/Translations/_translations.php:32
+#: Includes/Translations/_translations.php:34
 msgctxt "search"
 msgid "Offers & Needs"
 msgstr "Pasiūlymus ir Poreikius"
 
-#: Includes/Translations/_translations.php:34
+#: Includes/Translations/_translations.php:36
 msgctxt "nominative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1714,7 +1747,7 @@ msgstr[0] "Gyventojas"
 msgstr[1] "Gyventojai"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:35
+#: Includes/Translations/_translations.php:37
 msgctxt "accusative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1722,7 +1755,7 @@ msgstr[0] "Gyventoją"
 msgstr[1] "Gyventojus"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:36
+#: Includes/Translations/_translations.php:38
 msgctxt "dative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1730,7 +1763,7 @@ msgstr[0] "Gyventojui"
 msgstr[1] "Gyventojams"
 msgstr[2] "Gyventojams"
 
-#: Includes/Translations/_translations.php:37
+#: Includes/Translations/_translations.php:39
 msgctxt "genitive"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1738,7 +1771,7 @@ msgstr[0] "Gyventojo"
 msgstr[1] "Gyventojų"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:38
+#: Includes/Translations/_translations.php:40
 msgctxt "instrumental"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1746,22 +1779,22 @@ msgstr[0] "Gyventoju"
 msgstr[1] "Gyventojais"
 msgstr[2] "Gyventojais"
 
-#: Includes/Translations/_translations.php:42
+#: Includes/Translations/_translations.php:44
 msgctxt "search"
 msgid "Products and Services"
 msgstr "Produktus ar Paslaugas"
 
-#: Includes/Translations/_translations.php:44
+#: Includes/Translations/_translations.php:46
 #, php-format
 msgid "Needs in %s"
 msgstr "Poreikiai - %s"
 
-#: Includes/Translations/_translations.php:45
+#: Includes/Translations/_translations.php:47
 #, php-format
 msgid "Offers in %s"
 msgstr "Pasiūlymai - %s"
 
-#: Includes/Translations/_translations.php:46
+#: Includes/Translations/_translations.php:48
 #, php-format
 msgid "Entities in %s"
 msgstr "Nariai - %s"
@@ -1794,13 +1827,15 @@ msgstr[0] "%d Gyventojas"
 msgstr[1] "%d Gyventojai"
 msgstr[2] "%d Gyventojų"
 
-#: views/offers-needs/offers-needs-hashtag-list.php:9
-msgid "Latest Offers"
-msgstr "Naujausi Pasiūlymai"
+#: views/offers-needs/offers-needs-minified-single.php:8
+#: views/offers-needs/offers-needs-single.php:5
+msgid "Offer Type"
+msgstr "Pasiūlymo Tipas"
 
-#: views/offers-needs/offers-needs-hashtag-list.php:10
-msgid "Latest Needs"
-msgstr "Naujausi Poreikiai"
+#: views/offers-needs/offers-needs-minified-single.php:9
+#: views/offers-needs/offers-needs-single.php:6
+msgid "Type of Need"
+msgstr "Poreikio Tipas"
 
 #: views/offers-needs/offers-needs-no-results.php:8
 msgid "Maybe you have a need you would like to make public? Make it known."
@@ -1825,17 +1860,29 @@ msgstr "Norėdami pradėti, užregistruokite savo paskyrą <a href='%s'>čia</a>
 msgid "No %s."
 msgstr "Nėra %s."
 
-#: views/offers-needs/offers-needs-single.php:5
-msgid "Offer Type"
-msgstr "Pasiūlymo Tipas"
-
-#: views/offers-needs/offers-needs-single.php:6
-msgid "Type of Need"
-msgstr "Poreikio Tipas"
-
-#: views/offers-needs/offers-needs-single.php:29
+#: views/offers-needs/offers-needs-single.php:33
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
+
+#~ msgid "Reload"
+#~ msgstr "Įkelt iš naujo"
+
+#~ msgid "CD Offers & Needs Hashtag"
+#~ msgstr "BK Pasiūlymai ir Poreikiai Hashtag"
+
+#~ msgid "Hash Tag Title"
+#~ msgstr "#Hashtag Pavadinimas"
+
+#~ msgid ""
+#~ "Enter the hash tag title that sums up your offer or need in 49 characters "
+#~ "or less."
+#~ msgstr ""
+#~ "Įveskite #hashtag pavadinimą, kuris apibudina jūsų pasiūlymą ar poreikį "
+#~ "iki 49 simbolių."
+
+#~ msgctxt "placeholder"
+#~ msgid "#FreshlySqueezedAppleJuice"
+#~ msgstr "#SviežiaiSpaustaObuoliųSunka"
 
 #~ msgid "Hillsdale Farms"
 #~ msgstr "Jono Ūkis"

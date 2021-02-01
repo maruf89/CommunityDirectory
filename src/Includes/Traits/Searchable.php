@@ -14,7 +14,7 @@ trait Searchable {
             $instance = static::$instance_class::get_instance( null, null, $item );
 
             // If it doesn't have a valid link, skip it
-            if ( !$instance::get_display_link( $instance ) ) continue;
+            if ( !$instance->get_display_link() ) continue;
             
             load_template( $template_file, false, array(
                 'instance'  => $instance,

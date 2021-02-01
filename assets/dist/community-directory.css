@@ -39,6 +39,39 @@ body h6 {
   float: none;
   margin: 0 auto;
 }
+.carot:checked::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.carot::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.d-icon:before {
+  display: inline-block;
+  font: normal 400 1em/1 dashicons;
+  speak: never;
+  text-decoration: none;
+  text-transform: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: middle;
+  text-align: center;
+  transition: color 0.1s ease-in;
+  padding-right: 0.2em;
+}
+.d-icon.location:before {
+  content: "\F230";
+}
+.d-icon.taxonomy:before,
+.d-icon.product-service:before {
+  content: "\F323";
+}
 .instance-map {
   width: 100%;
   min-height: 200px;

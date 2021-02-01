@@ -9,12 +9,15 @@
 
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
-use Maruf89\CommunityDirectory\Includes\{ClassLocation, ClassErrorHandler};
+use Maruf89\CommunityDirectory\Includes\{ClassLocation, ClassErrorHandler, TaxonomyLocation};
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
 class Location extends Instance {
-    public static string $post_type = 'cd-location';
 
+    public static string $post_type;
+    public static string $post_slug;
+    protected static string $link_identifier;
+    
     protected bool $_cd_loaded = false;
     protected array $_featured = [
         'sizes' => []
@@ -26,6 +29,7 @@ class Location extends Instance {
     protected int $active_inhabitants;
     protected int $inactive_inhabitants;
     protected string $status;
+    protected int $taxonomy_id;
     protected $coords;
 
     public function __construct( int $location_id = null, int $post_id = null, object $post = null ) {
@@ -93,6 +97,9 @@ class Location extends Instance {
         if ( !isset( $this->post_id ) || !$this->post_id )
             $this->create_new_post( isset( $data[ 'user_id' ] ) ? $data[ 'user_id' ] : 0 );
 
+        // Save the location to the location taxonomy
+        $term_ids = TaxonomyLocation::get_instance()->new_location_created( $this );
+            
         $coords = community_directory_coords_to_mysql_point( $this->coords );
             
         $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
@@ -113,7 +120,6 @@ class Location extends Instance {
         $result = $wpdb->query( $sql );
         
         $this->load_from_db();
-        $this->_save_to_cache();
 
         return !!$result;
     }
@@ -163,6 +169,7 @@ class Location extends Instance {
                     die( 'Cannot alter the id of an existing location' );
                 case 'active_inhabitants':
                 case 'inactive_inhabitants':
+                case 'taxonomy_id':
                     $update[] = "$key = $value";
                     break;
                 case 'status':
@@ -232,9 +239,11 @@ class Location extends Instance {
         
         $deleted_post = wp_delete_post( $this->post_id, true );
 
+        $deleted_term = wp_delete_term( $this->taxonomy_id, TaxonomyLocation::$taxonomy );
+        
         $this->_remove_from_cache();
 
-        return !!$cd_delete && !!$deleted_post;
+        return !!$cd_delete && !!$deleted_post && !!$deleted_term;
     }
 
     //////////////////////////////////
@@ -272,6 +281,7 @@ class Location extends Instance {
         $this->active_inhabitants = $data->active_inhabitants;
         $this->inactive_inhabitants = $data->inactive_inhabitants;
         $this->status = $data->status;
+        $this->taxonomy_id = $data->taxonomy_id;
 
         if ( isset( $data->id ) )
             $this->location_id = $data->id;
@@ -423,6 +433,19 @@ class Location extends Instance {
         $where = "WHERE $which = $loc_id_or_post_id";
         
         return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
+    }
+
+    /**
+     * To be called upon post type registration long before any instance is required
+     */
+    public static function define_post_type(
+        string $post_type,
+        string $post_slug,
+        string $link_identifier = 'post_name'
+    ) {
+        self::$post_type = $post_type;
+        self::$post_slug = $post_slug;
+        self::$link_identifier = $link_identifier;
     }
 
 }

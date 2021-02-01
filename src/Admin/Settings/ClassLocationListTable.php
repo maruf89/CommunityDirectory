@@ -149,6 +149,7 @@ class ClassLocationListTable extends \WP_List_Table {
         $actions = array(
             'activate' => __( 'Activate Locations', 'community-directory' ),
             'deactivate' => __( 'Deactivate Locations', 'community-directory' ),
+            'delete' => __( 'Delete Locations', 'community-directory' ),
         );
 
         // If we've locked into a status, disable sortable on that col
@@ -273,11 +274,10 @@ class ClassLocationListTable extends \WP_List_Table {
         $sort = $this->get_sort_params( true );
         $url = "<a href='?page=$cd&action=%s&location=%s${tab}${section}${sort}'>%s</a>";
         
-        $edit_url = Location::get_edit_link( $location->post_id );
+        $edit_url = $location->get_edit_link();
         $edit_link = "<a href='$edit_url' %s>%s</a>";
         
         $actions = array(
-            'rename'      => sprintf( $url, 'rename', $location->location_id, __( 'Rename (todo)', 'community-directory' ) ),
             'edit'          => sprintf( $edit_link, '', __( 'Edit', 'community-directory' ) ),
             'delete'          => sprintf( $url, 'delete', $location->location_id, __( 'Delete', 'community-directory' ) ),
         );

@@ -145,6 +145,8 @@ class ClassEntityListTable extends \WP_List_Table {
         $actions = array(
             'activate' => __( 'Activate Entities', 'community-directory' ),
             'deactivate' => __( 'Deactivate Entities', 'community-directory' ),
+            'delete' => __( 'Delete Entities', 'community-directory' ),
+            'delete_entire' => __( 'Delete Entities and User Accounts', 'community-directory' ),
         );
 
         // If we've locked into a status, disable sortable on that col
@@ -191,6 +193,34 @@ class ClassEntityListTable extends \WP_List_Table {
                     'success'
                 );
                 break;
+            case 'delete':
+                foreach ( $all_entities as $entity_post_id ) {
+                    $entity = new Entity( $entity_post_id );
+                    if ( $entity->delete_permanently() ) $count++;
+                }
+
+                add_settings_error(
+                    'bulk_action',
+                    'bulk_action',
+                    /* translators: %d: Number of requests. */
+                    sprintf( _n( 'Deleted %d entity', 'Deleted %d entities', $count, 'community-directory' ), $count ),
+                    'success'
+                );
+                break;
+            case 'delete_entire':
+                foreach ( $all_entities as $entity_post_id ) {
+                    $entity = new Entity( $entity_post_id );
+                    if ( $entity->delete_permanently( true ) ) $count++;
+                }
+
+                add_settings_error(
+                    'bulk_action',
+                    'bulk_action',
+                    /* translators: %d: Number of requests. */
+                    sprintf( _n( 'Deleted %d entity', 'Deleted %d entities', $count, 'community-directory' ), $count ),
+                    'success'
+                );
+                break;
         }
     }
 
@@ -225,6 +255,28 @@ class ClassEntityListTable extends \WP_List_Table {
                     );
                 }
                 break;
+            case 'delete':
+                $results = $entity->delete_permanently();
+                if ( $results[ 'success' ] ) {
+                    add_settings_error(
+                        'single_action',
+                        'single_action',
+                        __( 'Deleted Entity', 'community-directory' ),
+                        'success'
+                    );
+                }
+                break;
+            case 'delete_entire':
+                $results = $entity->delete_permanently( true );
+                if ( $results[ 'success' ] ) {
+                    add_settings_error(
+                        'single_action',
+                        'single_action',
+                        __( 'Deleted Entity', 'community-directory' ),
+                        'success'
+                    );
+                }
+                break;
         }
     }
 
@@ -245,15 +297,17 @@ class ClassEntityListTable extends \WP_List_Table {
         $tab = empty( $this->page_tab ) ? '' : "&tab=$this->page_tab";
         $section = empty( $this->section ) ? '' : "&section=$this->section";
         $sort = $this->get_sort_params( true );
-        $url = "<a href='?page=$cd&action=%s&entity=%s${tab}${section}${sort}'>%s</a>";
+        $url = "<a %s href='?page=$cd&action=%s&entity=%s${tab}${section}${sort}'>%s</a>";
         
-        $edit_url = Entity::get_edit_link( $entity->ID );
+        $edit_url = $entity->get_edit_link();
         $edit_link = "<a href='$edit_url' %s>%s</a>";
         
         $actions = array(
-            'activate'      => sprintf( $url, 'activate', $entity->ID, __( 'Activate', 'community-directory' ) ),
-            'deactivate'    => sprintf( $url, 'deactivate', $entity->ID, __( 'Deactivate', 'community-directory' )),
+            'activate'      => sprintf( $url, '', 'activate', $entity->ID, __( 'Activate', 'community-directory' ) ),
+            'deactivate'    => sprintf( $url, '', 'deactivate', $entity->ID, __( 'Deactivate', 'community-directory' )),
             'edit'          => sprintf( $edit_link, 'style="color:red"', __( 'Edit', 'community-directory' ) ),
+            'delete'    => sprintf( $url, 'style="color:maroon"', 'delete', $entity->ID, __( 'Delete Entity', 'community-directory' )),
+            'delete_entire'    => sprintf( $url, 'style="color:maroon;font-weight:bold"', 'delete_entire', $entity->ID, __( 'Delete Entity & User', 'community-directory' )),
         );
 
         $remove_key = $entity->is_status( COMMUNITY_DIRECTORY_ENUM_ACTIVE ) ? 'activate' : 'deactivate';

@@ -40,8 +40,6 @@ class ClassACF {
     public static $offers_needs_form_group_key = 'group_community_directory_offers_needs';
     public static $offers_needs_active_key = 'field_cd_offer_need_active';
     public static $offers_needs_active = 'offer_need_active';
-    public static $offers_needs_hashtag_title_key = 'field_cd_offer_need_hashtag_title';
-    public static $offers_needs_hashtag_title = 'offer_need_hashtag_title';
     public static $offers_needs_product_or_service_key = 'field_cd_offer_need_product_or_service';
     public static $offers_needs_product_or_service = 'offer_need_product_or_service';
     public static $offers_needs_type_key = 'field_cd_offer_need_type';
@@ -284,16 +282,6 @@ class ClassACF {
 			'layout' => 'horizontal',
 			'return_format' => 'value',
 			'save_other_choice' => 0,
-        );
-
-        $fields_arr[] = array(
-            'key' => self::$offers_needs_hashtag_title_key,
-            'label' => __( 'Hash Tag Title', 'community-directory' ),
-            'name' => self::$offers_needs_hashtag_title,
-            'type' => 'text',
-            'instructions' => __( 'Enter the hash tag title that sums up your offer or need in 49 characters or less.', 'community-directory' ),
-            'placeholder' => _x( '#FreshlySqueezedAppleJuice', 'placeholder', 'community-directory' ),
-            'maxlength' => 49,
         );
         
         $fields_arr[] = array(

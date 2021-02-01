@@ -93,11 +93,7 @@ class ClassAdmin {
                     'offersNeeds' => ClassOffersNeeds::$post_type
                 ),
                 'pages' => array(
-                    'offersNeeds' => array(
-                        'acf' => array(
-                            'hashtag_title' => ClassACF::$offers_needs_hashtag_title_key
-                        )
-                    )
+                    'offersNeeds' => array()
                 ),
                 'taxonomyType' => array(
                     'productService' => ClassOffersNeeds::$taxonomy

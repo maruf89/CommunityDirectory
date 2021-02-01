@@ -9,18 +9,23 @@
 
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
-use Maruf89\CommunityDirectory\Includes\{ClassACF, ClassOffersNeeds, ClassErrorHandler};
+use Maruf89\CommunityDirectory\Includes\{ClassACF, ClassOffersNeeds, ClassErrorHandler, TaxonomyLocation};
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
+use Maruf89\CommunityDirectory\Includes\instances\ProductServiceTerm;
 
 class OfferNeed extends Instance {
-    public static string $post_type = 'cd-offers-needs';
+
+    public static string $post_type;
+    public static string $post_slug;
+    protected static string $link_identifier;
+
     protected bool $_acf_loaded = false;
     protected bool $_taxonomy_loaded = false;
-    protected static string $entity_loc_separator = '1100';
+    public static string $entity_loc_separator = '1100';
 
     protected int $entity_post_id;
     protected int $location_post_id;
-    protected ?\WP_Term $category;
+    protected ProductServiceTerm $category;
 
     protected ?array $acf_data = null;
 
@@ -29,6 +34,7 @@ class OfferNeed extends Instance {
 
         if ( $post_id ) $this->post_id = $post_id;
         if ( $entity_post_id ) $this->entity_post_id = $entity_post_id;
+        $this->_save_to_cache();
     }
 
     
@@ -64,16 +70,6 @@ class OfferNeed extends Instance {
         }
     }
 
-    public function get_acf_hashtag_title() {
-        $title = $this->__call( 'get_acf_hashtag_title', array() );
-        
-        if ( substr( $title, 0, 1 ) !== '#' ) $title = "#$title";
-        $title = mb_convert_case( $title, MB_CASE_TITLE, 'UTF-8');
-        $title = implode( explode( ' ', $title ) );
-        
-        return $title;
-    }
-
     /**
      * Returns Translated
      */
@@ -84,6 +80,7 @@ class OfferNeed extends Instance {
         ];
 
         $which = $this->__call( 'get_acf_product_or_service', array() );
+        $which = !empty( $which ) ? $which : 'service';
 
         return __( $options[ $which ], 'community-directory' );
     }
@@ -100,12 +97,11 @@ class OfferNeed extends Instance {
 
         $which = $this->__call( 'get_acf_urgency', array() );
 
-        return __( $options[ $which ], 'community-directory' );
+        return isset( $options[ $which ] ) ? __( $options[ $which ], 'community-directory' ) : '';
     }
 
     public function get_link():string {
-        $link = Entity::get_display_link( $this->get_entity() );
-        return empty( $link ) ? '' : "$link/#p-" . $this->get_id();
+        return static::build_offers_needs_link( $this );
     }
 
     public function get_id():string {
@@ -128,10 +124,17 @@ class OfferNeed extends Instance {
         return $translated ? __( ucfirst( $type ), 'community-directory' ) : $type;
     }
 
-    public function get_category( bool $return_obj = false ) {
-        if ( !$this->load_taxonomy() || !$this->category ) return $return_obj ? (object) null : '';
+    public function get_product_service_type( string $return_type = '', $default = null ):?ProductServiceTerm {
+        return $this->load_taxonomy() ? $this->category : $default;
+    }
 
-        return $return_obj ? $this->category : $this->category->name;
+    public function get_product_service_link( string $class_names = '', $default = null ):?string {
+        if ( !$this->load_taxonomy() ) return $default;
+        return $this->category->get_link( $class_names );
+    }
+
+    public function get_location():?Location {
+        return Location::get_instance( $this->__get( 'location_post_id' ) );
     }
 
     /**
@@ -157,6 +160,10 @@ class OfferNeed extends Instance {
     public function get_owner():Entity {
         return Entity::get_instance( $this->entity_post_id );
     }
+
+    //////////////////////////////////
+    ////////     Update      /////////
+    //////////////////////////////////
 
     public function activate_deactivate(
         bool $activate = true,
@@ -237,9 +244,9 @@ class OfferNeed extends Instance {
         
         $terms = get_the_terms( $this->post_id, ClassOffersNeeds::$taxonomy );
         if ( gettype( $terms ) !== 'array' || !count( $terms ) ) $this->category = null;
-        else {
-            $this->category = $terms[ 0 ];
-        }
+        else
+            $this->category = ProductServiceTerm::get_instance( null, $terms[ 0 ] );
+
         return $this->_taxonomy_loaded = true;
     }
 
@@ -262,18 +269,21 @@ class OfferNeed extends Instance {
         return $instance ? $instance : new OfferNeed( $post_id, $entity_id, $post );
     }
 
-    public static function get_location_link( Location $location = null ):string {
-        return 'To Do';
-    }
-
-    public static function get_display_link( OfferNeed $instance ):string {
+    public static function build_offers_needs_link( OfferNeed $instance ):string {
         $owner = $instance->get_owner();
-        $owner_link = $owner::get_display_link( $owner );
+        try {
+            $owner_link = $owner->get_link();
+        } catch ( Exception $err ) {
+            ClassErrorHandler::handle_exception( new \WP_Error( 500, "Error loading non-existent entity post_id: $owner->post_id" ) );
+            return '';
+        }
+        
+        $id = $instance->get_id();
 
-        return "$owner_link#p-$instance->post_id";
+        return "$owner_link#$id";
     }
 
-    public static function get_edit_link( int $post_id ):string {
+    public static function build_edit_link( int $post_id ):string {
         return admin_url( "post.php?post=$post_id&action=edit" );
     }
 
@@ -333,12 +343,16 @@ class OfferNeed extends Instance {
     }
 
     /**
-     * Upon publishing an OfferNeed updates the 'post_parent' field with
+     * Hook: Called before saving to DB
+     * 
+     * Modifies an OfferNeed, updates the 'post_parent' field like:
      * "${entity_post_id}1100${location_post_id}
      */
     public static function set_post_props_on_save( array $sanitized, array $unsanitized, array $unprocessed ) {
         $status = [ 'publish', 'inactive' ];
-        if ( !in_array( $sanitized[ 'post_status' ], $status ) || $sanitized[ 'post_type' ] !== ClassOffersNeeds::$post_type )
+        if ( !in_array( $sanitized[ 'post_status' ], $status ) ||
+             $sanitized[ 'post_type' ] !== ClassOffersNeeds::$post_type
+        )
             return $sanitized;
 
         $Entity = Entity::get_instance( null, $sanitized[ 'post_author' ] );
@@ -354,6 +368,20 @@ class OfferNeed extends Instance {
         $sanitized[ 'post_parent' ] = self::generate_entity_loc_id( $Entity->post_id, $loc_id );
 
         return $sanitized;
+    }
+
+    /**
+     * Hook: `save_post`
+     * 
+     * Adds the location tag to the post upon initial save to make it filterable by location
+     */
+    public static function after_save( int $post_id, object $post, bool $update ) {
+        if ( $post->post_status !== 'publish' || $update ) return;
+        $instance = static::get_instance( $post_id, null, $post );
+        $Location = $instance->get_location();
+        $res = wp_set_post_terms( $post_id, [ $Location->taxonomy_id ], TaxonomyLocation::$taxonomy, true );
+        
+        if ( $res instanceof \WP_Error ) ClassErrorHandler::handle_exception( $res );
     }
 
     public static function acf_activation_changed( $value, $post_id, $field ) {
@@ -373,6 +401,19 @@ class OfferNeed extends Instance {
         $instance->activate_deactivate( $is_active, true, false );
         
         return $value;
+    }
+
+    /**
+     * To be called upon post type registration long before any instance is required
+     */
+    public static function define_post_type(
+        string $post_type,
+        string $post_slug,
+        string $link_identifier = 'post_name'
+    ) {
+        static::$post_type = $post_type;
+        static::$post_slug = $post_slug;
+        static::$link_identifier = $link_identifier;
     }
 
 }

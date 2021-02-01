@@ -1,4 +1,4 @@
-import { LatLngTuple, Marker } from 'leaflet';
+import { Marker } from 'leaflet';
 import { mapInstances, LEAFLET_LOADED, MB_ATTR, mapboxUrl } from 'ThirdParty/leaflet';
 
 let $:JQueryStatic;
@@ -37,8 +37,10 @@ function initMap($map:JQuery<HTMLElement>) {
     const markers:Marker[] = $map.children('.marker')
         .map((_, el) => {
             const marker =  L.marker([+el.dataset.lat, +el.dataset.lon]);
-            marker.bindPopup(popup)
-            marker.on('click', mapOpenPopup.bind(null, jQuery(el)))
+            if (!data.singleMarker) {
+                marker.bindPopup(popup)
+                marker.on('click', mapOpenPopup.bind(null, jQuery(el)))
+            }
             return marker;
         })
         .toArray();
@@ -70,6 +72,8 @@ function initMap($map:JQuery<HTMLElement>) {
 
     markerGroup.addTo(map);
     map.fitBounds(markerGroup.getBounds());
+    
+    if (data.singleMarker) map.setZoom(16);
 }
 
 

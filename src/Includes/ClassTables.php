@@ -30,9 +30,6 @@ class ClassTables {
     public function create_tables() {
         global $wpdb;
 
-        // $wpdb->hide_errors();
-        
-
         $table_name = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -49,6 +46,7 @@ class ClassTables {
                 `active_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `inactive_inhabitants` int(4) NOT NULL DEFAULT '0',
                 `post_id` BIGINT(20) UNSIGNED NOT NULL,
+                `taxonomy_id` BIGINT(20) UNSIGNED NOT NULL,
                 `coords` POINT NOT NULL,
                 UNIQUE `unique_index`(`slug`, `post_id`),
                 PRIMARY KEY  (id),

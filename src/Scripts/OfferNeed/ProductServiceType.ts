@@ -42,9 +42,12 @@ export function breadcrumbProductServices() {
 
     $container.children('li').each(applyChildBreadcrumb);
 
-    $container.on('click', `.${classNames.listParent}`, debounce((event) => {
-        const ct = jQuery(event.currentTarget);
-        ct.toggleClass(classNames.opened, !ct.hasClass(classNames.opened));
+    $container.on('click', `.${classNames.listParent}`, debounce(event => {
+        event.stopPropagation();
+        if (jQuery(event.target).parent().hasClass(classNames.listParent)) {
+            const ct = jQuery(event.currentTarget);
+            ct.toggleClass(classNames.opened, !ct.hasClass(classNames.opened));
+        }
     }, 250, true));
     
 }

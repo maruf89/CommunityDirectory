@@ -83,7 +83,7 @@ class ClassAdminMenus {
 
             $entity_item =& $menu[ ClassEntity::$post_type_menu_position ];
             $entity_item[0] = __( 'Edit My Entity', 'community-directory' );
-            $entity_item[2] = Entity::get_edit_link();
+            $entity_item[2] = Entity::build_edit_link();
 
             $profile_item =& $menu[70];
             $profile_item[0] = __( 'Profile Settings', 'community-directory' );
@@ -99,7 +99,7 @@ class ClassAdminMenus {
             $submenu[ "edit.php?post_type=$entity_post_type"][9] = array(
                 __( 'Edit My Entity', 'community-directory' ),
                 'edit_entities',
-                Entity::get_edit_link()
+                Entity::build_edit_link()
             );
         }
     }

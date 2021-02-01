@@ -31,17 +31,18 @@ trait PostTypeMethods {
         global $wpdb;
 
         if ( null === $results ) $results = [];
-        if ( null === $post_status || empty( $post_status ) ) $post_status = [ '!=', 'auto-draft' ];
+        if ( null === $post_status ) $post_status = [ '!=', 'auto-draft' ];
         if ( null === $where_match ) $where_match = [];
         if ( null === $output ) $output = OBJECT;
 
         // Create where array with the first check
         $where = [ 'post_type = \'' . static::$post_type . '\'' ];
         
-        if ( gettype( $post_status ) === 'string' )
+        if ( gettype( $post_status ) === 'string' && !empty( $post_status ) )
             $post_status = [ '=', $post_status ];
         
-        $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
+        if ( !!$post_status)
+            $where[] = sprintf( 'post_status %s \'%s\'', $post_status[ 0 ], $post_status[ 1 ] );
 
         if ( count( $where_match ) ) {
             foreach ( $where_match as $key => $match ) {

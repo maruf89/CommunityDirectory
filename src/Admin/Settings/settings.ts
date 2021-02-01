@@ -6,9 +6,23 @@ export default function(_$:JQueryStatic) {
     if (!$('body.toplevel_page_community-directory').length) return;
 
     editLocationTable( $('.edit-locations-table') );
+    if ( window.location.search.indexOf('tab=entity') > -1 ) entityListTable()
+}
+
+function entityListTable() {
+    // Confirm user wants to delete an entity before doing so
+    $('#the-list').on('click', '.row-actions .delete, .row-actions .delete_entire', event => {
+        const title = $(event.currentTarget).closest('.title').children('a')[0].innerText;
+        if (!window.confirm('Are you sure you want to delete entity ' + title + '?')) {
+            event.preventDefault();
+            return false;
+        }
+    });
 }
 
 function editLocationTable ($table:JQuery<HTMLElement>) {
+    if (!$table.length) return;
+    
     const $form:JQuery<HTMLElement> = $('#mainform');
     let newFieldId:number = 1;
     

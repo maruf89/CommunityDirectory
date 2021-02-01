@@ -2,9 +2,9 @@
 
 namespace Maruf89\CommunityDirectory\Includes\Abstracts;
 
-abstract class Instance {
+use Maruf89\CommunityDirectory\Includes\Interfaces\IInstance;
 
-    public static string $post_type;
+abstract class Instance implements IInstance {
     
     protected bool $_has_loaded = false;
     protected bool $_post_loaded = false;
@@ -90,7 +90,7 @@ abstract class Instance {
     }
 
     /**
-     * Fills the entity object from a passed in post object
+     * Fills the instance object from a passed in post object
      */
     protected function from_post_obj( object $post ):bool {
         $wp_post = $post instanceof \WP_Post ? $post : new \WP_Post( $post );
@@ -98,7 +98,7 @@ abstract class Instance {
     }
 
     /**
-     * Fleshes an entity out from a passed in WP Post instance
+     * Fleshes an instance out from a passed in WP Post instance
      */
     protected function from_post( \WP_Post $post ):bool {
         if ( $post ) {
@@ -110,6 +110,22 @@ abstract class Instance {
         return false;
     }
 
+    //////////////////////////////////
+    ////////     Delete     //////////
+    //////////////////////////////////
+    
+    public function delete_self():bool {
+        $this->load_post_from_db();
+
+        if ( !$this->post_id ) return false;
+
+        $deleted_post = wp_delete_post( $this->post_id, true );
+        
+        $this->_remove_from_cache();
+
+        return !!$deleted_post;
+    }
+
     /////////////////////////////////////
     /////////////   Cache    ////////////
     /////////////////////////////////////
@@ -117,7 +133,7 @@ abstract class Instance {
     private static array $_post_id_cache = [];
 
     protected function _save_to_cache() {
-        self::$_post_id_cache[ $this->post_id ] = $this;
+        self::$_post_id_cache[ $this->post_id ] =& $this;
     }
 
     protected function _remove_from_cache() {
@@ -129,7 +145,17 @@ abstract class Instance {
     /////////////   Static   ////////////
     /////////////////////////////////////
 
-    public static function get_edit_link( int $post_id ):string {
+    public function get_edit_link():string { return static::build_edit_link( $this->post_id ); }
+    public static function build_edit_link( int $post_id ):string {
         return admin_url( "post.php?post=$post_id&action=edit" );
+    }
+
+    public function get_display_link():string { return static::build_display_link( $this ); }
+    public static function build_display_link( Instance $instance ):string {
+        $link_identifier = $instance::$link_identifier;
+        $id = $instance->__get( $link_identifier );
+        $post_slug = $instance::$post_slug;
+
+        return "/$post_slug/$id";
     }
 }

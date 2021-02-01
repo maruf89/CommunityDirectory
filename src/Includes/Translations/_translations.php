@@ -2,6 +2,8 @@
 
 __( 'm/d/y g:i a', 'community-directory' );
 __( 'm/d/Y g:i:s a', 'community-directory' );
+__( 'product-service-type', 'community-directory' );
+__( 'location-type', 'community-directory' );
 _n__noop( 'Activated %d location', 'Activated %d locations', 'community-directory' );
 _n__noop( '%d Inhabitant', '%d Inhabitants', 'community-directory' );
 _n__noop( 'Activated %d entity', 'Activated %d entities', 'community-directory' );

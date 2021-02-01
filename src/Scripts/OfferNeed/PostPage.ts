@@ -13,22 +13,6 @@ export function initPostPage():boolean {
 
     requireProductService();
     breadcrumbProductServices();
-    autofillHashtagTitle();
     
     return true;
-}
-
-export function autofillHashtagTitle() {
-    const $titleInput:HTMLInputElement = <HTMLInputElement> jQuery('#title')[0];
-    const $hashtagTitleInput:HTMLInputElement =
-        <HTMLInputElement> jQuery(`#acf-${cdData.pages.offersNeeds.acf.hashtag_title}`)[0];
-
-    $titleInput.onkeyup = event => {
-        $hashtagTitleInput.value = hashtagify((<HTMLInputElement>event.target).value);
-    }
-
-}
-
-function hashtagify(text:string):string {
-    return `#${text.split(' ').map(val => val[0].toUpperCase() + val.substr(1)).join('')}`;
 }

@@ -37,6 +37,7 @@ class ClassLocation extends Routable {
     }
 
     public static function register_post_type() {
+        $slug = strtolower( __( 'Location', 'community-directory' ) );
         $custom_post_type_args = array(
             'label' => __( 'Locations', 'community-directory' ),
             'labels' =>
@@ -81,10 +82,13 @@ class ClassLocation extends Routable {
                 'page-attributes'
             ),
             'rewrite' => array(
-                'slug' => \strtolower( __( 'Location', 'community-directory' ) ),
+                'slug' => $slug,
                 'with_front' => false,
             )
         );
+
+
+        Location::define_post_type( static::$post_type, $slug, 'slug' );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
         register_post_type( static::$post_type, $custom_post_type_args );
@@ -94,7 +98,7 @@ class ClassLocation extends Routable {
      * Get's all locations based on passed in vars
      * 
      * @param       $results            ?array           an array which to merge with passed in results
-     * @param       $status_type        ?string          optional status value to match against (default: COMMUNITY_DIRECTORY_ENUM_ACTIVE)
+     * @param       $status_type        ?string          optional status value to match against (default: get active locations)
      *                                                   one of (''|COMMUNITY_DIRECTORY_ENUM_ACTIVE|COMMUNITY_DIRECTORY_ENUM_INACTIVE)
      * @param       $where_match        ?array           optional array with fields to match against
      * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)

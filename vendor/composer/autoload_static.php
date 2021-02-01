@@ -300,7 +300,7 @@ class ComposerStaticInitfd1ddf97c2f8a2b0db35a17dd614c2ee
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassSettingsUninstall' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassSettingsUninstall.php',
         'Maruf89\\CommunityDirectory\\Admin\\Settings\\ClassUWPFormBuilder' => __DIR__ . '/../..' . '/src/Admin/Settings/ClassUWPFormBuilder.php',
         'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassLocationsWidget' => __DIR__ . '/../..' . '/src/Admin/Widgets/ClassLocationsWidget.php',
-        'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassOffersNeedsHashTagWidget' => __DIR__ . '/../..' . '/src/Admin/Widgets/ClassOffersNeedsHashTagWidget.php',
+        'Maruf89\\CommunityDirectory\\Admin\\Widgets\\ClassOffersNeedsWidget' => __DIR__ . '/../..' . '/src/Admin/Widgets/ClassOffersNeedsWidget.php',
         'Maruf89\\CommunityDirectory\\Email\\ClassTransactionalMailer' => __DIR__ . '/../..' . '/src/Email/ClassTransactionalMailer.php',
         'Maruf89\\CommunityDirectory\\Email\\Interfaces\\IMailer' => __DIR__ . '/../..' . '/src/Email/Interfaces/IMailer.php',
         'Maruf89\\CommunityDirectory\\Includes\\Abstracts\\Instance' => __DIR__ . '/../..' . '/src/Includes/Abstracts/Instance.php',

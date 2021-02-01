@@ -119,19 +119,19 @@ class ClassPublic {
             
             $top = community_directory_custom_nav_menu_item(
                 $Entity->location_name,
-                Entity::get_location_link(),
+                Entity::build_location_link(),
                 100
             );
             $items[] = $top;
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'My Profile', 'community-directory' ),
-                Entity::get_display_link(),
+                Entity::build_entity_link(),
                 101,
                 $top->ID
             );
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'Edit Profile', 'community-directory' ),
-                Entity::get_edit_link(),
+                Entity::build_edit_link(),
                 102,
                 $top->ID
             );

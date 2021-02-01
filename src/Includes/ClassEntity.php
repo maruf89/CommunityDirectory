@@ -33,8 +33,6 @@ class ClassEntity extends Routable implements ISearchable {
         if ( !isset( self::$instance ) ) {
             self::$instance = new ClassEntity();
         }
-
-        // flush_rewrite_rules( true );
  
         return self::$instance;
     }
@@ -53,7 +51,7 @@ class ClassEntity extends Routable implements ISearchable {
      */
     public static function register_post_type() {
         $loc_prefix = __( 'location', 'community-directory' );
-        
+        $slug = strtolower( __( 'Entity', 'community-directory' ) );
         $custom_post_type_args = array(
             'label' => __( 'Entities', 'community-directory' ),
             'labels' =>
@@ -95,12 +93,14 @@ class ClassEntity extends Routable implements ISearchable {
                 'custom_fields',
             ),
             'rewrite' => array(
-                'slug' => strtolower( __( 'Entity', 'community-directory' ) ),
+                'slug' => $slug,
                 'with_front' => false,
             ),
             'delete_with_user' => true,
             'show_in_rest' => true,
         );
+
+        Entity::define_post_type( static::$post_type, $slug );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
         register_post_type( static::$post_type, $custom_post_type_args );

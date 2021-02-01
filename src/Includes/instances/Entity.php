@@ -14,7 +14,11 @@ use Maruf89\CommunityDirectory\Includes\ClassACF;
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
 class Entity extends Instance {
-    public static string $post_type = 'cd-entity';
+
+    public static string $post_type;
+    public static string $post_slug;
+    protected static string $link_identifier;
+
     private static $active_entity;
     
     private bool $_acf_loaded = false;
@@ -221,6 +225,10 @@ class Entity extends Instance {
             case 'raw':
             default: return $img_arr;
         }
+    }
+
+    public function get_link():string {
+        return static::build_entity_link( $this );
     }
 
     private static string $_get_acf = 'get_acf_';
@@ -431,6 +439,45 @@ class Entity extends Instance {
     }
 
     //////////////////////////////////
+    ////////     Delete     //////////
+    //////////////////////////////////
+    
+    public function delete_permanently( bool $with_user = false ):array {
+        if ( !$this->load_post_from_db() ) return [ 'success' => false ];
+
+        global $wpdb;
+        
+        // Delete all posts of this this post_author
+        $self_delete_sql = "
+            DELETE FROM $wpdb->posts
+            WHERE post_author = $this->post_author
+        ";
+        $deleted_self = $wpdb->query( $self_delete_sql );
+
+        $response = [ 'success' => $deleted_self ];
+
+        if ( $with_user && $response[ 'success' ] ) {
+            $meta_delete = "
+                DELETE FROM $wpdb->usermeta
+                WHERE user_id = $this->post_author
+            ";
+
+            $meta_deleted = $wpdb->query( $meta_delete );
+
+            $user_delete = "
+                DELETE FROM $wpdb->users
+                WHERE ID = $this->post_author
+            ";
+
+            $user_deleted = $wpdb->query( $user_delete );
+
+            $response[ 'success' ] = $meta_deleted && $user_deleted;
+        }
+
+        return $response;
+    }
+
+    //////////////////////////////////
     //////// Static Methods //////////
     //////////////////////////////////
 
@@ -477,40 +524,36 @@ class Entity extends Instance {
         return new Entity( $post_id, $author_id, $post );
     }
 
-    public static function get_location_link( Location $location = null ):string {
+    public static function build_location_link( Location $location = null ):string {
         if ( !$location ) {
             if ( !self::$active_entity || !( $location = self::$active_entity->get_location() ) )
                 return '';
         }
 
-        $_location = __( 'location', 'community-directory' );
-
-        return "/$_location/$location->slug/";
+        return $location->get_display_link();
     }
 
-    public static function get_display_link( Entity $entity = null ):string {
+    public static function build_entity_link( Entity $entity = null ):string {
         if ( !$entity ) {
             if ( self::$active_entity ) $entity = self::$active_entity;
             else return '';
         }
 
-        $location = $entity->get_location();
+        if ( !( $location = $entity->get_location() ) ) return '';
 
-        if ( !$location ) return '';
+        $location_post_slug = $location::$post_slug;
+        $location_name_slug = $entity->location->slug;
 
-        $_location = __( 'location', 'community-directory' );
-        $slug = $entity->location->slug;
-
-        return "/$_location/$slug/$entity->post_name";
+        return "/$location_post_slug/$location_name_slug/$entity->post_name";
     }
 
-    public static function get_edit_link( int $post_id = null ):string {
+    public static function build_edit_link( int $post_id = null ):string {
         if ( !$post_id ) {
             if ( self::$active_entity ) $post_id = self::$active_entity->post_id;
             else return '';
         }
         
-        return parent::get_edit_link( $post_id );
+        return parent::build_edit_link( $post_id );
     }
 
     /**
@@ -576,5 +619,18 @@ class Entity extends Instance {
         $instance = self::get_instance( $entity_post_id );
 
         return $instance->activate_deactivate( $activate, $status_only );
+    }
+
+    /**
+     * To be called upon post type registration long before any instance is required
+     */
+    public static function define_post_type(
+        string $post_type,
+        string $post_slug,
+        string $link_identifier = 'post_name'
+    ) {
+        self::$post_type = $post_type;
+        self::$post_slug = $post_slug;
+        self::$link_identifier = $link_identifier;
     }
 }

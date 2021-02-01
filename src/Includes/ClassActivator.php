@@ -63,7 +63,7 @@ class ClassActivator {
 
     }
 
-    public static function install(){
+    public static function install() {
         self::add_default_options();
 
         self::add_capabilities();
@@ -75,6 +75,7 @@ class ClassActivator {
 
         // update the version
         update_option('community_directory_db_version', COMMUNITY_DIRECTORY_DB_VERSION);
+        do_action( 'community_directory_register_activated' );
     }
 
     /**
@@ -270,7 +271,7 @@ class ClassActivator {
      * @package     community-directory
      * @return      void
      */
-    public static function automatic_upgrade(){
+    public static function automatic_upgrade() {
         $uwp_db_version = get_option('community_directory_db_version');
 
         if ( $uwp_db_version != COMMUNITY_DIRECTORY_DB_VERSION ) {

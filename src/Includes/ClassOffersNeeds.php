@@ -10,7 +10,7 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
-use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity};
+use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity, ProductServiceTerm};
 use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
 use Maruf89\CommunityDirectory\Includes\Traits\{PostTypeMethods, Searchable};
 
@@ -47,6 +47,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
      * Register's the Entity post type
      */
     public static function register_post_type() {
+        $slug = __( 'offer-need', 'community-directory' );
         $custom_post_type_args = array(
             'label' => __( 'Offers & Needs', 'community-directory' ),
             'labels' =>
@@ -88,7 +89,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
                 'custom_fields',
             ),
             'rewrite' => array(
-                'slug' => __( 'offer-need', 'community-directory' ),
+                'slug' => $slug,
                 'with_front' => false,
             ),
             'menu_position' => self::$post_type_menu_position,
@@ -97,56 +98,16 @@ class ClassOffersNeeds extends Routable implements ISearchable {
             'taxonomies' => array( self::$taxonomy )
         );
 
+        OfferNeed::define_post_type( static::$post_type, $slug );
+
         register_post_type( static::$post_type, $custom_post_type_args );
-    }
-
-    /**
-     * Called via 'after_setup_theme' action
-     * 
-     * Gathers the categories to be added
-     */
-    public function register_taxonomy_terms() {
-        $custom_taxonomy_args = array(
-            'hierarchical' => true,
-            'label' => __( 'Product & Service Types', 'community-directory' ), // display name
-            'query_var' => true,
-            'labels' => array(
-                'name' => __( 'Product & Service Types', 'community-directory' ),
-                'singular_name' => __( 'Product & Service Type', 'community-directory' ),
-                'search_items' =>  __( 'Search Product & Service Types' ),
-                'all_items' => __( 'All Product & Service Types', 'community-directory' ),
-                'parent_item' => __( 'Parent Product & Service Type', 'community-directory' ),
-                'parent_item_colon' => __( 'Parent Product & Service Type:', 'community-directory' ),
-                'edit_item' => __( 'Edit Product & Service Type' , 'community-directory'), 
-                'update_item' => __( 'Update Product & Service Type', 'community-directory' ),
-                'add_new_item' => __( 'Add New Product & Service Type', 'community-directory' ),
-                'new_item_name' => __( 'New Product & Service Type Name', 'community-directory' ),
-                'menu_name' => __( 'Product & Service Types', 'community-directory' ),
-            ),
-            'capabilities' => array(
-                'manage_terms' => 'manage_product_service_type',
-                'edit_terms' => 'edit_product_service_type',
-                'delete_terms' => 'delete_product_service_type',
-                'assign_terms' => 'assign_product_service_type',
-            ),
-            'rewrite' => array(
-                'slug' => __( 'product-service-type', 'community-directory' ),
-                'with_front' => false  // Don't display the category base before
-            )
-        );
-
-        register_taxonomy( self::$taxonomy, self::$post_type, $custom_taxonomy_args );
-        
-        $categories = $this->_default_categories;
-        $categories = apply_filters( 'community_directory_offers_needs_default_categories', $categories );
-        $this->add_term_categories( $categories );
     }
 
     /**
      * Filters the HTML on the edit OffersNeeds cpt to replace the category checkboxes with radio buttons
      */
     public function replace_terms_to_radio_start( string $post_type, \WP_Post $post ) {
-        if ( $post_type === self::$post_type ) {
+        if ( $post_type === static::$post_type ) {
             $this->_replacing_checkboxes = true;
             ob_start();
         }
@@ -281,157 +242,6 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     }
 
     /**
-     * Registers Product/Service categories in WP
-     */
-    public function add_term_categories( array $categories, array $parent = null ) {
-        foreach ( $categories as $key => $term_or_arr ) {
-            $term_type = gettype( $term_or_arr );
-            if ( $term_type === 'array' ) {
-                $group_parent = $this->_insert_term_category( $key, $parent );
-                if ( $group_parent instanceof \WP_Error ) return;
-                $this->add_term_categories( $term_or_arr, $group_parent );
-            } else $this->_insert_term_category( $term_or_arr, $parent );
-        }
-    }
-
-    private function _insert_term_category( string $term, array $parent = null ) {
-        $translated = __( $term, 'community-directory' );
-        $slug = sanitize_title_with_dashes( community_directory_function_transliterate_string( $translated ) );
-        return wp_insert_term(
-            mb_convert_case( $translated, MB_CASE_TITLE, 'UTF-8'),
-            self::$taxonomy,
-            array(
-                'slug' => $slug,
-                'parent' => gettype( $parent ) === 'array' ? $parent['term_id'] : 0,
-            )
-        );
-    }
-
-    protected array $_default_categories = [
-        'food & drink' => array(
-            'ingredients',
-            'vegetables',
-            'fruit',
-            'meat',
-            'mushrooms',
-            'grains',
-            'dairy products',
-            'desert',
-            'fish',
-            'drinks',
-            'services' => array(
-                'catering',
-            ),
-            'other',
-        ),
-        'home & construction' => array(
-            'furniture',
-            'kitchen',
-            'flowers',
-            'bathroom',
-            'bedroom & sleeping',
-            'services' => array(
-                'handyman',
-                'cleaning',
-                'carpentry',
-                'plumbing',
-                'electric work',
-            ),
-            'other',
-        ),
-        'garden, farm, forest' => array(
-            'flowers',
-            'seeds',
-            'trees & plants',
-            'animals',
-            'equipment',
-            'services' => array(
-                'landscaping',
-                'farm help',
-            ),
-            'other',
-        ),
-        'real-estate' => array(
-            'apartment',
-            'land',
-            'rent',
-            'cottage',
-            'services' => array( 
-                'realty',
-            ),
-            'other',
-        ),
-        'transportas' => array(
-            'bikes',
-            'vehicles',
-            'courier',
-            'carpooling',
-            'services',
-            'other',
-        ),
-        'technology' => array(
-            'phones',
-            'tablets',
-            'computers',
-            'accessories',
-            'services' => array(
-                'technical repair',
-                'web consulting & websites',
-            ),
-            'other',
-        ),
-        'entertainment' => array(
-            'books & movies',
-            'hunting & fishing',
-            'music',
-            'games',
-            'services' => array(
-                'musical performance',
-                'acting performance',
-            ),
-            'other',
-        ),
-        'clothing' => array(
-            "men's clothing",
-            "women's clothing",
-            'special occasion',
-            'services',
-            'other',
-        ),
-        'children' => array(
-            "children's clothing",
-            'toys',
-            'school supplies',
-            'accessories',
-            'services',
-            'other',
-        ),
-        'personal development & health' => array(
-            'coaching, therapy, psychiatry',
-            'doctor',
-            'beauty',
-            'education' => array(
-                'math',
-                'science',
-                'spiritual',
-                'healthy eating',
-            ),
-            'sports & exercise',
-            'other',
-        ),
-        'work' => array(
-            'accounting',
-            'legal',
-            'other',
-        ),
-        'arts & crafts' => array(
-            'services',
-            'other',
-        ),
-        'give away' => array()
-    ];
-
-    /**
      * ISearchable Implementation
      */
     public function get_search_fields():array {
@@ -441,7 +251,6 @@ class ClassOffersNeeds extends Routable implements ISearchable {
                     'post_title'
                 ],
                 'postmeta' => [
-                    ClassACF::$offers_needs_hashtag_title,
                     ClassACF::$offers_needs_description,
                 ]
             ],
@@ -464,21 +273,41 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     /**
      * @param       $array          array       the array to fill
      * @param       $type           string      (offer|need)
-     * @param       $entity_post_id int         post id of the entity that created this
-     * @param       $sql_only       bool        whether to only return the sql
+     * @param       $args           array       additional arguments
+     * @return                      array       wp post object data
+     * 
+     * Additional arguments:
+     *  entity_id           int             If passed, gets all offers/needs pertaining to an entity
+     *  location_id         int             If passed, gets everything for a location
+     *  product_service_id  int             If passed, gets all of a cd-product-service-type taxonomy
+     *  status              string          Get of a post_status type (default: 'publish')
+     *  sql_only            bool            Whether to return the sql query (default: false)
      */
     public function get_latest(
         array $array,
-        string $type,
-        int $entity_post_id = null,
-        int $location_post_id = null,
-        string $status = 'publish',
-        bool $sql_only = false
+        string $type = '',
+        array $args = []
     ):array {
+        $default_args = array(
+            'entity_post_id' => 0,
+            'location_post_id' => 0,
+            'product_service_id' => 0,
+            'status' => 'publish',
+            'sql_only' => false,
+            'ignore_status' => false,
+        );
+
+        $args = wp_parse_args( $args, $default_args );
+        $entity_loc_separator = OfferNeed::$entity_loc_separator;
+
+        extract( $args );
+        
         global $wpdb;
         $post_type = self::$post_type;
 
-        if ( $type !== 'need' && $type !== 'offer' ) die( 'Invalid type passed to ClassOffersNeeds->get_latest()' );
+        $offer_need_type = '';
+        if ( $type == 'need' && $type == 'offer' )
+            $offer_need_type = "AND post_excerpt = '$type'";
 
         $where_status = '';
         if ( !empty( $status ) )
@@ -486,20 +315,23 @@ class ClassOffersNeeds extends Routable implements ISearchable {
 
         $where_entity = '';
         if ( $entity_post_id ) {
-            $where_entity = "AND post_parent regexp '^$entity_post_id'";
+            $where_entity = "AND post_parent regexp '^${entity_post_id}${entity_loc_separator}'";
         }
 
         $where_location = '';
         if ( $location_post_id ) {
-            $where_location = "AND post_parent regexp '$location_post_id$'";
+            $where_location = "AND post_parent regexp '${entity_loc_separator}${location_post_id}$'";
         }
+
+        $ignore_auto_draft = $ignore_status ? '' : "AND post_status != 'auto-draft'";
 
         $sql = "
             SELECT *
             FROM $wpdb->posts
-            WHERE post_status != 'auto-draft'
+            WHERE 1 = 1
+            $ignore_auto_draft
             AND post_type = '$post_type' $where_entity $where_location $where_status
-            AND post_excerpt = '$type'
+            $offer_need_type
             ORDER BY post_modified DESC
         ";
 
