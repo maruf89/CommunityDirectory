@@ -296,12 +296,12 @@ class Location extends Instance {
     }
 
     public function fill_with_data( object $data ) {
-        $this->display_name = $data->display_name;
-        $this->slug = $data->slug;
-        $this->active_inhabitants = $data->active_inhabitants;
-        $this->inactive_inhabitants = $data->inactive_inhabitants;
-        $this->status = $data->status;
-        $this->taxonomy_id = $data->taxonomy_id;
+        $this->display_name = $data->display_name ?? null;
+        $this->slug = $data->slug ?? null;
+        $this->active_inhabitants = $data->active_inhabitants ?? 0;
+        $this->inactive_inhabitants = $data->inactive_inhabitants ?? 0;
+        $this->status = $data->status ?? null;
+        $this->taxonomy_id = $data->taxonomy_id ?? 0;
 
         if ( isset( $data->id ) )
             $this->location_id = $data->id;
@@ -415,6 +415,7 @@ class Location extends Instance {
             'active_inhabitants'    => 0,
             'inactive_inhabitants'  => 0,
             'coords'                => community_directory_coords_to_array( '0,0' ),
+            'taxonomy_id'           => 0
         );
 
         $prepared = wp_parse_args( $data, $default_args );
