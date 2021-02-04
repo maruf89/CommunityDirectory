@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-02-01 17:49+0200\n"
-"PO-Revision-Date: 2021-02-01 17:51+0200\n"
+"POT-Creation-Date: 2021-02-04 17:10+0200\n"
+"PO-Revision-Date: 2021-02-04 17:11+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -1118,7 +1118,7 @@ msgstr "pasiulymas-poreikis"
 
 #: Includes/ClassOffersNeeds.php:52 Includes/ClassOffersNeeds.php:55
 #: Includes/ClassOffersNeeds.php:65 Includes/ClassOffersNeeds.php:66
-#: Includes/ClassPublic.php:140
+#: Includes/ClassPublic.php:141
 msgid "Offers & Needs"
 msgstr "Pasiūlymai ir Poreikiai"
 
@@ -1189,339 +1189,19 @@ msgstr "įkelti failai"
 msgid "Unattached"
 msgstr "Atjungta"
 
-#: Includes/ClassOffersNeeds.php:411
-msgid "food & drink"
-msgstr "maistas ir gėrimai"
-
-#: Includes/ClassOffersNeeds.php:412
-msgid "ingredients"
-msgstr "ingredientai"
-
-#: Includes/ClassOffersNeeds.php:413
-msgid "vegetables"
-msgstr "daržovės"
-
-#: Includes/ClassOffersNeeds.php:414
-msgid "fruit"
-msgstr "vaisiai"
-
-#: Includes/ClassOffersNeeds.php:415
-msgid "meat"
-msgstr "mėsa"
-
-#: Includes/ClassOffersNeeds.php:416
-msgid "mushrooms"
-msgstr "grybai"
-
-#: Includes/ClassOffersNeeds.php:417
-msgid "grains"
-msgstr "grūdai, kruopai"
-
-#: Includes/ClassOffersNeeds.php:418
-msgid "dairy products"
-msgstr "pieno produktai"
-
-#: Includes/ClassOffersNeeds.php:419
-msgid "desert"
-msgstr "desertai"
-
-#: Includes/ClassOffersNeeds.php:420
-msgid "fish"
-msgstr "žuvis"
-
-#: Includes/ClassOffersNeeds.php:421
-msgid "drinks"
-msgstr "gėrimai"
-
-#: Includes/ClassOffersNeeds.php:422
-msgid "services"
-msgstr "paslaugos"
-
-#: Includes/ClassOffersNeeds.php:423
-msgid "catering"
-msgstr "maitinimas"
-
-#: Includes/ClassOffersNeeds.php:424
-msgid "other"
-msgstr "kitas"
-
-#: Includes/ClassOffersNeeds.php:425
-msgid "home & construction"
-msgstr "namas ir buitis"
-
-#: Includes/ClassOffersNeeds.php:426
-msgid "furniture"
-msgstr "baldai"
-
-#: Includes/ClassOffersNeeds.php:427
-msgid "kitchen"
-msgstr "virtuvė"
-
-#: Includes/ClassOffersNeeds.php:428 Includes/ClassOffersNeeds.php:437
-msgid "flowers"
-msgstr "gėlės"
-
-#: Includes/ClassOffersNeeds.php:429
-msgid "bathroom"
-msgstr "vonios kambarys"
-
-#: Includes/ClassOffersNeeds.php:430
-msgid "bedroom & sleeping"
-msgstr "miegamasis"
-
-#: Includes/ClassOffersNeeds.php:431
-msgid "handyman"
-msgstr "meistrai"
-
-#: Includes/ClassOffersNeeds.php:432
-msgid "cleaning"
-msgstr "valymas"
-
-#: Includes/ClassOffersNeeds.php:433
-msgid "carpentry"
-msgstr "staliai"
-
-#: Includes/ClassOffersNeeds.php:434
-msgid "plumbing"
-msgstr "santechnikai"
-
-#: Includes/ClassOffersNeeds.php:435
-msgid "electric work"
-msgstr "elektrikai"
-
-#: Includes/ClassOffersNeeds.php:436
-msgid "garden, farm, forest"
-msgstr "daržas, ūkis, miškas"
-
-#: Includes/ClassOffersNeeds.php:438
-msgid "seeds"
-msgstr "sėklos"
-
-#: Includes/ClassOffersNeeds.php:439
-msgid "trees & plants"
-msgstr "augalai ir medžiai"
-
-#: Includes/ClassOffersNeeds.php:440
-msgid "animals"
-msgstr "gyvūnai"
-
-#: Includes/ClassOffersNeeds.php:441
-msgid "equipment"
-msgstr "įranga"
-
-#: Includes/ClassOffersNeeds.php:442
-msgid "landscaping"
-msgstr "apželdinimas"
-
-#: Includes/ClassOffersNeeds.php:443
-msgid "farm help"
-msgstr "pagalbininkas"
-
-#: Includes/ClassOffersNeeds.php:444
-msgid "real-estate"
-msgstr "nekilnojamasis turtas"
-
-#: Includes/ClassOffersNeeds.php:445
-msgid "apartment"
-msgstr "butas"
-
-#: Includes/ClassOffersNeeds.php:446
-msgid "land"
-msgstr "žemė"
-
-#: Includes/ClassOffersNeeds.php:447
-msgid "rent"
-msgstr "nuoma"
-
-#: Includes/ClassOffersNeeds.php:448
-msgid "cottage"
-msgstr "sodas"
-
-#: Includes/ClassOffersNeeds.php:449
-msgid "realty"
-msgstr "nekilnojamas turtas"
-
-#: Includes/ClassOffersNeeds.php:450
-msgid "transportation"
-msgstr "transportas"
-
-#: Includes/ClassOffersNeeds.php:451
-msgid "bikes"
-msgstr "dviračiai"
-
-#: Includes/ClassOffersNeeds.php:452
-msgid "vehicles"
-msgstr "transporto priemonės"
-
-#: Includes/ClassOffersNeeds.php:453
-msgid "courier"
-msgstr "kurjerai"
-
-#: Includes/ClassOffersNeeds.php:454
-msgid "carpooling"
-msgstr "bendras važiavimas (carpooling)"
-
-#: Includes/ClassOffersNeeds.php:455
-msgid "technology"
-msgstr "technologija"
-
-#: Includes/ClassOffersNeeds.php:456
-msgid "phones"
-msgstr "telefonai"
-
-#: Includes/ClassOffersNeeds.php:457
-msgid "tablets"
-msgstr "plančetės"
-
-#: Includes/ClassOffersNeeds.php:458
-msgid "computers"
-msgstr "kompiuteriai"
-
-#: Includes/ClassOffersNeeds.php:459 Includes/ClassOffersNeeds.php:477
-msgid "accessories"
-msgstr "aksesuarai"
-
-#: Includes/ClassOffersNeeds.php:460
-msgid "technical repair"
-msgstr "techninis remontas"
-
-#: Includes/ClassOffersNeeds.php:461
-msgid "web consulting & websites"
-msgstr "tinklapių konsultacija ir statyba"
-
-#: Includes/ClassOffersNeeds.php:462
-msgid "entertainment"
-msgstr "pramoga"
-
-#: Includes/ClassOffersNeeds.php:463
-msgid "books & movies"
-msgstr "knygos ir filmai"
-
-#: Includes/ClassOffersNeeds.php:464
-msgid "hunting & fishing"
-msgstr "medžioklė ir žvejyba"
-
-#: Includes/ClassOffersNeeds.php:465
-msgid "music"
-msgstr "muzika"
-
-#: Includes/ClassOffersNeeds.php:466
-msgid "games"
-msgstr "žaidimai"
-
-#: Includes/ClassOffersNeeds.php:467
-msgid "musical performance"
-msgstr "muzikinai pasirodymai"
-
-#: Includes/ClassOffersNeeds.php:468
-msgid "acting performance"
-msgstr "vaidybiniai ir dramos spektakliai"
-
-#: Includes/ClassOffersNeeds.php:469
-msgid "clothing"
-msgstr "apranga"
-
-#: Includes/ClassOffersNeeds.php:470
-msgid "men's clothing"
-msgstr "vyrų drabužiai"
-
-#: Includes/ClassOffersNeeds.php:471
-msgid "women's clothing"
-msgstr "moterų drabužiai"
-
-#: Includes/ClassOffersNeeds.php:472
-msgid "special occasion"
-msgstr "speciali apranga"
-
-#: Includes/ClassOffersNeeds.php:473
-msgid "children"
-msgstr "vaikai"
-
-#: Includes/ClassOffersNeeds.php:474
-msgid "children's clothing"
-msgstr "vaikų drabužiai"
-
-#: Includes/ClassOffersNeeds.php:475
-msgid "toys"
-msgstr "žaislai"
-
-#: Includes/ClassOffersNeeds.php:476
-msgid "school supplies"
-msgstr "mokyklos ištekliai"
-
-#: Includes/ClassOffersNeeds.php:478
-msgid "personal development & health"
-msgstr "asmeninis tobulėjimas ir sveikata"
-
-#: Includes/ClassOffersNeeds.php:479
-msgid "coaching, therapy, psychiatry"
-msgstr "koučingas ir terapija"
-
-#: Includes/ClassOffersNeeds.php:480
-msgid "doctor"
-msgstr "daktarai"
-
-#: Includes/ClassOffersNeeds.php:481
-msgid "beauty"
-msgstr "grožis"
-
-#: Includes/ClassOffersNeeds.php:482
-msgid "education"
-msgstr "edukacija"
-
-#: Includes/ClassOffersNeeds.php:483
-msgid "math"
-msgstr "matematika"
-
-#: Includes/ClassOffersNeeds.php:484
-msgid "science"
-msgstr "mokslas"
-
-#: Includes/ClassOffersNeeds.php:485
-msgid "spiritual"
-msgstr "dvasinis"
-
-#: Includes/ClassOffersNeeds.php:486
-msgid "healthy eating"
-msgstr "mitybas"
-
-#: Includes/ClassOffersNeeds.php:487
-msgid "sports & exercise"
-msgstr "sportas"
-
-#: Includes/ClassOffersNeeds.php:488
-msgid "work"
-msgstr "paslaugos"
-
-#: Includes/ClassOffersNeeds.php:489
-msgid "accounting"
-msgstr "buhalterija"
-
-#: Includes/ClassOffersNeeds.php:490
-msgid "legal"
-msgstr "juridinės paslaugos"
-
-#: Includes/ClassOffersNeeds.php:491
-msgid "arts & crafts"
-msgstr "menas ir amatai"
-
-#: Includes/ClassOffersNeeds.php:492
-msgid "give away"
-msgstr "atiduodu"
-
-#: Includes/ClassPublic.php:127
+#: Includes/ClassPublic.php:128
 msgid "My Profile"
 msgstr "Mano Profilis"
 
-#: Includes/ClassPublic.php:133
+#: Includes/ClassPublic.php:134
 msgid "Edit Profile"
 msgstr "Redaguokite profilį"
 
-#: Includes/ClassPublic.php:146
+#: Includes/ClassPublic.php:147
 msgid "Create New"
 msgstr "Sukurkit Naują"
 
-#: Includes/ClassPublic.php:152
+#: Includes/ClassPublic.php:153
 msgid "View Mine"
 msgstr "Pažiūrėkite į Savo"
 
@@ -1603,6 +1283,328 @@ msgstr "Naujas Produktų ir Paslaugų Tipas"
 #: Includes/Translations/_translations.php:5
 msgid "product-service-type"
 msgstr "produkto-paslaugos-tipas"
+
+#: Includes/TaxonomyProductService.php:221
+msgid "food & drink"
+msgstr "maistas ir gėrimai"
+
+#: Includes/TaxonomyProductService.php:222
+msgid "ingredients"
+msgstr "ingredientai"
+
+#: Includes/TaxonomyProductService.php:223
+msgid "vegetables"
+msgstr "daržovės"
+
+#: Includes/TaxonomyProductService.php:224
+msgid "fruit"
+msgstr "vaisiai"
+
+#: Includes/TaxonomyProductService.php:225
+msgid "meat"
+msgstr "mėsa"
+
+#: Includes/TaxonomyProductService.php:226
+msgid "mushrooms"
+msgstr "grybai"
+
+#: Includes/TaxonomyProductService.php:227
+msgid "grains"
+msgstr "grūdai, kruopai"
+
+#: Includes/TaxonomyProductService.php:228
+msgid "dairy products"
+msgstr "pieno produktai"
+
+#: Includes/TaxonomyProductService.php:229
+msgid "desert"
+msgstr "desertai"
+
+#: Includes/TaxonomyProductService.php:230
+msgid "fish"
+msgstr "žuvis"
+
+#: Includes/TaxonomyProductService.php:231
+msgid "drinks"
+msgstr "gėrimai"
+
+#: Includes/TaxonomyProductService.php:232
+msgid "services"
+msgstr "paslaugos"
+
+#: Includes/TaxonomyProductService.php:233
+msgid "catering"
+msgstr "maitinimas"
+
+#: Includes/TaxonomyProductService.php:234
+msgid "other"
+msgstr "kitas"
+
+#: Includes/TaxonomyProductService.php:235
+msgid "home & construction"
+msgstr "namas ir buitis"
+
+#: Includes/TaxonomyProductService.php:236
+msgid "furniture"
+msgstr "baldai"
+
+#: Includes/TaxonomyProductService.php:237
+msgid "kitchen"
+msgstr "virtuvė"
+
+#: Includes/TaxonomyProductService.php:238
+#: Includes/TaxonomyProductService.php:247
+msgid "flowers"
+msgstr "gėlės"
+
+#: Includes/TaxonomyProductService.php:239
+msgid "bathroom"
+msgstr "vonios kambarys"
+
+#: Includes/TaxonomyProductService.php:240
+msgid "bedroom & sleeping"
+msgstr "miegamasis"
+
+#: Includes/TaxonomyProductService.php:241
+msgid "handyman"
+msgstr "meistrai"
+
+#: Includes/TaxonomyProductService.php:242
+msgid "cleaning"
+msgstr "valymas"
+
+#: Includes/TaxonomyProductService.php:243
+msgid "carpentry"
+msgstr "staliai"
+
+#: Includes/TaxonomyProductService.php:244
+msgid "plumbing"
+msgstr "santechnikai"
+
+#: Includes/TaxonomyProductService.php:245
+msgid "electric work"
+msgstr "elektrikai"
+
+#: Includes/TaxonomyProductService.php:246
+msgid "garden, farm, forest"
+msgstr "daržas, ūkis, miškas"
+
+#: Includes/TaxonomyProductService.php:248
+msgid "seeds"
+msgstr "sėklos"
+
+#: Includes/TaxonomyProductService.php:249
+msgid "trees & plants"
+msgstr "augalai ir medžiai"
+
+#: Includes/TaxonomyProductService.php:250
+msgid "animals"
+msgstr "gyvūnai"
+
+#: Includes/TaxonomyProductService.php:251
+msgid "equipment"
+msgstr "įranga"
+
+#: Includes/TaxonomyProductService.php:252
+msgid "landscaping"
+msgstr "apželdinimas"
+
+#: Includes/TaxonomyProductService.php:253
+msgid "farm help"
+msgstr "pagalbininkas"
+
+#: Includes/TaxonomyProductService.php:254
+msgid "real-estate"
+msgstr "nekilnojamasis turtas"
+
+#: Includes/TaxonomyProductService.php:255
+msgid "apartment"
+msgstr "butas"
+
+#: Includes/TaxonomyProductService.php:256
+msgid "land"
+msgstr "žemė"
+
+#: Includes/TaxonomyProductService.php:257
+msgid "rent"
+msgstr "nuoma"
+
+#: Includes/TaxonomyProductService.php:258
+msgid "cottage"
+msgstr "sodas"
+
+#: Includes/TaxonomyProductService.php:259
+msgid "realty"
+msgstr "nekilnojamas turtas"
+
+#: Includes/TaxonomyProductService.php:260
+msgid "transportation"
+msgstr "transportas"
+
+#: Includes/TaxonomyProductService.php:261
+msgid "bikes"
+msgstr "dviračiai"
+
+#: Includes/TaxonomyProductService.php:262
+msgid "vehicles"
+msgstr "transporto priemonės"
+
+#: Includes/TaxonomyProductService.php:263
+msgid "courier"
+msgstr "kurjerai"
+
+#: Includes/TaxonomyProductService.php:264
+msgid "carpooling"
+msgstr "bendras važiavimas (carpooling)"
+
+#: Includes/TaxonomyProductService.php:265
+msgid "technology"
+msgstr "technologija"
+
+#: Includes/TaxonomyProductService.php:266
+msgid "phones"
+msgstr "telefonai"
+
+#: Includes/TaxonomyProductService.php:267
+msgid "tablets"
+msgstr "plančetės"
+
+#: Includes/TaxonomyProductService.php:268
+msgid "computers"
+msgstr "kompiuteriai"
+
+#: Includes/TaxonomyProductService.php:269
+#: Includes/TaxonomyProductService.php:287
+msgid "accessories"
+msgstr "aksesuarai"
+
+#: Includes/TaxonomyProductService.php:270
+msgid "technical repair"
+msgstr "techninis remontas"
+
+#: Includes/TaxonomyProductService.php:271
+msgid "web consulting & websites"
+msgstr "tinklapių konsultacija ir statyba"
+
+#: Includes/TaxonomyProductService.php:272
+msgid "entertainment"
+msgstr "pramoga"
+
+#: Includes/TaxonomyProductService.php:273
+msgid "books & movies"
+msgstr "knygos ir filmai"
+
+#: Includes/TaxonomyProductService.php:274
+msgid "hunting & fishing"
+msgstr "medžioklė ir žvejyba"
+
+#: Includes/TaxonomyProductService.php:275
+msgid "music"
+msgstr "muzika"
+
+#: Includes/TaxonomyProductService.php:276
+msgid "games"
+msgstr "žaidimai"
+
+#: Includes/TaxonomyProductService.php:277
+msgid "musical performance"
+msgstr "muzikinai pasirodymai"
+
+#: Includes/TaxonomyProductService.php:278
+msgid "acting performance"
+msgstr "vaidybiniai ir dramos spektakliai"
+
+#: Includes/TaxonomyProductService.php:279
+msgid "clothing"
+msgstr "apranga"
+
+#: Includes/TaxonomyProductService.php:280
+msgid "men's clothing"
+msgstr "vyrų drabužiai"
+
+#: Includes/TaxonomyProductService.php:281
+msgid "women's clothing"
+msgstr "moterų drabužiai"
+
+#: Includes/TaxonomyProductService.php:282
+msgid "special occasion"
+msgstr "speciali apranga"
+
+#: Includes/TaxonomyProductService.php:283
+msgid "children"
+msgstr "vaikai"
+
+#: Includes/TaxonomyProductService.php:284
+msgid "children's clothing"
+msgstr "vaikų drabužiai"
+
+#: Includes/TaxonomyProductService.php:285
+msgid "toys"
+msgstr "žaislai"
+
+#: Includes/TaxonomyProductService.php:286
+msgid "school supplies"
+msgstr "mokyklos ištekliai"
+
+#: Includes/TaxonomyProductService.php:288
+msgid "personal development & health"
+msgstr "asmeninis tobulėjimas ir sveikata"
+
+#: Includes/TaxonomyProductService.php:289
+msgid "coaching, therapy, psychiatry"
+msgstr "koučingas ir terapija"
+
+#: Includes/TaxonomyProductService.php:290
+msgid "doctor"
+msgstr "daktarai"
+
+#: Includes/TaxonomyProductService.php:291
+msgid "beauty"
+msgstr "grožis"
+
+#: Includes/TaxonomyProductService.php:292
+msgid "education"
+msgstr "edukacija"
+
+#: Includes/TaxonomyProductService.php:293
+msgid "math"
+msgstr "matematika"
+
+#: Includes/TaxonomyProductService.php:294
+msgid "science"
+msgstr "mokslas"
+
+#: Includes/TaxonomyProductService.php:295
+msgid "spiritual"
+msgstr "dvasinis"
+
+#: Includes/TaxonomyProductService.php:296
+msgid "healthy eating"
+msgstr "mitybas"
+
+#: Includes/TaxonomyProductService.php:297
+msgid "sports & exercise"
+msgstr "sportas"
+
+#: Includes/TaxonomyProductService.php:298
+msgid "work"
+msgstr "paslaugos"
+
+#: Includes/TaxonomyProductService.php:299
+msgid "accounting"
+msgstr "buhalterija"
+
+#: Includes/TaxonomyProductService.php:300
+msgid "legal"
+msgstr "juridinės paslaugos"
+
+#: Includes/TaxonomyProductService.php:301
+msgid "arts & crafts"
+msgstr "menas ir amatai"
+
+#: Includes/TaxonomyProductService.php:302
+msgid "give away"
+msgstr "atiduodu"
 
 #: Includes/Translations/_translations.php:4
 msgid "m/d/Y g:i:s a"
@@ -1739,7 +1741,17 @@ msgctxt "search"
 msgid "Offers & Needs"
 msgstr "Pasiūlymus ir Poreikius"
 
+#: Includes/Translations/_translations.php:35
+msgctxt "search"
+msgid "Offers"
+msgstr "Pasiūlymus"
+
 #: Includes/Translations/_translations.php:36
+msgctxt "search"
+msgid "Needs"
+msgstr "Poreikius"
+
+#: Includes/Translations/_translations.php:38
 msgctxt "nominative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1747,7 +1759,7 @@ msgstr[0] "Gyventojas"
 msgstr[1] "Gyventojai"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:37
+#: Includes/Translations/_translations.php:39
 msgctxt "accusative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1755,7 +1767,7 @@ msgstr[0] "Gyventoją"
 msgstr[1] "Gyventojus"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:38
+#: Includes/Translations/_translations.php:40
 msgctxt "dative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1763,7 +1775,7 @@ msgstr[0] "Gyventojui"
 msgstr[1] "Gyventojams"
 msgstr[2] "Gyventojams"
 
-#: Includes/Translations/_translations.php:39
+#: Includes/Translations/_translations.php:41
 msgctxt "genitive"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1771,7 +1783,7 @@ msgstr[0] "Gyventojo"
 msgstr[1] "Gyventojų"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:40
+#: Includes/Translations/_translations.php:42
 msgctxt "instrumental"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1779,22 +1791,26 @@ msgstr[0] "Gyventoju"
 msgstr[1] "Gyventojais"
 msgstr[2] "Gyventojais"
 
-#: Includes/Translations/_translations.php:44
+#: Includes/Translations/_translations.php:46
 msgctxt "search"
 msgid "Products and Services"
 msgstr "Produktus ar Paslaugas"
 
-#: Includes/Translations/_translations.php:46
+#: Includes/Translations/_translations.php:47
+msgid "Product Service Types"
+msgstr "Produktų ir Paslaugų Tipai"
+
+#: Includes/Translations/_translations.php:49
 #, php-format
 msgid "Needs in %s"
 msgstr "Poreikiai - %s"
 
-#: Includes/Translations/_translations.php:47
+#: Includes/Translations/_translations.php:50
 #, php-format
 msgid "Offers in %s"
 msgstr "Pasiūlymai - %s"
 
-#: Includes/Translations/_translations.php:48
+#: Includes/Translations/_translations.php:51
 #, php-format
 msgid "Entities in %s"
 msgstr "Nariai - %s"

@@ -32,10 +32,16 @@ class Location extends Instance {
     protected int $taxonomy_id;
     protected $coords;
 
-    public function __construct( int $location_id = null, int $post_id = null, object $post = null ) {
+    public function __construct(
+        int $location_id = null,
+        int $post_id = null,
+        object $post = null,
+        int $taxonomy_id = null
+    ) {
         if ( $location_id ) $this->location_id = $location_id;
         if ( $post_id ) $this->post_id = $post_id;
         if ( $post ) $this->from_post_obj( $post );
+        if ( $taxonomy_id ) $this->taxonomy_id = $taxonomy_id;
     }
 
     /////////////////////////////////////
@@ -252,7 +258,8 @@ class Location extends Instance {
 
     protected function load_from_db():bool {
         if ( $this->_has_loaded ) return true;
-        if ( !isset( $this->location_id ) && !isset( $this->post_id ) ) return false;
+        if ( !isset( $this->location_id ) && !isset( $this->post_id ) &&
+             !isset( $this->taxonomy_id ) ) return false;
 
         return $this->_has_loaded = $this->load_cd_from_db() && $this->load_post_from_db();
     }
@@ -262,9 +269,22 @@ class Location extends Instance {
 
         global $wpdb;
 
-        if ( !isset( $this->location_id ) || !isset( $this->post_id ) || !$this->_check_cd_fields() ) {
-            $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
-            $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
+        if ( isset( $this->location_id ) ) {
+            $where_key = 'id';
+            $where_val = $this->location_id;
+        } elseif ( isset( $this->post_id ) ) {
+            $where_key = 'post_id';
+            $where_val = $this->post_id;
+        } elseif ( isset( $this->taxonomy_id ) ) {
+            $where_key = 'taxonomy_id';
+            $where_val = $this->taxonomy_id;
+        } else {
+            ClassErrorHandler::handle_exception(
+                new \WP_Error( 500, 'Trying to load non-existant location from db. How?', $this ) );
+            return false;
+        }
+
+        if ( !$this->_check_cd_fields() ) {
             $row = $wpdb->get_row( 'SELECT *
                                     FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
                                     WHERE $where_key = $where_val"
@@ -301,7 +321,6 @@ class Location extends Instance {
                 }
             }
         }
-            
 
         return $this->_check_cd_fields();
     }
@@ -329,12 +348,15 @@ class Location extends Instance {
     }
     
     protected static array $_location_id_cache = [];
+    protected static array $_taxonomy_id_cache = [];
 
     protected function _save_to_cache() {
         if ( isset( $this->post_id ) )
             parent::_save_to_cache();
         if ( isset( $this->location_id ) )
             self::$_location_id_cache[ $this->location_id ] = $this;
+        if ( isset( $this->taxonomy_id ) )
+            self::$_taxonomy_id_cache[ $this->taxonomy_id ] = $this;
     }
 
     protected function _remove_from_cache() {
@@ -342,6 +364,8 @@ class Location extends Instance {
             parent::_remove_from_cache();
         if ( isset( $this->location_id ) && isset( self::$_location_id_cache[ $this->location_id ] ) )
             unset( self::$_location_id_cache[ $this->location_id ] );
+        if ( isset( $this->taxonomy_id ) && isset( self::$_taxonomy_id_cache[ $this->taxonomy_id ] ) )
+            unset( self::$_taxonomy_id_cache[ $this->taxonomy_id ] );
     }
 
     /////////////////////////////////////
@@ -354,17 +378,23 @@ class Location extends Instance {
     public static function get_instance(
         int $post_id = null,
         int $location_id = null,
-        object $post = null
+        object $post = null,
+        int $taxonomy_id = null
     ):?Location {
-        if ( !$post_id && !$location_id && !$post ) return null;
+        if ( !$post_id && !$location_id && !$post && !$taxonomy_id ) {
+            ClassErrorHandler( new \WP_Error( 500, 'Trying to load location with no variables' ) );
+            return null;
+        }
         
         $instance = parent::_get_instance( $post_id, $post );
 
         if ( $instance ) return $instance;
         else if ( $location_id && isset( self::$_location_id_cache[ $location_id ] ) )
             return self::$_location_id_cache[ $location_id ];
+        else if ( $taxonomy_id && isset( self::$_taxonomy_id_cache[ $taxonomy_id ] ))
+            return self::$_taxonomy_id_cache[ $taxonomy_id ];
 
-        return new Location( $location_id, $post_id, $post );
+        return new Location( $location_id, $post_id, $post, $taxonomy_id );
     }
 
     /**

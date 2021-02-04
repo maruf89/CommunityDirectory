@@ -106,7 +106,7 @@ class ClassEntity extends Routable implements ISearchable {
         register_post_type( static::$post_type, $custom_post_type_args );
     }
 
-    public function get_search_fields():array {
+    public function get_search_fields( string $type, array $_taxonomy = null ):array {
         $fields = [
             'search' => [
                 'posts' => [
@@ -120,6 +120,7 @@ class ClassEntity extends Routable implements ISearchable {
                     'display_name'
                 ]
             ],
+            'taxonomy' => [],
             'email' => ClassACF::$entity_email,
             'required' => [
                 'postmeta' => [],
@@ -129,6 +130,17 @@ class ClassEntity extends Routable implements ISearchable {
                 ]
             ]
         ];
+        if ( isset( $_taxonomy[ TaxonomyLocation::$taxonomy ] ) &&
+             count( $_taxonomy[ TaxonomyLocation::$taxonomy ] )
+        ) {
+            $loc_ids = [];
+            foreach( $_taxonomy[ TaxonomyLocation::$taxonomy ] as $taxonomy_term_id ) {
+                $loc = Location::get_instance( null, null, null, $taxonomy_term_id );
+                $loc_ids[] = $loc->post_id;
+            }
+            $fields[ 'required' ][ 'posts' ][ 'post_parent' ] = $loc_ids;
+            
+        }
         
         return $fields;
     }

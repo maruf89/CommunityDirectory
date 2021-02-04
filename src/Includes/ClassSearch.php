@@ -19,6 +19,8 @@ class ClassSearch extends Routable {
     private static ClassSearch $instance;
     protected string $router_ns = 'search';
 
+    public static string $search_by_key = 'search';
+
     public static function get_instance() {
         if ( !isset( self::$instance ) ) {
             self::$instance = new ClassSearch();
@@ -31,7 +33,9 @@ class ClassSearch extends Routable {
         parent::__construct( $this );
     }
 
-    public function search( string $search, string $type = '' ) {
+    public function search( string $search, string $type = '', array $taxonomy = null ) {
+        if ( is_null( $taxonomy ) ) $taxonomy = [];
+
         switch ( $type ) {
             case 'location':
                 $type_class = ClassLocation::get_instance();
@@ -39,14 +43,15 @@ class ClassSearch extends Routable {
             case 'entity':
                 $type_class = ClassEntity::get_instance();
                 break;
-            case 'offer_need':
+            case 'offer':
+            case 'need':
                 $type_class = ClassOffersNeeds::get_instance();
                 break;
         }
 
         if ( $type_class ) {
             $search_sql = $this->_format_search_sql(
-                $type_class->get_search_fields(), 'search', $search
+                $type_class->get_search_fields( $type, $taxonomy ), $search, $taxonomy
             );
 
             if ( $search_sql instanceof \WP_Error )
@@ -76,10 +81,12 @@ class ClassSearch extends Routable {
 
     private function _format_search_sql(
         array $search_fields,
-        string $search_by_key = 'search',
-        string $search_query
+        string $search_query,
+        array $taxonomy
     ) {
         global $wpdb;
+        $search_by_key = static::$search_by_key;
+        $taxonomy_key = 'taxonomy';
         $search_val = $wpdb->_real_escape( $search_query );
         
         $formatted = [ 'relation' => 'OR' ];
@@ -88,48 +95,80 @@ class ClassSearch extends Routable {
             'posts' => 'post',
             'postmeta' => 'meta',
             'users' => 'user',
+            'term_relationships' => 'term',
         ];
+
+        $tables = $as;
+        $use_table = function ( string $key ) use ( &$tables, $as ):string {
+            if ( gettype( $tables[ $key ] === 'string' ) ) $tables[ $key ] = 0;
+            $tables[ $key ]++;
+            return $as[ $key ];
+        };
         
         $or = [];
         $and = [];
 
-        if ( isset( $search_fields[ $search_by_key ] ) )
-            foreach ( $search_fields[ $search_by_key ] as $table => $keys )
+        if ( !empty( $search_val ) )
+            foreach ( $search_fields[ $search_by_key ] ?? [] as $table => $keys )
                 foreach ( $keys as $key )
                     $or[] = $this->_add_where_match(
-                        $as[ $table ],
+                        $use_table( $table ),
                         $key,
                         'LIKE',
                         "%$search_val%"
                     );
-        else
-            return ClassErrorHandler::handle_exception( new \WP_Error( 400, "Invalid search_by_key: $search_by_key" ) );
 
-        if ( isset( $search_fields[ 'required' ] ) )
-            foreach ( $search_fields[ 'required' ] as $table => $key_values )
-                foreach ( $key_values as $key => $values ) {
-                    $values = is_array( $values ) ? $values : [ '=', $values ];
-                    $and[] = $this->_add_where_match(
-                        $as[ $table ],
-                        $key,
-                        $values[ 0 ],
-                        $values[ 1 ]
-                    );
-                }
+        // Needed to ensure AND matching of multiple categories
+        $distinct_tax_term_count = 0;
+        $tax_ids = [];
+        foreach ( $search_fields[ $taxonomy_key ] as $tax ) {
+            if ( !isset( $taxonomy[ $tax ] ) ) continue;
+            $distinct_tax_term_count++;
+            foreach ( $taxonomy[ $tax ] as $term_taxonomy_id )
+                $tax_ids[] = $term_taxonomy_id;
 
+            unset( $tax_and_or, $tax, $term_taxonomy_id );
+        }
+
+        if ( count( $tax_ids ) ) $and[] = $this->_add_where_match(
+            $use_table( 'term_relationships' ),
+            'term_taxonomy_id',
+            'IN',
+            $tax_ids
+        );
+
+        foreach ( $search_fields[ 'required' ] ?? [] as $table => $key_values )
+            foreach ( $key_values as $key => $values ) {
+                $and[] = $this->_add_where_match(
+                    $use_table( $table ),
+                    $key,
+                    '=',
+                    $values
+                );
+            }
+
+        // via $use_table() we have an array that corresponds to the tables we need to join
+        foreach ( $tables as $key => $value)
+            // If it's value is an integer, it means it's used, otherwise unset it
+            if ( gettype( $value ) !== 'integer' ) unset( $tables[ $key ] );
+        
+        // Next build the inner joins using that
         $from_join_on = implode(
             ' ',
-            $this->_add_from_join_on( $search_fields, $search_by_key, $as, 'posts' )
+            $this->_add_from_join_on( $tables, $as, 'posts' )
         );
                 
         $where_req = implode( ' AND ', $and );
-        $where_or = implode( ' OR ', $or );
+        $where_or = count( $or ) ? 'AND ( ' . implode( ' OR ', $or ) . ' )' : '';
+        $having_count = $distinct_tax_term_count > 1 ?
+            'HAVING COUNT(DISTINCT ' . $as[ 'term_relationships' ] . ".term_taxonomy_id) = $distinct_tax_term_count" : '';
 
         $sql = "
             SELECT SQL_CALC_FOUND_ROWS " . $as[ 'posts' ] . ".ID
             $from_join_on
-            WHERE $where_req AND ( $where_or )
+            WHERE $where_req $where_or
             GROUP BY " . $as[ 'posts' ] . ".ID
+            $having_count
         ";
 
         return $sql;
@@ -152,18 +191,22 @@ class ClassSearch extends Routable {
         $value
     ):string {
         // If not working with digits and not comparing, wrap in quotes for SQL
-        if ( gettype( $value ) !== 'integer')
+        if ( gettype( $value ) === 'string')
             $value = "'$value'";
         
         if ( $as === 'meta' )
             return  "( $as.meta_key = '$key' AND $as.meta_value $comparison $value )";
-        else
+        elseif ( gettype( $value ) === 'array' ) {
+            if ( count( $value ) === 1 ) $equals = '= ' . $value[ 0 ];
+            else $equals = 'IN (' . implode( ',', $value ) . ')';
+        
+            return "$as.$key $equals";
+        } else
             return "$as.$key $comparison $value";
     }
 
     private function _add_from_join_on(
-        array $search_fields,
-        string $search_by_key,
+        array $use_tables,
         array $as_arr,
         string $primary_table
     ) {
@@ -173,7 +216,8 @@ class ClassSearch extends Routable {
 
         $join_map = [
             'posts_postmeta' => [ 'ID', 'post_id' ],
-            'posts_users' => [ 'post_author', 'ID' ]
+            'posts_users' => [ 'post_author', 'ID' ],
+            'posts_term_relationships' => [ 'ID', 'object_id' ],
         ];
 
         foreach ( $as_arr as $table => $as ) {
@@ -183,6 +227,10 @@ class ClassSearch extends Routable {
             }
                 
             else {
+                // If the table isn't used in the search query, don't join it
+                if ( !isset( $use_tables[ $table ] ) ) continue;
+
+                // Otherwise pull the connecting table's key fields
                 $join_field_key = "${primary_table}_${table}";
                 if ( !isset( $join_map[ $join_field_key ] ) )
                     return ClassErrorHandler::handle_exception(
@@ -222,6 +270,7 @@ class ClassSearch extends Routable {
             'args'      => array(
                 'search'           	=> 'string',
                 'type'       		=> '?string',
+                'taxonomy'          => '?array',
             )
         )
     ];

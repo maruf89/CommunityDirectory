@@ -244,7 +244,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     /**
      * ISearchable Implementation
      */
-    public function get_search_fields():array {
+    public function get_search_fields( string $type, array $taxonomy = null ):array {
         $fields = [
             'search' => [
                 'posts' => [
@@ -252,13 +252,20 @@ class ClassOffersNeeds extends Routable implements ISearchable {
                 ],
                 'postmeta' => [
                     ClassACF::$offers_needs_description,
-                ]
+                ],
             ],
+            
+            'taxonomy' => [
+                TaxonomyProductService::$taxonomy,
+                TaxonomyLocation::$taxonomy,
+            ],
+            
             'required' => [
                 'postmeta' => [],
                 'posts' => [
                     'post_type' => static::$post_type,
                     'post_status' => 'publish',
+                    'post_excerpt' => $type,
                 ]
             ]
         ];
@@ -404,87 +411,3 @@ class ClassOffersNeeds extends Routable implements ISearchable {
         );
     }
 }
-
-// Category translations
-__( 'food & drink', 'community-directory' );
-    __( 'ingredients', 'community-directory' );
-    __( 'vegetables', 'community-directory' );
-    __( 'fruit', 'community-directory' );
-    __( 'meat', 'community-directory' );
-    __( 'mushrooms', 'community-directory' );
-    __( 'grains', 'community-directory' );
-    __( 'dairy products', 'community-directory' );
-    __( 'desert', 'community-directory' );
-    __( 'fish', 'community-directory' );
-    __( 'drinks', 'community-directory' );
-    __( 'services', 'community-directory' );
-        __( 'catering', 'community-directory' );
-    __( 'other', 'community-directory' );
-__( 'home & construction', 'community-directory' );
-    __( 'furniture', 'community-directory' );
-    __( 'kitchen', 'community-directory' );
-    __( 'flowers', 'community-directory' );
-    __( 'bathroom', 'community-directory' );
-    __( 'bedroom & sleeping', 'community-directory' );
-        __( 'handyman', 'community-directory' );
-        __( 'cleaning', 'community-directory' );
-        __( 'carpentry', 'community-directory' );
-        __( 'plumbing', 'community-directory' );
-        __( 'electric work', 'community-directory' );
-__( 'garden, farm, forest', 'community-directory' );
-    __( 'flowers', 'community-directory' );
-    __( 'seeds', 'community-directory' );
-    __( 'trees & plants', 'community-directory' );
-    __( 'animals', 'community-directory' );
-    __( 'equipment', 'community-directory' );
-        __( 'landscaping', 'community-directory' );
-        __( 'farm help', 'community-directory' );
-__( 'real-estate', 'community-directory' );
-    __( 'apartment', 'community-directory' );
-    __( 'land', 'community-directory' );
-    __( 'rent', 'community-directory' );
-    __( 'cottage', 'community-directory' );
-        __( 'realty', 'community-directory' );
-__( 'transportation', 'community-directory' );
-    __( 'bikes', 'community-directory' );
-    __( 'vehicles', 'community-directory' );
-    __( 'courier', 'community-directory' );
-    __( 'carpooling', 'community-directory' );
-__( 'technology', 'community-directory' );
-    __( 'phones', 'community-directory' );
-    __( 'tablets', 'community-directory' );
-    __( 'computers', 'community-directory' );
-    __( 'accessories', 'community-directory' );
-        __( 'technical repair', 'community-directory' );
-        __( 'web consulting & websites', 'community-directory' );
-__( 'entertainment', 'community-directory' );
-    __( 'books & movies', 'community-directory' );
-    __( 'hunting & fishing', 'community-directory' );
-    __( 'music', 'community-directory' );
-    __( 'games', 'community-directory' );
-        __( 'musical performance', 'community-directory' );
-        __( 'acting performance', 'community-directory' );
-__( 'clothing', 'community-directory' );
-    __( "men's clothing", 'community-directory' );
-    __( "women's clothing", 'community-directory' );
-    __( 'special occasion', 'community-directory' );
-__( 'children', 'community-directory' );
-    __( "children's clothing", 'community-directory' );
-    __( 'toys', 'community-directory' );
-    __( 'school supplies', 'community-directory' );
-    __( 'accessories', 'community-directory' );
-__( 'personal development & health', 'community-directory' );
-    __( 'coaching, therapy, psychiatry', 'community-directory' );
-    __( 'doctor', 'community-directory' );
-    __( 'beauty', 'community-directory' );
-    __( 'education', 'community-directory' );
-        __( 'math', 'community-directory' );
-        __( 'science', 'community-directory' );
-        __( 'spiritual', 'community-directory' );
-        __( 'healthy eating', 'community-directory' );
-    __( 'sports & exercise', 'community-directory' );
-__( 'work', 'community-directory' );
-    __( 'accounting', 'community-directory' );
-    __( 'legal', 'community-directory' );
-__( 'arts & crafts', 'community-directory' );
-__( 'give away', 'community-directory' );
