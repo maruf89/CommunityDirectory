@@ -128,7 +128,7 @@ class ClassSearch extends Routable {
         $sql = "
             SELECT SQL_CALC_FOUND_ROWS " . $as[ 'posts' ] . ".ID
             $from_join_on
-            WHERE $where_req AND $where_or
+            WHERE $where_req AND ( $where_or )
             GROUP BY " . $as[ 'posts' ] . ".ID
         ";
 

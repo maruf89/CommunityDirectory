@@ -129,8 +129,6 @@ class ClassEntity extends Routable implements ISearchable {
                 ]
             ]
         ];
-
-        $fields[ 'required' ][ 'postmeta' ][ ClassACF::$entity_active ] = [ '=', 'true' ];
         
         return $fields;
     }

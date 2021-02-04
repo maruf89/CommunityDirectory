@@ -262,8 +262,6 @@ class ClassOffersNeeds extends Routable implements ISearchable {
                 ]
             ]
         ];
-
-        $fields[ 'required' ][ 'postmeta' ][ ClassACF::$offers_needs_active ] = [ '=', 'true' ];
         
         return $fields;
     }

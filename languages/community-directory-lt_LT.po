@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-02-01 14:25+0200\n"
-"PO-Revision-Date: 2021-02-01 14:25+0200\n"
+"POT-Creation-Date: 2021-02-01 17:49+0200\n"
+"PO-Revision-Date: 2021-02-01 17:51+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -1557,49 +1557,49 @@ msgstr "Įveskite jūsų gyvenvietės pavadinimą."
 msgid "Location Types"
 msgstr "Vietos Tipai"
 
-#: Includes/TaxonomyProductService.php:45
-#: Includes/TaxonomyProductService.php:48
-#: Includes/TaxonomyProductService.php:58
+#: Includes/TaxonomyProductService.php:43
+#: Includes/TaxonomyProductService.php:46
+#: Includes/TaxonomyProductService.php:56
 msgid "Product & Service Types"
 msgstr "Produktų ir Paslaugų Tipai"
 
-#: Includes/TaxonomyProductService.php:49
+#: Includes/TaxonomyProductService.php:47
 msgid "Product & Service Type"
 msgstr "Produktų ir Paslaugų Tipas"
 
-#: Includes/TaxonomyProductService.php:50
+#: Includes/TaxonomyProductService.php:48
 msgid "Search Product & Service Types"
 msgstr "Ieškoti Produktų ir Paslaugų Tipų"
 
-#: Includes/TaxonomyProductService.php:51
+#: Includes/TaxonomyProductService.php:49
 msgid "All Product & Service Types"
 msgstr "Visi Produktų ir Paslaugų Tipai"
 
-#: Includes/TaxonomyProductService.php:52
+#: Includes/TaxonomyProductService.php:50
 msgid "Parent Product & Service Type"
 msgstr "Pagrindinio Produkto ir Paslaugos Tipas"
 
-#: Includes/TaxonomyProductService.php:53
+#: Includes/TaxonomyProductService.php:51
 msgid "Parent Product & Service Type:"
 msgstr "Pagrindinio Produkto ir Paslaugos Tipas:"
 
-#: Includes/TaxonomyProductService.php:54
+#: Includes/TaxonomyProductService.php:52
 msgid "Edit Product & Service Type"
 msgstr "Redaguokite Produktų ir Paslaugų Tipą"
 
-#: Includes/TaxonomyProductService.php:55
+#: Includes/TaxonomyProductService.php:53
 msgid "Update Product & Service Type"
 msgstr "Atnaujinkite Produktų ir Paslaugų Tipą"
 
-#: Includes/TaxonomyProductService.php:56
+#: Includes/TaxonomyProductService.php:54
 msgid "Add New Product & Service Type"
 msgstr "Pridėkite Naują Produktų ir Paslaugų Tipą"
 
-#: Includes/TaxonomyProductService.php:57
+#: Includes/TaxonomyProductService.php:55
 msgid "New Product & Service Type Name"
 msgstr "Naujas Produktų ir Paslaugų Tipas"
 
-#: Includes/TaxonomyProductService.php:220
+#: Includes/TaxonomyProductService.php:219
 #: Includes/Translations/_translations.php:5
 msgid "product-service-type"
 msgstr "produkto-paslaugos-tipas"

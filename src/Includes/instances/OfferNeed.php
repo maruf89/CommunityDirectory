@@ -129,7 +129,7 @@ class OfferNeed extends Instance {
     }
 
     public function get_product_service_link( string $class_names = '', $default = null ):?string {
-        if ( !$this->load_taxonomy() ) return $default;
+        if ( !$this->load_taxonomy() || !$this->category ) return $default;
         return $this->category->get_link( $class_names );
     }
 
