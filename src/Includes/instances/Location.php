@@ -106,6 +106,8 @@ class Location extends Instance {
 
         // Save the location to the location taxonomy
         $term_ids = TaxonomyLocation::get_instance()->new_location_created( $this );
+        if ( $term_ids instanceof \WP_Error )
+            $term_ids = (array) get_term_by( 'slug', $location->slug, TaxonomyLocation::$taxonomy );
             
         $coords = community_directory_coords_to_mysql_point( $this->coords );
             
