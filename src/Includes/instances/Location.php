@@ -23,6 +23,7 @@ class Location extends Instance {
         'sizes' => []
     ];
 
+    protected int $id;
     protected int $location_id;
     protected string $display_name;
     protected string $slug;
@@ -112,15 +113,16 @@ class Location extends Instance {
         $sql = $wpdb->prepare(
             "
                 INSERT INTO $table
-                ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords )
-                VALUES( %s, %s, %s, %d, %d, %d, $coords )
+                ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords, taxonomy_id )
+                VALUES( %s, %s, %s, %d, %d, %d, $coords, %d )
             ",
             $this->display_name,
             $this->slug,
             $this->status,
             $this->post_id,
             $this->active_inhabitants,
-            $this->inactive_inhabitants
+            $this->inactive_inhabitants,
+            $term_ids[ 'term_taxonomy_id' ],
         );
 
         $result = $wpdb->query( $sql );
@@ -220,7 +222,7 @@ class Location extends Instance {
         $cd_updated = $this->update_cd_row( array( 'status' => $cd_status ) );
 
         $post_status = community_directory_bool_to_status( $activate, 'location', 'post' );
-        $post_updated = $this->update_post( array( 'status' => $post_status ) );
+        $post_updated = $this->update_post( array( 'post_status' => $post_status ) );
 
         return $cd_updated && $post_updated;
     }
@@ -304,7 +306,7 @@ class Location extends Instance {
         $this->taxonomy_id = $data->taxonomy_id ?? 0;
 
         if ( isset( $data->id ) )
-            $this->location_id = $data->id;
+            $this->location_id = $this->id = $data->id;
         else if ( isset( $data->location_id ) )
             $this->location_id = $data->location_id;
             

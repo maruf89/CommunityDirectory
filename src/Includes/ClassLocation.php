@@ -275,28 +275,17 @@ class ClassLocation extends Routable {
      *          ),
      *          ...
      *      )
-     * @return                      (int|bool)  returns false if no change, or number of created rows
+     * @return                      (int)   number of created rows
      */
-    public static function create_locations( $new_locations ) {
-        if ( !count( $new_locations ) ) return false;
+    public static function create_locations( $new_locations ):int {
+        if ( !count( $new_locations ) ) return 0;
         
         $create_array = array();
-        $posts_array = array();
 
-        foreach ( $new_locations as $row ) {
-            if ( empty( $row['display_name'] ) ) continue;
+        foreach ( $new_locations as $row )
+            $create_array[] = static::create_if_doesnt_exist( $row );
 
-            if ( !isset( $row['slug'] ) )
-                $row = apply_filters( 'community_directory_prepare_location_for_creation', $row, null );
-
-            $row['post_id'] = self::create_new_post( $row );
-            $create_array[] = $row;
-        }
-
-        if ( !count( $create_array ) ) return false;
-        
-        $result = wp_insert_rows( $create_array, COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS );
-        return $result;
+        return count( $create_array );
     }
 
     /**
@@ -314,7 +303,7 @@ class ClassLocation extends Routable {
      * @param           $update_by                  string      if set, the field to update by
      * @return                                      int         Returns number of changed rows 
      */
-    public static function update_locations( $update_locations_array, $update_by = 'id' ) {
+    public static function update_locations( array $update_locations_array, $update_by = 'id' ) {
         if ( !count( $update_locations_array ) ) return 0;
 
         global $wpdb;
