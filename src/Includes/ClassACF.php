@@ -292,8 +292,8 @@ class ClassACF {
             'instructions' => __( 'Is this something you are offering or you\'re looking for?', 'community-directory' ),
             'required' => 1,
             'choices' => array(
-                'offer' => __( 'Offer', 'community-directory' ),
-                'need' => __( 'Need', 'community-directory' ),
+                'offer' => community_directory_offer_type_translated( 'offer' ),
+                'need' => community_directory_offer_type_translated( 'need' ),
             ),
             'layout' => 'vertical',
             'return_format' => 'value',

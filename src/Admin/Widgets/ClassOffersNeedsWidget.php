@@ -80,7 +80,7 @@ class ClassOffersNeedsWidget extends \WP_Widget {
                        name="<?= $this->get_field_name( 'type' ) ?>"
                        <?php if ( $type === 'offer' ) echo 'checked' ?>
                        />
-                <label for="cdOffer<?= self::$idIncrement++ ?>"><?= __( 'Offer', 'community-directory' ) ?></label>
+                <label for="cdOffer<?= self::$idIncrement++ ?>"><?= community_directory_offer_type_translated( 'offer' ) ?></label>
             </div>
             <div>
                 <input type="radio"
@@ -89,7 +89,7 @@ class ClassOffersNeedsWidget extends \WP_Widget {
                        name="<?= $this->get_field_name( 'type' ) ?>"
                        <?php if ( $type === 'need' ) echo 'checked' ?>
                        />
-                <label for="cdNeed<?= self::$idIncrement++ ?>"><?= __( 'Need', 'community-directory' ) ?></label>
+                <label for="cdNeed<?= self::$idIncrement++ ?>"><?= community_directory_offer_type_translated( 'need' ) ?></label>
             </div>
         </fieldset>
         <br />

@@ -276,6 +276,7 @@ final class ClassCommunityDirectory {
     public function load_taxonomy_actions_and_filters( array $instances ) {
         foreach( $instances as $instance ) {
             add_action( 'after_setup_theme', array( $instance, 'register_taxonomy_terms' ) );
+            add_filter( 'community_directory_get_taxonomy_types', array( $instance, 'add_taxonomy_type'), 10, 1 );
         }
     }
 

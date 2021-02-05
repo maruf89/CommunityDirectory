@@ -32,6 +32,10 @@ function initMap($map:JQuery<HTMLElement>) {
             const targetLatLng = map.containerPointToLatLng(targetPoint);
             map.panTo(targetLatLng);
         }, 250);
+        
+        // @ts-ignore
+        const popupOpenEvent = new CustomEvent(cdData.events.map.popupOpen, { detail: { $element, e } });
+        window.dispatchEvent(popupOpenEvent);
     };
     
     const markers:Marker[] = $map.children('.marker')

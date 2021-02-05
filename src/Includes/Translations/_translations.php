@@ -49,3 +49,8 @@ __( 'Product Service Types', 'community-directory' );
 __( 'Needs in %s', 'community-directory' );
 __( 'Offers in %s', 'community-directory' );
 __( 'Entities in %s', 'community-directory' );
+_nx( 'Offer', 'Offers', 1, 'no results', 'community-directory' );
+_nx( 'Need', 'Needs', 1, 'no results', 'community-directory' );
+_x( 'Search offers and needs by product or service type - %s', 'meta_description', 'community-directory' );
+_x( 'Search entities, offers, and needs in %s', 'meta_description', 'community-directory' );
+_x( 'Entities, offers, and needs in %s', 'meta_description', 'community-directory' );

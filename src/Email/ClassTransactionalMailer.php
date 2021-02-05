@@ -18,6 +18,7 @@ class ClassTransactionalMailer implements IMailer {
     private TransactionalEmailsApi $transaction_api;
 
     private GetSmtpTemplateOverviewSender $sender;
+    private bool $_templates_loaded = false;
     private array $templates;
 
     public static function get_instance():ClassTransactionalMailer {
@@ -29,8 +30,11 @@ class ClassTransactionalMailer implements IMailer {
     public function __construct() {
         $this->api_key = SENDINBLUE_API_KEY;
         
-        $mailer_instance =& $this;
         require_once( dirname(__FILE__) . '/wp_mail_override.php' );
+    }
+
+    private function _templates_loaded():bool {
+        if ( isset( $this->templates ) ) return true;
 
         $config = Configuration::getDefaultConfiguration()->setApiKey(
             'api-key',
@@ -49,13 +53,16 @@ class ClassTransactionalMailer implements IMailer {
                 foreach ( $result[0]->getTemplates() as $template )
                     $this->templates[ $template->getName() ] = $template->getId();
             }
-
+            return true;
         } catch (Exception $e) {
             ClassErrorHandler::handle_exception( new \WP_Error( '', 'Error loading templates from SendInBlue', $e->getMessage() ) );
         }
+        return false;
     }
 
     public function send_welcome_email( string $user_login, string $key ) {
+        if ( !$this->_templates_loaded() ) return false;
+
         $user = get_user_by( 'login', $user_login );
         
         $activation_link = add_query_arg(
@@ -90,6 +97,8 @@ class ClassTransactionalMailer implements IMailer {
     }
 
     public function send_forgotten_password_email( string $user_login, string $key ) {
+        if ( !$this->_templates_loaded() ) return false;
+
         $user = get_user_by( 'login', $user_login );
 
         // forgot password link

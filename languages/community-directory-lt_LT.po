@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-02-04 17:10+0200\n"
-"PO-Revision-Date: 2021-02-04 17:11+0200\n"
+"POT-Creation-Date: 2021-02-05 11:36+0200\n"
+"PO-Revision-Date: 2021-02-05 11:37+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -676,16 +676,6 @@ msgstr "Rodyti sukondensuotą versiją"
 msgid "What to show"
 msgstr "Ką rodyti"
 
-#: Admin/Widgets/ClassOffersNeedsWidget.php:83 Includes/ClassACF.php:295
-#: Includes/helpers/offer_need.php:9
-msgid "Offer"
-msgstr "Pasiūlymas"
-
-#: Admin/Widgets/ClassOffersNeedsWidget.php:92 Includes/ClassACF.php:296
-#: Includes/helpers/offer_need.php:12
-msgid "Need"
-msgstr "Poreikis"
-
 #: Admin/views/html-admin-settings.php:31
 msgid "Save changes"
 msgstr "Išsaugokite pakeitimus"
@@ -698,11 +688,11 @@ msgstr "Pasirinkite vietą"
 msgid "Save"
 msgstr "Išsaugokite"
 
-#: Email/ClassTransactionalMailer.php:73
+#: Email/ClassTransactionalMailer.php:80
 msgid " - Account Activation"
 msgstr " - Sąskaitos Aktivacija"
 
-#: Email/ClassTransactionalMailer.php:101
+#: Email/ClassTransactionalMailer.php:110
 msgid " - Forgotten Password"
 msgstr " - Pamirštas Slaptažodis"
 
@@ -740,7 +730,7 @@ msgstr ""
 "profilis nebus viešintas."
 
 #: Includes/ClassACF.php:143 Includes/ClassACF.php:279
-#: Includes/ClassCommunityDirectory.php:438 Includes/instances/Entity.php:181
+#: Includes/ClassCommunityDirectory.php:439 Includes/instances/Entity.php:181
 #: Includes/instances/OfferNeed.php:151
 msgid "Inactive"
 msgstr "Neaktyvu"
@@ -1022,7 +1012,7 @@ msgstr "Narystės Prenumeratorius"
 msgid "Location Manager"
 msgstr "Vietos Valdas"
 
-#: Includes/ClassCommunityDirectory.php:444
+#: Includes/ClassCommunityDirectory.php:445
 #, php-format
 msgctxt "post_status"
 msgid "Inactive<span class=\"count\">(%s)</span>"
@@ -1107,7 +1097,7 @@ msgstr "Nerasta vietų"
 msgid "No Locations Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Vietų"
 
-#: Includes/ClassLocation.php:406
+#: Includes/ClassLocation.php:407
 #, php-format
 msgid "Successfully deleted %s location(s)"
 msgstr "Sėkmingai ištrinta %s vietą(-os)"
@@ -1815,6 +1805,40 @@ msgstr "Pasiūlymai - %s"
 msgid "Entities in %s"
 msgstr "Nariai - %s"
 
+#: Includes/Translations/_translations.php:52
+msgctxt "no results"
+msgid "Offer"
+msgid_plural "Offers"
+msgstr[0] "Pasiūlymo"
+msgstr[1] "Pasiūlymų"
+msgstr[2] "Pasiūlymų"
+
+#: Includes/Translations/_translations.php:53
+msgctxt "no results"
+msgid "Need"
+msgid_plural "Needs"
+msgstr[0] "Poreikio"
+msgstr[1] "Poreikių"
+msgstr[2] "Poreikių"
+
+#: Includes/Translations/_translations.php:54
+#, php-format
+msgctxt "meta_description"
+msgid "Search offers and needs by product or service type - %s"
+msgstr "Ieškokite pasiūlymų ir poreikių pagal produktų ir paslaugų tipą - %s"
+
+#: Includes/Translations/_translations.php:55
+#, php-format
+msgctxt "meta_description"
+msgid "Search entities, offers, and needs in %s"
+msgstr "Ieškokite narių, pasiūlymų, ir poreikių vietoje %s"
+
+#: Includes/Translations/_translations.php:56
+#, php-format
+msgctxt "meta_description"
+msgid "Entities, offers, and needs in %s"
+msgstr "Nariai, pasiūlymai, ir poreikiai vietoje %s"
+
 #: Includes/helpers/misc.php:288
 msgid "pending"
 msgstr "laukiama"
@@ -1827,13 +1851,19 @@ msgstr "paskelbta"
 msgid "draft"
 msgstr "juodraštis"
 
-#: Includes/helpers/offer_need.php:8
-msgid "Offers"
-msgstr "Pasiūlymai"
+#: Includes/helpers/offer_need.php:14
+msgid "Offer"
+msgid_plural "Offers"
+msgstr[0] "Pasiūlymas"
+msgstr[1] "Pasiūlymai"
+msgstr[2] "Pasiūlymų"
 
-#: Includes/helpers/offer_need.php:11
+#: Includes/helpers/offer_need.php:18
 msgid "Needs"
-msgstr "Poreikiai"
+msgid_plural "Needss"
+msgstr[0] "Poreikis"
+msgstr[1] "Poreikiai"
+msgstr[2] "Poreikių"
 
 #: views/location/location-single.php:10
 #, php-format
@@ -1879,6 +1909,12 @@ msgstr "Nėra %s."
 #: views/offers-needs/offers-needs-single.php:33
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
+
+#~ msgid "Need"
+#~ msgstr "Poreikis"
+
+#~ msgid "Offers"
+#~ msgstr "Pasiūlymai"
 
 #~ msgid "Reload"
 #~ msgstr "Įkelt iš naujo"

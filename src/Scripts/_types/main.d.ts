@@ -25,6 +25,11 @@ interface cdData {
         accessToken:string
         defaultCoords:[number, number]
     },
-    wp_nonce:string
-    edit_others_entities:boolean
+    wp_nonce:string,
+    edit_others_entities:boolean,
+    events: {
+        [name:string]: {
+            [name:string]:string
+        }
+    }
 }

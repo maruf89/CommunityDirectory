@@ -2,7 +2,7 @@
 
 $attrs = $args[ 'attrs' ];
 $type = $attrs[ 'type' ];
-$translated = community_directory_offer_type_translated( $type, true );
+$translated = community_directory_offer_type_translated( $type, 0, 'no results' );
 
 if ( $type === 'need' )
     $message = __( 'Maybe you have a need you would like to make public? Make it known.', 'community-directory' );

@@ -94,6 +94,12 @@ class ClassPublic {
                     'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
                     'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),
                 ),
+                'events' => array(
+                    'map' => array(
+                        'popupOpen' => 'MapPopupOpen',
+                        'popupClose' => 'MapPopupClose'
+                    )
+                )
             )); ?>
         </script><?php
     }

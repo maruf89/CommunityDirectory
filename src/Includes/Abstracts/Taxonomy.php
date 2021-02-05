@@ -28,6 +28,11 @@ abstract class Taxonomy {
             return $this->$property;
     }
 
+    public function add_taxonomy_type( array $arr ):array {
+        $arr[] = static::$taxonomy;
+        return $arr;
+    }
+
     /**
      * Formats the taxonomy's terms into a hierarchy of term_blocks and saves the value as a property to the class
      * 

@@ -79,7 +79,8 @@ class ClassLocation extends Routable {
                 'title',
                 'thumbnail',
                 'custom_fields',
-                'page-attributes'
+                'page-attributes',
+                'editor',
             ),
             'rewrite' => array(
                 'slug' => $slug,
