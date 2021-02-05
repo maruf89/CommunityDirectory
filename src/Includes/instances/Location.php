@@ -141,7 +141,7 @@ class Location extends Instance {
         // Create post object
         $my_post = array(
             'post_title'    => $this->display_name,
-            'post_status'   => $this->status,
+            'post_status'   => community_directory_enum_status_to_post_status( $this->status ),
             'post_type'     => self::$post_type,
             'post_author'   => $optional_user_id,
         );

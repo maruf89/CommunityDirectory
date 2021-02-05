@@ -289,7 +289,7 @@ function community_directory_enum_status_to_post_status( $status = '', $display 
         case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
             return $display ? __( 'publish', 'community-directory' ) : 'publish';
         default:
-            return $display ? __( 'draft', 'community-directory' ) : 'draft';
+            return $status;
     }
 }
 
