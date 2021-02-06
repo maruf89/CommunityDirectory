@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2021.01\n"
-"POT-Creation-Date: 2021-02-05 11:36+0200\n"
-"PO-Revision-Date: 2021-02-05 11:37+0200\n"
+"POT-Creation-Date: 2021-02-06 11:09+0200\n"
+"PO-Revision-Date: 2021-02-06 11:10+0200\n"
 "Last-Translator: Marius Miliunas\n"
 "Language-Team: \n"
 "Language: lt_LT\n"
@@ -636,15 +636,15 @@ msgstr "BK Vietos"
 msgid "Displays Community Directory locations on a map or as a list"
 msgstr "Rodo Bendruomenės Katalogo vietos arba žemėlapyje arba saraše"
 
-#: Admin/Widgets/ClassLocationsWidget.php:65
+#: Admin/Widgets/ClassLocationsWidget.php:66
 msgid "How do you want to display the Locations?"
 msgstr "Kaip norite rodyti vietas?"
 
-#: Admin/Widgets/ClassLocationsWidget.php:73
+#: Admin/Widgets/ClassLocationsWidget.php:74
 msgid "List as Blocks"
 msgstr "Blokais saraše"
 
-#: Admin/Widgets/ClassLocationsWidget.php:83
+#: Admin/Widgets/ClassLocationsWidget.php:84
 msgid "On a map"
 msgstr "Žemėlapyje"
 
@@ -1097,7 +1097,7 @@ msgstr "Nerasta vietų"
 msgid "No Locations Found in Trash"
 msgstr "Šiukšliadėžėje Nerasta Vietų"
 
-#: Includes/ClassLocation.php:407
+#: Includes/ClassLocation.php:396
 #, php-format
 msgid "Successfully deleted %s location(s)"
 msgstr "Sėkmingai ištrinta %s vietą(-os)"
@@ -1108,7 +1108,7 @@ msgstr "pasiulymas-poreikis"
 
 #: Includes/ClassOffersNeeds.php:52 Includes/ClassOffersNeeds.php:55
 #: Includes/ClassOffersNeeds.php:65 Includes/ClassOffersNeeds.php:66
-#: Includes/ClassPublic.php:141
+#: Includes/ClassPublic.php:147
 msgid "Offers & Needs"
 msgstr "Pasiūlymai ir Poreikiai"
 
@@ -1179,27 +1179,27 @@ msgstr "įkelti failai"
 msgid "Unattached"
 msgstr "Atjungta"
 
-#: Includes/ClassPublic.php:128
+#: Includes/ClassPublic.php:134
 msgid "My Profile"
 msgstr "Mano Profilis"
 
-#: Includes/ClassPublic.php:134
+#: Includes/ClassPublic.php:140
 msgid "Edit Profile"
 msgstr "Redaguokite profilį"
 
-#: Includes/ClassPublic.php:147
+#: Includes/ClassPublic.php:153
 msgid "Create New"
 msgstr "Sukurkit Naują"
 
-#: Includes/ClassPublic.php:153
+#: Includes/ClassPublic.php:159
 msgid "View Mine"
 msgstr "Pažiūrėkite į Savo"
 
-#: Includes/ClassShortcodes.php:114
+#: Includes/ClassShortcodes.php:125
 msgid "Uh oh…"
 msgstr "Blemba…"
 
-#: Includes/ClassShortcodes.php:115
+#: Includes/ClassShortcodes.php:126
 msgid "You should'nt be seeing this page. Something went wrong."
 msgstr "Kažkas netaip. Šitas neturėtų būti rodomas."
 
@@ -1741,7 +1741,23 @@ msgctxt "search"
 msgid "Needs"
 msgstr "Poreikius"
 
+#: Includes/Translations/_translations.php:37
+#: Includes/helpers/offer_need.php:14
+msgid "Offer"
+msgid_plural "Offers"
+msgstr[0] "Pasiūlymas"
+msgstr[1] "Pasiūlymai"
+msgstr[2] "Pasiūlymų"
+
 #: Includes/Translations/_translations.php:38
+#: Includes/helpers/offer_need.php:18
+msgid "Need"
+msgid_plural "Needs"
+msgstr[0] "Poreikis"
+msgstr[1] "Poreikiai"
+msgstr[2] "Poreikių"
+
+#: Includes/Translations/_translations.php:40
 msgctxt "nominative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1749,7 +1765,7 @@ msgstr[0] "Gyventojas"
 msgstr[1] "Gyventojai"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:39
+#: Includes/Translations/_translations.php:41
 msgctxt "accusative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1757,7 +1773,7 @@ msgstr[0] "Gyventoją"
 msgstr[1] "Gyventojus"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:40
+#: Includes/Translations/_translations.php:42
 msgctxt "dative"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1765,7 +1781,7 @@ msgstr[0] "Gyventojui"
 msgstr[1] "Gyventojams"
 msgstr[2] "Gyventojams"
 
-#: Includes/Translations/_translations.php:41
+#: Includes/Translations/_translations.php:43
 msgctxt "genitive"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1773,7 +1789,7 @@ msgstr[0] "Gyventojo"
 msgstr[1] "Gyventojų"
 msgstr[2] "Gyventojų"
 
-#: Includes/Translations/_translations.php:42
+#: Includes/Translations/_translations.php:44
 msgctxt "instrumental"
 msgid "Inhabitant"
 msgid_plural "Inhabitants"
@@ -1781,31 +1797,31 @@ msgstr[0] "Gyventoju"
 msgstr[1] "Gyventojais"
 msgstr[2] "Gyventojais"
 
-#: Includes/Translations/_translations.php:46
+#: Includes/Translations/_translations.php:48
 msgctxt "search"
 msgid "Products and Services"
 msgstr "Produktus ar Paslaugas"
 
-#: Includes/Translations/_translations.php:47
+#: Includes/Translations/_translations.php:49
 msgid "Product Service Types"
 msgstr "Produktų ir Paslaugų Tipai"
 
-#: Includes/Translations/_translations.php:49
+#: Includes/Translations/_translations.php:51
 #, php-format
 msgid "Needs in %s"
 msgstr "Poreikiai - %s"
 
-#: Includes/Translations/_translations.php:50
+#: Includes/Translations/_translations.php:52
 #, php-format
 msgid "Offers in %s"
 msgstr "Pasiūlymai - %s"
 
-#: Includes/Translations/_translations.php:51
+#: Includes/Translations/_translations.php:53
 #, php-format
 msgid "Entities in %s"
 msgstr "Nariai - %s"
 
-#: Includes/Translations/_translations.php:52
+#: Includes/Translations/_translations.php:54
 msgctxt "no results"
 msgid "Offer"
 msgid_plural "Offers"
@@ -1813,7 +1829,7 @@ msgstr[0] "Pasiūlymo"
 msgstr[1] "Pasiūlymų"
 msgstr[2] "Pasiūlymų"
 
-#: Includes/Translations/_translations.php:53
+#: Includes/Translations/_translations.php:55
 msgctxt "no results"
 msgid "Need"
 msgid_plural "Needs"
@@ -1821,19 +1837,19 @@ msgstr[0] "Poreikio"
 msgstr[1] "Poreikių"
 msgstr[2] "Poreikių"
 
-#: Includes/Translations/_translations.php:54
+#: Includes/Translations/_translations.php:56
 #, php-format
 msgctxt "meta_description"
 msgid "Search offers and needs by product or service type - %s"
 msgstr "Ieškokite pasiūlymų ir poreikių pagal produktų ir paslaugų tipą - %s"
 
-#: Includes/Translations/_translations.php:55
+#: Includes/Translations/_translations.php:57
 #, php-format
 msgctxt "meta_description"
 msgid "Search entities, offers, and needs in %s"
 msgstr "Ieškokite narių, pasiūlymų, ir poreikių vietoje %s"
 
-#: Includes/Translations/_translations.php:56
+#: Includes/Translations/_translations.php:58
 #, php-format
 msgctxt "meta_description"
 msgid "Entities, offers, and needs in %s"
@@ -1846,24 +1862,6 @@ msgstr "laukiama"
 #: Includes/helpers/misc.php:290
 msgid "publish"
 msgstr "paskelbta"
-
-#: Includes/helpers/misc.php:292
-msgid "draft"
-msgstr "juodraštis"
-
-#: Includes/helpers/offer_need.php:14
-msgid "Offer"
-msgid_plural "Offers"
-msgstr[0] "Pasiūlymas"
-msgstr[1] "Pasiūlymai"
-msgstr[2] "Pasiūlymų"
-
-#: Includes/helpers/offer_need.php:18
-msgid "Needs"
-msgid_plural "Needss"
-msgstr[0] "Poreikis"
-msgstr[1] "Poreikiai"
-msgstr[2] "Poreikių"
 
 #: views/location/location-single.php:10
 #, php-format
@@ -1910,8 +1908,14 @@ msgstr "Nėra %s."
 msgid "Additional Attachment"
 msgstr "Papildomi Priedai"
 
-#~ msgid "Need"
-#~ msgstr "Poreikis"
+#~ msgid "draft"
+#~ msgstr "juodraštis"
+
+#~ msgid "Needs"
+#~ msgid_plural "Needss"
+#~ msgstr[0] "Poreikis"
+#~ msgstr[1] "Poreikiai"
+#~ msgstr[2] "Poreikių"
 
 #~ msgid "Offers"
 #~ msgstr "Pasiūlymai"

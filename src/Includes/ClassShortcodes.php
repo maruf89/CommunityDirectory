@@ -22,6 +22,8 @@ class ClassShortcodes {
         $location_id = $attrs[ 'location_id' ] ?? 0;
         $type =  $attrs[ 'type' ] ?? 'need';
         $product_service_id = $attrs[ 'product_service_id' ] ?? 0;
+        $show_empty = $attrs[ 'show_empty' ] ?? false;
+        $classes = $attrs[ 'classes' ] ?? '';
         // todo
         $count = $attrs[ 'count' ] ?? 10;
 
@@ -40,15 +42,21 @@ class ClassShortcodes {
 
         // No results template
         if ( !count( $instances ) ) {
-            $template_file = apply_filters( 'community_directory_template_offers-needs/offers-needs-no-results.php', '' );
-            load_template( $template_file, false, array(
-                'attrs' => $attrs,
-            ) );
+            if ( $show_empty ) {
+                    $template_file = apply_filters(
+                        'community_directory_template_offers-needs/offers-needs-no-results.php', ''
+                    );
+                load_template( $template_file, false, array(
+                    'attrs' => $attrs,
+                ) );
+            }
         } else {
             // With results
             $template_file = apply_filters( 'community_directory_template_offers-needs/offers-needs-list.php', '' );
             $maybe_minified = $minified ? 'minified-' : '';
-            $single_template = apply_filters( "community_directory_template_offers-needs/offers-needs-${maybe_minified}single.php", '' );
+            $single_template = apply_filters(
+                "community_directory_template_offers-needs/offers-needs-${maybe_minified}single.php", ''
+            );
             load_template( $template_file, false, array(
                 'instances' => $instances,
                 'title' => $title,
@@ -57,6 +65,7 @@ class ClassShortcodes {
                     'hide_location' => !!$location_id,
                     'hide_product_service' => !!$product_service_id,
                 ),
+                'classes' => $classes,
                 'attrs' => $attrs,
             ) );
         }
@@ -72,6 +81,7 @@ class ClassShortcodes {
         $entity_id = $attrs[ 'entity_id' ] ?? null;
         $show_title = $attrs[ 'show_title' ] ?? false;
         $type = $attrs[ 'type' ] ?? 'list';
+        $classes = $attrs[ 'classes' ] ?? '';
 
         if ( !isset( static::$templates[ "entity-$type" ] ) ) die( 'Invalid type passed to `list_entities` shortcode, must be one of (list|map)' );
         $template_filter = static::$templates[ "entity-$type" ];
@@ -107,7 +117,8 @@ class ClassShortcodes {
                 'single_template' => $single_template,
                 'single_template_args' => array(
                     'hide_popup' => !!$entity_id,
-                )
+                ),
+                'classes' => $classes,
             ) );
         } else {
             ?>

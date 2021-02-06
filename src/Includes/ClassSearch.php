@@ -33,7 +33,7 @@ class ClassSearch extends Routable {
         parent::__construct( $this );
     }
 
-    public function search( string $search, string $type = '', array $taxonomy = null ) {
+    public function search( string $search = '', string $type = '', array $taxonomy = null ) {
         if ( is_null( $taxonomy ) ) $taxonomy = [];
 
         switch ( $type ) {

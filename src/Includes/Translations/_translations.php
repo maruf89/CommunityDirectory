@@ -34,6 +34,8 @@ _nx( 'Offer & Need', 'Offers & Needs', 1, 'with', 'community-directory' );
 _x( 'Offers & Needs', 'search', 'community-directory' );
 _x( 'Offers', 'search', 'community-directory' );
 _x( 'Needs', 'search', 'community-directory' );
+_n( 'Offer', 'Offers', 1, 'community-directory' );
+_n( 'Need', 'Needs', 1, 'community-directory' );
 
 _nx( 'Inhabitant', 'Inhabitants', 1, 'nominative', 'community-directory' );
 _nx( 'Inhabitant', 'Inhabitants', 1, 'accusative', 'community-directory' );

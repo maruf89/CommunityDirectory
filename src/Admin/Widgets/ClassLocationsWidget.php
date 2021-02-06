@@ -49,6 +49,7 @@ class ClassLocationsWidget extends \WP_Widget {
         $args = array(
             'instances' => $instances,
             'single_template' => $single_template,
+            'classes' => 'masonry spaced',
         );
         
         load_template( $template_file, false, $args );
