@@ -178,11 +178,14 @@ class ClassACF {
             'key' => self::$entity_about_key,
 			'label' => __( 'Bio', 'community-directory' ),
 			'name' => self::$entity_about,
-			'type' => 'textarea',
+			'type' => 'wysiwyg',
             'instructions' => __( 'Write something about yourself or about your place. Don\'t know what to write about? Write about what you do, the history of your place, or what you would like to see more of around you.', 'community-directory' ),
             'placeholder' => _x( 'At Higgleby Ranch we pride ourselves in our livestock. We raise cattle, and train horses, as well as invite families to visit with their children where they can play with the animals and ride our ponies.', 'placeholder', 'community-directory' ),
 			'required' => 0,
-			'maxlength' => '2000',
+			'tabs' => 'all',
+			'toolbar' => 'full',
+			'media_upload' => 1,
+			'delay' => 0,
         );
 
         $fields_arr[] = array(
