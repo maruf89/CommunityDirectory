@@ -39,6 +39,14 @@ Entities
 ====
 All users with locations upon registering are granted `subscriber_entity` roles which allows them to edit their entity profile, and post offers & needs. Entities are capable of showing their location, but in order for that, they need a Google API Key (temporarily until )
 
+SendIn Blue Email Support
+---
+To Enable SendIn blue transaction emailer, add your api key to your .env or config so it's available as a constant like
+
+```.env
+SENDINBLUE_ENABLE=1
+SENDINBLUE_API_KEY='api_key'
+```
 
 
 To Do
