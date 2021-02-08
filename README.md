@@ -60,18 +60,3 @@ To Do
 
 Menu button which links to the user's backend where nearby offers/needs are shown
 
-
-# Offers & Needs
-- Activating/deactivating entities publishes/pends their offers/needs
-- Allow uploading galleries
-
-- limit # of offers/needs? If, not, show # of offers and needs on entity's profile
-
-Admin Interface
-------
-- A tab to list all O&N's
-- option to sort based on date
-
-Taxonomies/Categories
------
-Create js script to organize product and service taxonomy
