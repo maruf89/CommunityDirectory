@@ -199,6 +199,12 @@ class Entity extends Instance {
         return '';
     }
 
+    public function share_location():bool {
+        if ( !$this->load_acf_from_db() ) return false;
+
+        return $this->acf_data[ClassACF::$entity_share_loc_key] ?? false;
+    }
+
     public function get_location():?Location {
         if ( $this->location ) return $this->location;
 
