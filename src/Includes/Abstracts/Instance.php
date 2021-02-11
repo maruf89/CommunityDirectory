@@ -105,6 +105,7 @@ abstract class Instance implements IInstance {
             $this->post = $post;
             $this->_post_loaded = true;
             $this->post_id = $post->ID;
+            $this->author_id = $post->post_author;
             return true;
         }
         return false;
