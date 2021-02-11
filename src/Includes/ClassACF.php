@@ -31,8 +31,12 @@ class ClassACF {
     public static $entity_website = 'entity_website';
     public static $entity_facebook_key = 'field_cd_entity_facebook';
     public static $entity_facebook = 'entity_facebook';
+    public static $entity_youtube_key = 'field_cd_entity_youtube';
+    public static $entity_youtube = 'entity_youtube';
     public static $entity_share_loc_key = 'field_cd_entity_share_loc';
     public static $entity_share_loc = 'entity_share_loc';
+    public static $entity_visit_info_key = 'field_cd_entity_visit_info';
+    public static $entity_visit_info = 'entity_visit_info';
     public static $entity_gmap_loc_key = 'field_cd_entity_gmap_loc';
     public static $entity_gmap_loc = 'entity_gmap_loc';
 
@@ -235,6 +239,16 @@ class ClassACF {
             'prepend' => 'https://www.facebook.com/',
         );
 
+        $fields_arr[] = array(
+            'key' => self::$entity_youtube_key,
+			'label' => __( 'Youtube Channel', 'community-directory' ),
+			'name' => self::$entity_youtube,
+			'type' => 'url',
+			'instructions' => __( 'Do you have a YouTube channel?', 'community-directory' ),
+            'placeholder' => 'https://www.youtube.com/channel/UCiiQgLrHKYPwcKFx24M7',
+            'prepend' => 'https://www.youtube.com/channel/',
+        );
+
 		$fields_arr[] = array(
 			'key' => self::$entity_share_loc_key,
 			'label' => __( 'Share My Location', 'community-directory' ),
@@ -242,6 +256,25 @@ class ClassACF {
 			'type' => 'true_false',
 			'instructions' => __( 'Do you want to share your location with others?', 'community-directory' ),
         );
+
+        $fields_arr[] = array(
+			'key' => self::$entity_visit_info_key,
+			'label' => __( 'Visiting Information', 'community-directory' ),
+			'name' => self::$entity_visit_info,
+			'type' => 'text',
+			'instructions' => __( 'Do you have any additional information for anyone wishing to visit your place?', 'community-directory' ),
+			'required' => 0,
+			'conditional_logic' => array(
+				array(
+					array(
+						'field' => self::$entity_share_loc_key,
+						'operator' => '==',
+						'value' => '1',
+					),
+				),
+			),
+			'placeholder' => '',
+		);
 
 		$fields_arr[] = array(
 			'key' => self::$entity_gmap_loc_key,
