@@ -253,6 +253,7 @@ final class ClassCommunityDirectory {
         add_action( 'acf/init', array( $instance, 'initiate_plugin' ) );
         add_action( 'community_directory_acf_initiate_entity', array( $instance, 'initiate_entity' ) );
         add_action( 'community_directory_acf_update', array( $instance, 'update' ), 10, 2 );
+        add_action( 'wp_ajax_acf/save_post', [ $instance, 'ajax_form_submit' ], 10);
 
         add_filter( 'community_directory_required_acf_entity_fields', array( $instance, 'generate_required_entity_fields' ), 10, 1 );
         add_filter( 'community_directory_required_acf_offers_needs_fields', array( $instance, 'generate_required_offers_needs_fields' ), 10, 1 );

@@ -108,7 +108,7 @@ class ClassAccount {
      * Action hook that returns the link to redirect to on first login
      */
     public function get_first_entity_login_link( string $redirect, \WP_User $user, Entity $Entity ):string {
-        return Entity::build_edit_link( $Entity->post_id );
+        return Entity::build_entity_link( $Entity, true );
     }
 
     /**

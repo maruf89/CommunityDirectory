@@ -71,6 +71,50 @@ class ClassACF {
         return self::$instance;
     }
 
+    public static function export_field_names():array {
+        return array(
+            'entity' => [
+                'location_name_key' => static::$entity_location_name_key,
+                'location_name' => static::$entity_location_name,
+                'active_key' => static::$entity_active_key,
+                'active' => static::$entity_active,
+                'picture_key' => static::$entity_picture_key,
+                'picture' => static::$entity_picture,
+                'about_key' => static::$entity_about_key,
+                'about' => static::$entity_about,
+                'contact_method_key' => static::$entity_contact_method_key,
+                'contact_method' => static::$entity_contact_method,
+                'email_key' => static::$entity_email_key,
+                'email' => static::$entity_email,
+                'tel_key' => static::$entity_tel_key,
+                'tel' => static::$entity_tel,
+                'website_key' => static::$entity_website_key,
+                'website' => static::$entity_website,
+                'facebook_key' => static::$entity_facebook_key,
+                'facebook' => static::$entity_facebook,
+                'youtube_key' => static::$entity_youtube_key,
+                'youtube' => static::$entity_youtube,
+                'share_loc_key' => static::$entity_share_loc_key,
+                'share_loc' => static::$entity_share_loc,
+                'visit_info_key' => static::$entity_visit_info_key,
+                'visit_info' => static::$entity_visit_info,
+                'gmap_loc_key' => static::$entity_gmap_loc_key,
+                'gmap_loc' => static::$entity_gmap_loc,
+            ],
+            'offers_needs' => [
+                'active' => static::$offers_needs_active,
+                'product_or_service' => static::$offers_needs_product_or_service,
+                'type' => static::$offers_needs_type,
+                'description' => static::$offers_needs_description,
+                'compensation_type' => static::$offers_needs_compensation_type,
+                'compensation' => static::$offers_needs_compensation,
+                'urgency' => static::$offers_needs_urgency,
+                'image' => static::$offers_needs_image,
+                'attachment' => static::$offers_needs_attachment,
+            ]
+        );
+    }
+
     /**
      * This method gets fired during plugin activation.
      *
@@ -470,6 +514,19 @@ class ClassACF {
         );
 
         return $fields_arr;
+    }
+
+    
+    public function ajax_form_submit(  ) {
+        $success = acf_save_post( $_POST[ 'post_id' ] );
+        $slug = '';
+        if ( $success )
+            $slug = community_directory_get_post_var_by_field(
+                'post_name', 'ID',
+                (int) $_POST[ 'post_id' ]
+            );
+
+        die( json_encode( [ 'success' => $success, 'slug' => $slug ] ) );
     }
 
     /**

@@ -99,7 +99,8 @@ class ClassPublic {
                         'popupOpen' => 'MapPopupOpen',
                         'popupClose' => 'MapPopupClose'
                     )
-                )
+                ),
+                'acf' => ClassACF::export_field_names()
             )); ?>
         </script><?php
     }
@@ -138,7 +139,7 @@ class ClassPublic {
             );
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'Edit Profile', 'community-directory' ),
-                Entity::build_edit_link(),
+                Entity::build_entity_link( null, true ),
                 102,
                 $top->ID
             );

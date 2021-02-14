@@ -218,10 +218,12 @@ function community_directory_get_post_var_by_field( $var_to_get, $where_key, $wh
     $p_type = '';
     if ( !empty( $post_type ) ) $p_type = "AND post_type = '$post_type'";
 
+    if ( gettype( $where_val ) !== 'integer' ) $where_val = "'$where_val'";
+
     $post = $wpdb->get_var(
         "SELECT $var_to_get
         FROM $wpdb->posts
-        WHERE $where_key = '$where_val' $p_type AND post_status != 'auto-draft'"
+        WHERE $where_key = $where_val $p_type AND post_status != 'auto-draft'"
     );
     
     return $post;

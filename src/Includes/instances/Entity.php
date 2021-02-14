@@ -34,6 +34,8 @@ class Entity extends Instance {
     public static $post_meta_loc_id = '_cd_location_id';
     private int $location_id;
 
+    public static string $entity_edit_hash = '#edit';
+
 
     public function __construct( int $post_id = null, int $author_id = null, object $post = null ) {
         if ( $post && $this->from_post_obj( $post ) ) return;
@@ -539,7 +541,7 @@ class Entity extends Instance {
         return $location->get_display_link();
     }
 
-    public static function build_entity_link( Entity $entity = null ):string {
+    public static function build_entity_link( Entity $entity = null, bool $edit = false ):string {
         if ( !$entity ) {
             if ( self::$active_entity ) $entity = self::$active_entity;
             else return '';
@@ -550,16 +552,10 @@ class Entity extends Instance {
         $location_post_slug = $location::$post_slug;
         $location_name_slug = $entity->location->slug;
 
-        return "/$location_post_slug/$location_name_slug/$entity->post_name";
-    }
-
-    public static function build_edit_link( int $post_id = null ):string {
-        if ( !$post_id ) {
-            if ( self::$active_entity ) $post_id = self::$active_entity->post_id;
-            else return '';
-        }
+        $hash = $edit ? static::$entity_edit_hash : '';
         
-        return parent::build_edit_link( $post_id );
+
+        return "/$location_post_slug/$location_name_slug/$entity->post_name${hash}";
     }
 
     /**
