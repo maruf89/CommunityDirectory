@@ -1,6 +1,6 @@
 <?php
 /**
- * Community Directory Offers and Needs Ad listing
+ * Community Directory Entity aka User Profile related functions
  *
  * @since      2020.12
  * @author     Marius Miliunas <mvmiliunas@gmail.com>
@@ -10,26 +10,26 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
-use Maruf89\CommunityDirectory\Includes\instances\{OfferNeed, Entity, ProductServiceTerm};
+use Maruf89\CommunityDirectory\Includes\instances\{Project, Entity};
 use Maruf89\CommunityDirectory\Includes\Interfaces\ISearchable;
 use Maruf89\CommunityDirectory\Includes\Traits\{PostTypeMethods, Searchable, EntityChildClassMethods};
 
-class ClassOffersNeeds extends Routable implements ISearchable {
+class ClassProjects extends Routable implements ISearchable {
 
     use PostTypeMethods, Searchable, EntityChildClassMethods;
 
-    private static ClassOffersNeeds $instance;
-    private static string $instance_class = OfferNeed::class;
+    private static ClassProjects $instance;
+    private static string $instance_class = Project::class;
 
-    protected string $router_ns = 'offers-needs';
+    protected string $router_ns = 'projects';
     
-    public static string $name = 'offers-needs';
+    public static string $name = 'projects';
     public static string $post_type;
-    public static int $post_type_menu_position = 28;
+    public static int $post_type_menu_position = 29;
 
-    public static function get_instance():ClassOffersNeeds {
+    public static function get_instance():ClassProjects {
         if ( !isset( self::$instance ) ) {
-            self::$instance = new ClassOffersNeeds();
+            self::$instance = new ClassProjects();
         }
  
         return self::$instance;
@@ -46,40 +46,40 @@ class ClassOffersNeeds extends Routable implements ISearchable {
     public static function register_post_type() {
         $slug = __( static::$name, 'community-directory' );
         $custom_post_type_args = array(
-            'label' => __( 'Offers & Needs', 'community-directory' ),
+            'label' => __( 'Projects', 'community-directory' ),
             'labels' =>
                 array(
-                    'name' => __( 'Offers & Needs', 'community-directory' ),
-                    'singular_name' => __( 'Offer or Need', 'community-directory' ),
-                    'add_new' => __( 'Add Offer or Need', 'community-directory' ),
-                    'add_new_item' => __( 'Add New Offer or Need', 'community-directory' ),
-                    'edit_item' => __( 'Edit Offer or Need', 'community-directory' ),
-                    'new_item' => __( 'New Offer or Need', 'community-directory' ),
-                    'view_item' => __( 'View Offer or Need', 'community-directory' ),
-                    'search_items' => __( 'Search Offer or Need', 'community-directory' ),
-                    'not_found' => __( 'No Offers & Needs Found', 'community-directory' ),
-                    'not_found_in_trash' => __( 'No Offers & Needs Found in Trash', 'community-directory' ),
-                    'menu_name' => __( 'Offers & Needs', 'community-directory' ),
-                    'name_admin_bar'     => __( 'Offers & Needs', 'community-directory' ),
+                    'name' => __( 'Projects', 'community-directory' ),
+                    'singular_name' => __( 'Project', 'community-directory' ),
+                    'add_new' => __( 'Add Project', 'community-directory' ),
+                    'add_new_item' => __( 'Add New Project', 'community-directory' ),
+                    'edit_item' => __( 'Edit Project', 'community-directory' ),
+                    'new_item' => __( 'New Project', 'community-directory' ),
+                    'view_item' => __( 'View Project', 'community-directory' ),
+                    'search_items' => __( 'Search Project', 'community-directory' ),
+                    'not_found' => __( 'No Projects Found', 'community-directory' ),
+                    'not_found_in_trash' => __( 'No Projects Found in Trash', 'community-directory' ),
+                    'menu_name' => __( 'Projects', 'community-directory' ),
+                    'name_admin_bar'     => __( 'Projects', 'community-directory' ),
                 ),
             'public' => true,
-            'description' => __( 'Community Directory Offers & Needs', 'community-directory' ), 
+            'description' => __( 'Community Directory Projects', 'community-directory' ), 
             'exclude_from_search' => false,
             'show_ui' => true,
             'show_in_menu' => true,
-            'capability_type' => array( 'offer_need', 'offers_needs' ),
+            'capability_type' => array( 'project', 'projects' ),
             'map_meta_cap'        => false,
             'capabilities' => array(
-                'edit_post'          => 'edit_offer_need', 
-                'read_post'          => 'read_offer_need', 
-                'delete_post'        => 'delete_offer_need', 
-                'edit_posts'         => 'edit_offers_needs', 
-                'edit_others_posts'  => 'edit_others_offers_needs', 
-                'publish_posts'      => 'publish_offers_needs',       
-                'read_private_posts' => 'read_private_offers_needs', 
-                'create_posts'       => 'create_offers_needs',
-                'delete_posts'       => 'delete_offers_needs',
-                'delete_others_posts'=> 'delete_others_offers_needs',
+                'edit_post'          => 'edit_project', 
+                'read_post'          => 'read_project', 
+                'delete_post'        => 'delete_project', 
+                'edit_posts'         => 'edit_projects', 
+                'edit_others_posts'  => 'edit_others_projects', 
+                'publish_posts'      => 'publish_projects',       
+                'read_private_posts' => 'read_private_projects', 
+                'create_posts'       => 'create_projects',
+                'delete_posts'       => 'delete_projects',
+                'delete_others_posts'=> 'delete_others_projects',
             ),
             'supports' => array(
                 'title',
@@ -92,16 +92,15 @@ class ClassOffersNeeds extends Routable implements ISearchable {
             'menu_position' => self::$post_type_menu_position,
             'delete_with_user' => true,
             'show_in_rest' => true,
-            'taxonomies' => array( TaxonomyProductService::$taxonomy )
         );
 
-        OfferNeed::define_post_type( static::$post_type, $slug );
+        Project::define_post_type( static::$post_type, $slug );
 
         register_post_type( static::$post_type, $custom_post_type_args );
     }
 
     /**
-     * Updates the wp_query which by default loads all offers_needs a user can see
+     * Updates the wp_query which by default loads all projects a user can see
      * This restricts it to only their own
      */
     public static function pre_get_posts( $query ) {
@@ -231,7 +230,7 @@ class ClassOffersNeeds extends Routable implements ISearchable {
                     'post_title'
                 ],
                 'postmeta' => [
-                    ClassACF::$offers_needs_description,
+                    ClassACF::$projects_description,
                 ],
             ],
             
@@ -325,13 +324,6 @@ class ClassOffersNeeds extends Routable implements ISearchable {
         $latest = $wpdb->get_results( $sql );
 
         return array_merge( $array, $latest );
-    }
-
-    public static function format_to_instances( $rows ) {
-        foreach ( (object) $rows as $key => $post )
-            $rows[ $key ] = new OfferNeed( $post->ID, null, \WP_Post::get_instance( $post->ID ) );
-
-        return $rows;
     }
 
     

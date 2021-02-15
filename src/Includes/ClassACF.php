@@ -61,6 +61,19 @@ class ClassACF {
     public static $offers_needs_attachment_key = 'field_cd_offer_need_attachment';
     public static $offers_needs_attachment = 'offer_need_attachment';
 
+    /////// Offers & Needs field keys and field names
+    public static $projects_form_group_key = 'group_community_directory_projects';
+    public static $projects_active_key = 'field_cd_project_active';
+    public static $projects_active = 'project_active';
+    public static $projects_description_key = 'field_cd_project_description';
+    public static $projects_description = 'project_description';
+    public static $projects_urgency_key = 'field_cd_project_urgency';
+    public static $projects_urgency = 'project_urgency';
+    public static $projects_image_key = 'field_cd_project_image';
+    public static $projects_image = 'project_image';
+    public static $projects_attachment_key = 'field_cd_project_attachment';
+    public static $projects_attachment = 'project_attachment';
+
     private static $instance;
 
     public static function get_instance() {

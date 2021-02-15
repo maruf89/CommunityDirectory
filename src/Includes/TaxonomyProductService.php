@@ -20,6 +20,8 @@ class TaxonomyProductService extends Taxonomy {
     public static string $taxonomy;
     public static string $slug;
 
+    private bool $_replacing_checkboxes = false;
+
     public static function get_instance():TaxonomyProductService {
         if ( !isset( static::$instance ) )
             static::$instance = new TaxonomyProductService();
@@ -80,6 +82,23 @@ class TaxonomyProductService extends Taxonomy {
             $categories = apply_filters( 'community_directory_offers_needs_default_categories', $categories );
             $this->add_term_categories( $categories );
             community_directory_delete_option( 'taxonomy_product_service_init' );
+        }
+    }
+
+    /**
+     * Filters the HTML on the edit OffersNeeds cpt to replace the category checkboxes with radio buttons
+     */
+    public function replace_terms_to_radio_start( string $post_type, \WP_Post $post ) {
+        if ( in_array( $post_type, apply_filters( 'community_directory_taxonomy_product_service_type_cpt', []) ) ) {
+            $this->_replacing_checkboxes = true;
+            ob_start();
+        }
+    }
+
+    public function replace_terms_to_radio_end() {
+        if ( $this->_replacing_checkboxes ) {
+            $this->_replacing_checkboxes = false;
+            echo str_replace( '"checkbox"', '"radio"', ob_get_clean() );
         }
     }
 

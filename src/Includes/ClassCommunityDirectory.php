@@ -7,6 +7,7 @@ use Maruf89\CommunityDirectory\Admin\Menus\{ClassAdminMenus, ClassMenuItems};
 use Maruf89\CommunityDirectory\Admin\Settings\ClassUWPFormBuilder;
 use Maruf89\CommunityDirectory\Admin\Widgets\{ClassLocationsWidget, ClassOffersNeedsWidget};
 use Maruf89\CommunityDirectory\Email\ClassTransactionalMailer;
+use Maruf89\CommunityDirectory\Admin\Scripts\{ClassScripts};
 
 
 final class ClassCommunityDirectory {
@@ -30,11 +31,13 @@ final class ClassCommunityDirectory {
     protected ClassAdmin $admin;
     protected ClassLocation $location;
     protected ClassOffersNeeds $offers_needs;
+    protected ClassProjects $projects;
     protected ClassUWPForms $uwp_forms;
     protected ClassShortcodes $shortcodes;
     protected ClassACF $acf;
     protected ClassRestEndPoints $rest_end_points;
     protected ClassSearch $search;
+    protected ClassCron $cron;
 
     protected TaxonomyProductService $product_service_type;
     protected TaxonomyLocation $location_type;
@@ -61,6 +64,7 @@ final class ClassCommunityDirectory {
         $this->entity = ClassEntity::get_instance();
         $this->location = ClassLocation::get_instance();
         $this->offers_needs = ClassOffersNeeds::get_instance();
+        $this->projects = ClassProjects::get_instance();
         $this->rest_end_points = ClassRestEndPoints::get_instance();
 
         $this->product_service_type = TaxonomyProductService::get_instance();
@@ -80,6 +84,7 @@ final class ClassCommunityDirectory {
         $this->admin_post_display = ClassAdminPostDisplay::get_instance();
         $this->account = new ClassAccount();
         $this->search = new ClassSearch();
+        $this->cron = ClassCron::get_instance();
 
         // actions and filters
         $this->load_assets_actions_and_filters( $this->public );
@@ -91,12 +96,16 @@ final class ClassCommunityDirectory {
         $this->load_entity_actions_and_filters( $this->entity );
         $this->load_acf_actions_and_filters( $this->acf );
         $this->load_offers_needs_actions_and_filters( $this->offers_needs );
+        $this->load_projects_actions_and_filters( $this->projects );
+        $this->load_cron_actions_and_filters( $this->cron );
 
         $this->load_taxonomy_actions_and_filters( [ $this->product_service_type, $this->location_type ] );
+        $this->load_product_service_type_actions_and_filters( $this->product_service_type );
 
         $this->load_instance_offers_needs_actions_and_filters( __NAMESPACE__ . '\\instances\\OfferNeed' );
         $this->load_instance_entity_actions_and_filters( __NAMESPACE__ . '\\instances\\Entity' );
         $this->load_instance_location_actions_and_filters( __NAMESPACE__ . '\\instances\\Location' );
+        $this->load_instance_project_actions_and_filters( __NAMESPACE__ . '\\instances\\Project' );
 
         if ( ClassTransactionalMailer::enabled() )
             $this->load_mail_actions_and_filters( ClassTransactionalMailer::get_instance() );
@@ -144,6 +153,7 @@ final class ClassCommunityDirectory {
     private function init_hooks() {
         register_activation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'activate' ) );
         register_deactivation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassActivator', 'deactivate' ) );
+        register_deactivation_hook( COMMUNITY_DIRECTORY_PLUGIN_FILE, array( __NAMESPACE__ . '\\ClassCron', 'deactivate' ) );
         add_action( 'admin_init', array( __NAMESPACE__ . '\\ClassActivator', 'automatic_upgrade') );
         add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
         add_action( 'init', array( $this, 'has_required_plugins' ), 10, 1 );
@@ -261,8 +271,10 @@ final class ClassCommunityDirectory {
 
     public function load_offers_needs_actions_and_filters( ClassOffersNeeds $instance ) {
         add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
-        add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
-        add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
+        // This ensures offers needs meta categories get converted from checkboxes -> radios
+        add_filter( 'community_directory_taxonomy_product_service_type_cpt',
+            array( $instance, 'add_post_type' ), 10, 1
+        );
         add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
         add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
         add_filter( 'community_directory_get_offers_needs', array( $instance, 'get' ), 10, 4 );
@@ -274,11 +286,33 @@ final class ClassCommunityDirectory {
         add_filter( 'community_directory_register_taxonomy_cpt_cd-location-type', array( $instance, 'add_post_type' ), 10, 1 );
     }
 
+    public function load_projects_actions_and_filters( ClassProjects $instance ) {
+        // add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
+
+        // add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
+        // add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
+        // add_filter( 'community_directory_get_projects', array( $instance, 'get' ), 10, 4 );
+
+        // add_filter( 'community_directory_format_projects_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
+        // add_filter( 'community_directory_register_taxonomy_cpt_cd-location-type', array( $instance, 'add_post_type' ), 10, 1 );
+    }
+
+    public function load_cron_actions_and_filters( ClassCron $instance ) {
+        add_action( $instance::$cron_twice_daily, [ ClassScripts::class, 'reindex_inhabitants' ] );
+        if ( !wp_next_scheduled( $instance::$cron_twice_daily ) )
+            wp_schedule_event( time(), 'twicedaily', $instance::$cron_twice_daily );
+    }
+
     public function load_taxonomy_actions_and_filters( array $instances ) {
         foreach( $instances as $instance ) {
             add_action( 'after_setup_theme', array( $instance, 'register_taxonomy_terms' ) );
             add_filter( 'community_directory_get_taxonomy_types', array( $instance, 'add_taxonomy_type'), 10, 1 );
         }
+    }
+
+    public function load_product_service_type_actions_and_filters( TaxonomyProductService $instance ) {
+        add_action( 'add_meta_boxes', array( $instance, 'replace_terms_to_radio_start' ), 10, 2);
+        add_action( 'dbx_post_sidebar', array( $instance, 'replace_terms_to_radio_end' ) );
     }
 
     // OfferNeed
@@ -321,6 +355,18 @@ final class ClassCommunityDirectory {
 
         
         add_action( 'community_directory_shift_inhabitants_count', array( $class_name, 'shift_inhabitants_count' ), 10, 3 );
+    }
+
+    // Project
+    public function load_instance_project_actions_and_filters( string $class_name ) {
+        // add_filter( 'community_directory_get_project', array( $class_name, 'get_instance' ), 10, 3 );
+        // // On saving the type, sets the excerpt field to (offer|need)
+        // $post_type = ClassProjects::$post_type;
+        // add_filter(
+        //     'acf/update_value/key=' . ClassACF::$projects_active_key,
+        //     array( $class_name, 'acf_activation_changed' ), 10, 3 );
+
+        // add_action( "save_post_$post_type", array( $class_name, 'after_save' ), 10, 3 );
     }
 
     public function load_mail_actions_and_filters( ClassTransactionalMailer $instance ) {

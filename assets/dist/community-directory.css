@@ -89,6 +89,9 @@ body h6 {
 .instance-map .text {
   font-size: 14px;
 }
+.instance-map li {
+  list-style: none;
+}
 .ps-parent {
   overflow: hidden;
   max-height: 24px;

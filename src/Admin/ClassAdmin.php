@@ -2,7 +2,7 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-use Maruf89\CommunityDirectory\Includes\{ClassEntity, ClassLocation, ClassOffersNeeds, ClassRestEndPoints, ClassACF};
+use Maruf89\CommunityDirectory\Includes\{ClassEntity, ClassLocation, ClassOffersNeeds, ClassRestEndPoints, ClassACF, TaxonomyProductService, TaxonomyLocation};
 
 /**
  * The admin-specific functionality of the plugin.
@@ -96,7 +96,8 @@ class ClassAdmin {
                     'offersNeeds' => array()
                 ),
                 'taxonomyType' => array(
-                    'productService' => ClassOffersNeeds::$taxonomy
+                    'productService' => TaxonomyProductService::$taxonomy,
+                    'location' => TaxonomyLocation::$taxonomy,
                 ),
                 'map' => array(
                     'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',

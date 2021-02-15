@@ -567,8 +567,6 @@ class Entity extends Instance {
     public static function acf_shift_inhabitants_count( $value, $entity_post_id, $field ) {
         if ( !isset( $_POST['acf'][ClassACF::$entity_active_key] ) ) return $value;
         
-        global $post;
-        
         // get the old (saved) value
         $was_active = get_field( ClassACF::$entity_active, $entity_post_id ) === 'true';
 
@@ -576,7 +574,12 @@ class Entity extends Instance {
         
         if ( $was_active == $is_active ) return $value;
 
-        $post_parent = $post->post_parent;
+        global $post;
+        $post_parent = $post ? $post->post_parent : community_directory_get_post_var_by_field(
+            'post_parent',
+            'ID',
+            (int) $entity_post_id
+        );
 
         do_action( 'community_directory_shift_inhabitants_count', $post_parent, 'post_id', $is_active );
 

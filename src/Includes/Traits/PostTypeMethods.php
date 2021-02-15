@@ -116,4 +116,11 @@ trait PostTypeMethods {
         // Otherwise $format is a string
         return self::format_row_locations( $results, $format );
     }
+
+    public static function format_to_instances( $rows ) {
+        foreach ( (object) $rows as $key => $post )
+            $rows[ $key ] = new static::$instance_class( $post->ID, null, \WP_Post::get_instance( $post->ID ) );
+
+        return $rows;
+    }
 }

@@ -233,7 +233,7 @@ function community_directory_get_post_var_by_field( $var_to_get, $where_key, $wh
  * Given a a satus active type (true|false|1|2|3|4), the type it's for, and the type of return value, returns the status
  * 
  * @param   $action     boolean|int         true = 1 = active, false = 2 = inactive
- * @param   $what_for   string              (entity|location|offer_need)
+ * @param   $what_for   string              (entity|location|entity_child)
  * @param   $type       string              (enum|post)
  * @return              string
  */
@@ -259,18 +259,18 @@ function community_directory_bool_to_status(
                 case 'post':
                     return $action ? 'publish' : 'pending';
             }
-        case 'offer_need':
+        case 'entity_child':
             switch ( $type ) {
                 case 'enum':
                     return community_directory_bool_to_status( $action, 'entity' );
                 case 'post':
                     switch ( $action ) {
                         case 0:// Deactivated
-                        case 2:// Entity owner is inactive and offer_need is inactive
+                        case 2:// Entity owner is inactive and entity_child is inactive
                             return 'pending';
                         case 1:// Active
                             return 'publish';
-                        case 3:// Entity owner is inactive yet offer_need IS active (not visible)
+                        case 3:// Entity owner is inactive yet entity_child IS active (not visible)
                             return 'future';
                     }
             }
