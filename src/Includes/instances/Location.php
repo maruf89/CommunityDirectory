@@ -3,7 +3,7 @@
  *
  * Location instance
  *
- * @since      1.0.0
+ * @since      0.6.4
  * @author     Marius Miliunas
  */
 

@@ -13,6 +13,7 @@
 namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\instances\{Entity, OfferNeed};
+use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
 
 class ClassPublic {
     private static string $_post_type_prefix = 'cd-';
@@ -81,7 +82,7 @@ class ClassPublic {
     public function global_js_variables() {?>
         <script type="text/javascript">
             window.cdData = <?= json_encode( array(
-                'restBase' => '/wp-json/wp/v2/',
+                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base,
                 'postType' => array(
                     'entity' => ClassEntity::$post_type,
                     'location' => ClassLocation::$post_type,

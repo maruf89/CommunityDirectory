@@ -3,7 +3,7 @@
  *
  * This class creates the ACF form groups with the required fields and so on…
  *
- * @since      1.0.0
+ * @since      0.6.4
  * @author     Marius Miliunas
  */
 
@@ -61,7 +61,7 @@ class ClassACF {
     public static $offers_needs_attachment_key = 'field_cd_offer_need_attachment';
     public static $offers_needs_attachment = 'offer_need_attachment';
 
-    /////// Offers & Needs field keys and field names
+    /////// Project field keys and field names
     public static $projects_form_group_key = 'group_community_directory_projects';
     public static $projects_active_key = 'field_cd_project_active';
     public static $projects_active = 'project_active';
@@ -73,6 +73,27 @@ class ClassACF {
     public static $projects_image = 'project_image';
     public static $projects_attachment_key = 'field_cd_project_attachment';
     public static $projects_attachment = 'project_attachment';
+
+    /////// Event field keys and field names
+    public static $events_form_group_key = 'group_community_directory_events';
+    public static $events_active_key = 'field_cd_event_active';
+    public static $events_active = 'event_active';
+    public static $events_date_time_start = 'event_date_time_start';
+    public static $events_date_time_start_key = 'field_cd_event_date_time_start';
+    public static $events_date_time_end = 'event_date_time_end';
+    public static $events_date_time_end_key = 'field_cd_event_date_time_end';
+    public static $events_price = 'event_price';
+    public static $events_price_key = 'field_cd_event_price';
+    public static $events_category = 'event_category';
+    public static $events_category_key = 'field_cd_event_category';
+    public static $events_description_key = 'field_cd_event_description';
+    public static $events_description = 'event_description';
+    public static $events_image_key = 'field_cd_event_image';
+    public static $events_image = 'event_image';
+    public static $events_no_physical_location_key = 'field_cd_event_no_physical_location';
+    public static $events_no_physical_location = 'event_no_physical_location';
+    public static $events_location_key = 'field_cd_event_location';
+    public static $events_location = 'event_location';
 
     private static $instance;
 
@@ -124,6 +145,17 @@ class ClassACF {
                 'urgency' => static::$offers_needs_urgency,
                 'image' => static::$offers_needs_image,
                 'attachment' => static::$offers_needs_attachment,
+            ],
+            'events' => [
+                'active' => static::$events_active,
+                'date_time_start' => static::$events_date_time_start,
+                'date_time_end' => static::$events_date_time_end,
+                'price' => static::$events_price,
+                'category' => static::$events_category,
+                'description' => static::$events_description,
+                'image' => static::$events_image,
+                'no_physical_location' => static::$events_no_physical_location,
+                'location' => static::$events_location,
             ]
         );
     }
@@ -186,6 +218,33 @@ class ClassACF {
                     'hide_on_screen' => '',
                     'active' => true,
                     'description' => __( 'The Community Directory generated form for Offers & Needs.', 'community-directory' ),
+                )
+            );
+        }
+
+        if ( !acf_get_field_group_post( self::$events_form_group_key ) ) {
+            acf_import_field_group(
+                array(
+                    'key' => self::$events_form_group_key,
+                    'title' => __( 'Community Directory Events Custom Fields', 'community-directory' ),
+                    'fields' => apply_filters( 'community_directory_required_acf_events_fields', array() ),
+                    'location' => array(
+                        array(
+                            array(
+                                'param' => 'post_type',
+                                'operator' => '==',
+                                'value' => ClassEvents::$post_type,
+                            ),
+                        ),
+                    ),
+                    'menu_order' => 1,
+                    'position' => 'acf_after_title',
+                    'style' => 'default',
+                    'label_placement' => 'left',
+                    'instruction_placement' => 'label',
+                    'hide_on_screen' => '',
+                    'active' => true,
+                    'description' => __( 'The Community Directory generated Events form.', 'community-directory' ),
                 )
             );
         }
@@ -355,11 +414,10 @@ class ClassACF {
 			'height' => '',
 		);
 
-
         return $fields_arr;
     }
 
-    public static function generate_required_offers_needs_fields( $fields_arr ) {
+    public static function generate_required_offers_needs_fields( array $fields_arr ) {
         $fields_arr[] = array(
             'key'       => self::$offers_needs_active_key,
 			'label'     => __( 'Is Active', 'community-directory' ),
@@ -524,6 +582,160 @@ class ClassACF {
             'library' => 'uploadedTo',
             'max_size' => 10,
             'mime_types' => 'pdf,jpeg,jpg,gif,png',
+        );
+
+        return $fields_arr;
+    }
+
+    public function generate_required_events_fields( array $fields_arr ) {
+        $fields_arr[] = array(
+            'key'       => self::$events_active_key,
+			'label'     => __( 'Event Active', 'community-directory' ),
+			'name'      => self::$events_active,
+			'type'      => 'radio',
+			'instructions' => __( 'Select \'Active\' to make your event visible. If \'Inactive\', your event will not be visible to others.', 'community-directory' ),
+			'required' => 1,
+			'choices'   => array(
+				'true'      => __( 'Active', 'community-directory' ),
+				'false'     => __( 'Inactive', 'community-directory' ),
+			),
+			'default_value' => 'false',
+			'layout' => 'horizontal',
+			'return_format' => 'value',
+			'save_other_choice' => 0,
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_date_time_start_key,
+            'label' => __( 'When', 'community-directory' ),
+            'name' => self::$events_date_time_start,
+            'type' => 'date_time_picker',
+            'instructions' => __( 'When does the event start?', 'community-directory' ),
+            'required' => 1,
+            'display_format' => 'F j, Y g:i a',
+            'return_format' => 'Y-m-d H:i:s',
+            'first_day' => 1
+        );
+        $fields_arr[] = array(
+            'key' => self::$events_date_time_end_key,
+            'label' => __( 'End Date', 'community-directory' ),
+            'name' => self::$events_date_time_end,
+            'type' => 'date_time_picker',
+            'instructions' => __( 'Does this event have an end date or time?', 'community-directory' ),
+            'display_format' => 'F j, Y g:i a',
+            'return_format' => 'Y-m-d H:i:s',
+            'first_day' => 1
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_price_key,
+            'label' => __( 'Price', 'community-directory' ),
+            'name' => self::$events_price,
+            'type' => 'number',
+            'instructions' => __( 'Is this a paid event? If so, how much does it cost?', 'community-directory' ),
+            'prepend' => '€'
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_category_key,
+            'label' => __( 'Category', 'community-directory' ),
+            'name' => self::$events_category,
+            'type' => 'taxonomy',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'taxonomy' => TaxonomyProductService::$taxonomy,
+			'field_type' => 'checkbox',
+			'add_term' => 0,
+			'save_terms' => 1,
+			'load_terms' => 0,
+			'return_format' => 'id',
+			'multiple' => 0,
+			'allow_null' => 0,
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_description_key,
+            'label' => __( 'Description', 'community-directory' ),
+            'name' => self::$events_description,
+            'type' => 'wysiwyg',
+			'instructions' => '',
+			'required' => 1,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'default_value' => '',
+			'tabs' => 'all',
+			'toolbar' => 'full',
+			'media_upload' => 1,
+			'delay' => 0,
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_image_key,
+            'label' => __( 'Event Photo', 'community-directory' ),
+            'name' => self::$events_image,
+            'type' => 'image',
+			'instructions' => '',
+			'required' => 0,
+			'conditional_logic' => 0,
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'return_format' => 'array',
+			'preview_size' => 'medium',
+			'library' => 'uploadedTo',
+			'min_width' => '',
+			'min_height' => '',
+			'min_size' => '',
+			'max_width' => '',
+			'max_height' => '',
+			'max_size' => '',
+            'mime_types' => 'pdf,jpeg,jpg,gif,png',
+        );
+        $fields_arr[] = array(
+            'key' => self::$events_no_physical_location_key,
+            'label' => __( 'No Physical Location', 'community-directory' ),
+            'name' => self::$events_no_physical_location,
+            'type' => 'true_false',
+            'default_value' => 'true',
+            'message' => __( 'This event has no physical location', 'community-directory' )
+        );
+
+        $fields_arr[] = array(
+            'key' => self::$events_location_key,
+            'label' => __( 'Event Location', 'community-directory' ),
+            'name' => self::$events_location,
+            'type' => 'google_map',
+            'instructions' => __( 'Where will this event occur?', 'community-directory' ),
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => self::$events_no_physical_location_key,
+                        'operator' => '==',
+                        'value' => '0',
+                    ),
+                ),
+            ),
+			'wrapper' => array(
+				'width' => '',
+				'class' => '',
+				'id' => '',
+			),
+			'center_lat' => '',
+			'center_lng' => '',
+			'zoom' => '',
+			'height' => '',
         );
 
         return $fields_arr;

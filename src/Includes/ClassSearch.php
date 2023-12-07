@@ -282,6 +282,11 @@ class ClassSearch extends Routable {
                 'callback'  => $callback,
                 'permission_callback' => function ( $request ) { return true; },
             ),
+            '/test' => array(
+                'methods'   => 'GET',
+                'callback'  => $callback,
+                'permission_callback' => function ( $request ) { return true; },
+            ),
         );
     }
 }

@@ -32,6 +32,7 @@ final class ClassCommunityDirectory {
     protected ClassLocation $location;
     protected ClassOffersNeeds $offers_needs;
     protected ClassProjects $projects;
+    protected ClassEvents $events;
     protected ClassUWPForms $uwp_forms;
     protected ClassShortcodes $shortcodes;
     protected ClassACF $acf;
@@ -65,6 +66,7 @@ final class ClassCommunityDirectory {
         $this->location = ClassLocation::get_instance();
         $this->offers_needs = ClassOffersNeeds::get_instance();
         $this->projects = ClassProjects::get_instance();
+        $this->events = ClassEvents::get_instance();
         $this->rest_end_points = ClassRestEndPoints::get_instance();
 
         $this->product_service_type = TaxonomyProductService::get_instance();
@@ -96,6 +98,7 @@ final class ClassCommunityDirectory {
         $this->load_entity_actions_and_filters( $this->entity );
         $this->load_acf_actions_and_filters( $this->acf );
         $this->load_offers_needs_actions_and_filters( $this->offers_needs );
+        $this->load_events_actions_and_filters( $this->events );
         $this->load_projects_actions_and_filters( $this->projects );
         $this->load_cron_actions_and_filters( $this->cron );
 
@@ -161,6 +164,8 @@ final class ClassCommunityDirectory {
         add_action( 'init', array( $this->location, 'register_post_type' ) );
         add_action( 'init', array( $this->entity, 'register_post_type' ) );
         add_action( 'init', array( $this->offers_needs, 'register_post_type' ) );
+        add_action( 'init', array( $this->projects, 'register_post_type' ) );
+        add_action( 'init', array( $this->events, 'register_post_type' ) );
         add_action( 'init', array( $this, 'register_post_status' ) );
         add_action( 'rest_api_init', array( $this->rest_end_points, 'on_init' ) );
 	    add_action( 'community_directory_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
@@ -267,6 +272,8 @@ final class ClassCommunityDirectory {
 
         add_filter( 'community_directory_required_acf_entity_fields', array( $instance, 'generate_required_entity_fields' ), 10, 1 );
         add_filter( 'community_directory_required_acf_offers_needs_fields', array( $instance, 'generate_required_offers_needs_fields' ), 10, 1 );
+        add_filter( 'community_directory_required_acf_events_fields', array( $instance, 'generate_required_events_fields' ), 10, 1 );
+        // add_filter( 'community_directory_required_acf_projects_fields', array( $instance, 'generate_required_projects_fields' ), 10, 1 );
     }
 
     public function load_offers_needs_actions_and_filters( ClassOffersNeeds $instance ) {
@@ -287,13 +294,24 @@ final class ClassCommunityDirectory {
     }
 
     public function load_projects_actions_and_filters( ClassProjects $instance ) {
-        // add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
+        add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
 
         // add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
-        // add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
-        // add_filter( 'community_directory_get_projects', array( $instance, 'get' ), 10, 4 );
+        add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
+        add_filter( 'community_directory_get_projects', array( $instance, 'get' ), 10, 4 );
 
-        // add_filter( 'community_directory_format_projects_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
+        add_filter( 'community_directory_format_projects_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
+        // add_filter( 'community_directory_register_taxonomy_cpt_cd-location-type', array( $instance, 'add_post_type' ), 10, 1 );
+    }
+
+    public function load_events_actions_and_filters( ClassEvents $instance ) {
+        add_filter( 'community_directory_get_post_types', array( $instance, 'add_post_type' ), 10, 1 );
+
+        // add_action( 'pre_get_posts', array( $instance, 'pre_get_posts' ), 1 );
+        add_action( 'community_directory_entity_changed_activation', [ $instance, 'entity_changed_activation' ], 10, 3 );
+        add_filter( 'community_directory_get_events', array( $instance, 'get' ), 10, 4 );
+
+        add_filter( 'community_directory_format_events_to_instances', array( $instance, 'format_to_instances' ), 10, 1 );
         // add_filter( 'community_directory_register_taxonomy_cpt_cd-location-type', array( $instance, 'add_post_type' ), 10, 1 );
     }
 

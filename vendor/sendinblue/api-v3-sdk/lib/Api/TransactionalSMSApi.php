@@ -100,7 +100,7 @@ class TransactionalSMSApi
      * @param  string $phoneNumber Filter the report for a specific phone number (optional)
      * @param  string $event Filter the report for specific events (optional)
      * @param  string $tags Filter the report for specific tags passed as a serialized urlencoded array (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -125,7 +125,7 @@ class TransactionalSMSApi
      * @param  string $phoneNumber Filter the report for a specific phone number (optional)
      * @param  string $event Filter the report for specific events (optional)
      * @param  string $tags Filter the report for specific tags passed as a serialized urlencoded array (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -216,7 +216,7 @@ class TransactionalSMSApi
      * @param  string $phoneNumber Filter the report for a specific phone number (optional)
      * @param  string $event Filter the report for specific events (optional)
      * @param  string $tags Filter the report for specific tags passed as a serialized urlencoded array (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -244,7 +244,7 @@ class TransactionalSMSApi
      * @param  string $phoneNumber Filter the report for a specific phone number (optional)
      * @param  string $event Filter the report for specific events (optional)
      * @param  string $tags Filter the report for specific tags passed as a serialized urlencoded array (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -302,7 +302,7 @@ class TransactionalSMSApi
      * @param  string $phoneNumber Filter the report for a specific phone number (optional)
      * @param  string $event Filter the report for specific events (optional)
      * @param  string $tags Filter the report for specific tags passed as a serialized urlencoded array (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
@@ -405,7 +405,7 @@ class TransactionalSMSApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -431,7 +431,7 @@ class TransactionalSMSApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -709,7 +709,7 @@ class TransactionalSMSApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -735,7 +735,7 @@ class TransactionalSMSApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -753,7 +753,7 @@ class TransactionalSMSApi
      * @param  string $endDate Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report (optional)
      * @param  int $days Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; (optional)
      * @param  string $tag Filter on a tag (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -774,7 +774,7 @@ class TransactionalSMSApi
      * @param  string $endDate Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report (optional)
      * @param  int $days Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; (optional)
      * @param  string $tag Filter on a tag (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \SendinBlue\Client\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -861,7 +861,7 @@ class TransactionalSMSApi
      * @param  string $endDate Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report (optional)
      * @param  int $days Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; (optional)
      * @param  string $tag Filter on a tag (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -885,7 +885,7 @@ class TransactionalSMSApi
      * @param  string $endDate Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report (optional)
      * @param  int $days Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; (optional)
      * @param  string $tag Filter on a tag (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -939,7 +939,7 @@ class TransactionalSMSApi
      * @param  string $endDate Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the report (optional)
      * @param  int $days Number of days in the past including today (positive integer). Not compatible with &#39;startDate&#39; and &#39;endDate&#39; (optional)
      * @param  string $tag Filter on a tag (optional)
-     * @param  string $sort Sort the results in the ascending/descending order of record creation (optional, default to desc)
+     * @param  string $sort Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed (optional, default to desc)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
@@ -1022,7 +1022,7 @@ class TransactionalSMSApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -1048,7 +1048,7 @@ class TransactionalSMSApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1312,7 +1312,7 @@ class TransactionalSMSApi
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
 
@@ -1338,7 +1338,7 @@ class TransactionalSMSApi
             $headers
         );
 
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * OffferNeed instance
+ * Project instance
  *
- * @since      1.0.0
+ * @since      0.6.5
  * @author     Marius Miliunas
  */
 
@@ -13,7 +13,7 @@ use Maruf89\CommunityDirectory\Includes\{ClassACF, ClassProjects, ClassErrorHand
 use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 use Maruf89\CommunityDirectory\Includes\Traits\EntityChildInstanceMethods;
 
-class OfferNeed extends Instance {
+class Project extends Instance {
     use EntityChildInstanceMethods;
 
     public static string $post_type;

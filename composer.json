@@ -16,10 +16,15 @@
         "community-directory"
     ],
     "config": {
+        "bin-dir": "vendor/bin",
         "platform": {
-            "php": "7.3"
+            "php": "7.4.21"
         },
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "repositories": [
         {
@@ -27,6 +32,9 @@
             "url": "https://github.com/wordpress/wordpress-develop"
         }
     ],
+    "scripts": {
+        "test": "phpunit"
+    },
     "require": {
         "php": ">=7.3",
         "composer/installers": "~1.0",

@@ -30,7 +30,7 @@ class ClassRestEndPoints {
     }
 
     public function __construct() {
-        $this->rest_base = COMMUNITY_DIRECTORY_NAME . '/v' . COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM . '/';
+        $this->rest_base = COMMUNITY_DIRECTORY_NAME . '/v' . COMMUNITY_DIRECTORY_REST_VERSION . '/';
     }
 
     public static function on_init() {

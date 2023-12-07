@@ -663,6 +663,8 @@ This endpoint does not need any parameter.
 
 Get a contact's details
 
+Along with the contact details, this endpoint will show the statistics of contact for the recent 90 days by default. To fetch the earlier statistics, please use Get contact campaign stats (https://developers.sendinblue.com/reference/contacts-7#getcontactstats) endpoint with the appropriate date ranges.
+
 ### Example
 ```php
 <?php
@@ -741,8 +743,8 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
     $config
 );
 $identifier = "identifier_example"; // string | Email (urlencoded) OR ID of the contact
-$startDate = new \DateTime("2013-10-20"); // \DateTime | Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be lower than equal to endDate
-$endDate = new \DateTime("2013-10-20"); // \DateTime | Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be greater than equal to startDate
+$startDate = "startDate_example"; // string | Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be lower than equal to endDate
+$endDate = "endDate_example"; // string | Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be greater than equal to startDate. Maximum difference between startDate and endDate should not be greater than 90 days
 
 try {
     $result = $apiInstance->getContactStats($identifier, $startDate, $endDate);
@@ -758,8 +760,8 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **identifier** | **string**| Email (urlencoded) OR ID of the contact |
- **startDate** | **\DateTime**| Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be lower than equal to endDate | [optional]
- **endDate** | **\DateTime**| Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be greater than equal to startDate | [optional]
+ **startDate** | **string**| Mandatory if endDate is used. Starting date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be lower than equal to endDate | [optional]
+ **endDate** | **string**| Mandatory if startDate is used. Ending date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be greater than equal to startDate. Maximum difference between startDate and endDate should not be greater than 90 days | [optional]
 
 ### Return type
 
@@ -803,8 +805,8 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
 );
 $limit = 50; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
-$modifiedSince = new \DateTime("2013-10-20T19:20:30+01:00"); // \DateTime | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
-$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation
+$modifiedSince = "modifiedSince_example"; // string | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
     $result = $apiInstance->getContacts($limit, $offset, $modifiedSince, $sort);
@@ -821,8 +823,8 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **limit** | **int**| Number of documents per page | [optional] [default to 50]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
- **modifiedSince** | **\DateTime**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
- **sort** | **string**| Sort the results in the ascending/descending order of record creation | [optional] [default to desc]
+ **modifiedSince** | **string**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -865,10 +867,10 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
     $config
 );
 $listId = 789; // int | Id of the list
-$modifiedSince = new \DateTime("2013-10-20T19:20:30+01:00"); // \DateTime | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
+$modifiedSince = "modifiedSince_example"; // string | Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result.
 $limit = 50; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
-$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
     $result = $apiInstance->getContactsFromList($listId, $modifiedSince, $limit, $offset, $sort);
@@ -884,10 +886,10 @@ try {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **listId** | **int**| Id of the list |
- **modifiedSince** | **\DateTime**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
+ **modifiedSince** | **string**| Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). Prefer to pass your timezone in date-time format for accurate result. | [optional]
  **limit** | **int**| Number of documents per page | [optional] [default to 50]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
- **sort** | **string**| Sort the results in the ascending/descending order of record creation | [optional] [default to desc]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -989,7 +991,7 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
 $folderId = 789; // int | Id of the folder
 $limit = 10; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
-$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
     $result = $apiInstance->getFolderLists($folderId, $limit, $offset, $sort);
@@ -1007,7 +1009,7 @@ Name | Type | Description  | Notes
  **folderId** | **int**| Id of the folder |
  **limit** | **int**| Number of documents per page | [optional] [default to 10]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
- **sort** | **string**| Sort the results in the ascending/descending order of record creation | [optional] [default to desc]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -1051,7 +1053,7 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
 );
 $limit = 10; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
-$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
     $result = $apiInstance->getFolders($limit, $offset, $sort);
@@ -1068,7 +1070,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **limit** | **int**| Number of documents per page | [default to 10]
  **offset** | **int**| Index of the first document of the page | [default to 0]
- **sort** | **string**| Sort the results in the ascending/descending order of record creation | [optional] [default to desc]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
@@ -1169,7 +1171,7 @@ $apiInstance = new SendinBlue\Client\Api\ContactsApi(
 );
 $limit = 10; // int | Number of documents per page
 $offset = 0; // int | Index of the first document of the page
-$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation
+$sort = "desc"; // string | Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed
 
 try {
     $result = $apiInstance->getLists($limit, $offset, $sort);
@@ -1186,7 +1188,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **limit** | **int**| Number of documents per page | [optional] [default to 10]
  **offset** | **int**| Index of the first document of the page | [optional] [default to 0]
- **sort** | **string**| Sort the results in the ascending/descending order of record creation | [optional] [default to desc]
+ **sort** | **string**| Sort the results in the ascending/descending order of record creation. Default order is **descending** if &#x60;sort&#x60; is not passed | [optional] [default to desc]
 
 ### Return type
 
