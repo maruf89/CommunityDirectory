@@ -4,9 +4,9 @@ namespace Maruf89\CommunityDirectory\Email;
 
 use Maruf89\CommunityDirectory\Includes\ClassErrorHandler;
 use Maruf89\CommunityDirectory\Email\Interfaces\IMailer;
-use \SendinBlue\Client\Configuration;
-use \SendinBlue\Client\Api\TransactionalEmailsApi;
-use \SendinBlue\Client\Model\{SendSmtpEmail, SendSmtpEmailTo, GetSmtpTemplateOverviewSender};
+use \Brevo\Client\Configuration;
+use \Brevo\Client\Api\TransactionalEmailsApi;
+use \Brevo\Client\Model\{SendSmtpEmail, SendSmtpEmailTo, GetSmtpTemplateOverviewSender};
 
 class ClassTransactionalMailer implements IMailer {
     private static ClassTransactionalMailer $instance;
@@ -28,7 +28,7 @@ class ClassTransactionalMailer implements IMailer {
     }
 
     public function __construct() {
-        $this->api_key = SENDINBLUE_API_KEY;
+        $this->api_key = BREVO_API_KEY;
         
         require_once( dirname(__FILE__) . '/wp_mail_override.php' );
     }
@@ -142,9 +142,9 @@ class ClassTransactionalMailer implements IMailer {
     }
 
     public static function enabled():bool {
-        if ( !defined( 'SENDINBLUE_ENABLE' ) ||
-             !defined( 'SENDINBLUE_API_KEY' ) ||
-             !SENDINBLUE_ENABLE
+        if ( !defined( 'BREVO_ENABLE' ) ||
+             !defined( 'BREVO_API_KEY' ) ||
+             !BREVO_ENABLE
         ) return false;
 
         return true;

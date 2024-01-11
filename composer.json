@@ -24,12 +24,13 @@
         "optimize-autoloader": true,
         "allow-plugins": {
             "composer/installers": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "roots/wordpress-core-installer": true
         }
     },
     "repositories": [
         {
-            "type": "git",
+            "type": "vcs",
             "url": "https://github.com/wordpress/wordpress-develop"
         }
     ],
@@ -39,9 +40,9 @@
     "require": {
         "php": ">=7.3",
         "composer/installers": "~1.0",
-        "sendinblue/api-v3-sdk": "7.x.x",
         "phpstan/phpstan": "*",
-        "roots/wordpress": "5.6"
+        "roots/wordpress": "5.6",
+        "getbrevo/brevo-php": "^1.0"
     },
     "require-dev": {
         "php": ">=7.3",
