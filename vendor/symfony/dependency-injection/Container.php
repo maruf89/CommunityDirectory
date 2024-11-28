@@ -63,7 +63,7 @@ class Container implements ContainerInterface, ResetInterface
     private $compiled = false;
     private $getEnv;
 
-    public function __construct(ParameterBagInterface $parameterBag = null)
+    public function __construct(?ParameterBagInterface $parameterBag = null)
     {
         $this->parameterBag = $parameterBag ?? new EnvPlaceholderParameterBag();
     }
@@ -299,7 +299,6 @@ class Container implements ContainerInterface, ResetInterface
     public function reset()
     {
         $services = $this->services + $this->privates;
-        $this->services = $this->factories = $this->privates = [];
 
         foreach ($services as $service) {
             try {
@@ -310,6 +309,8 @@ class Container implements ContainerInterface, ResetInterface
                 continue;
             }
         }
+
+        $this->services = $this->factories = $this->privates = [];
     }
 
     /**

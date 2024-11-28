@@ -41,7 +41,7 @@
         "php": ">=7.3",
         "composer/installers": "~1.0",
         "phpstan/phpstan": "*",
-        "roots/wordpress": "5.6",
+        "roots/wordpress": ">=6.7",
         "getbrevo/brevo-php": "^1.0"
     },
     "require-dev": {
