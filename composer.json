@@ -39,10 +39,10 @@
     },
     "require": {
         "php": ">=7.3",
-        "composer/installers": "~1.0",
+        "composer/installers": "^2.3",
         "phpstan/phpstan": "*",
         "roots/wordpress": ">=6.7",
-        "getbrevo/brevo-php": "^1.0"
+        "getbrevo/brevo-php": "^2.0"
     },
     "require-dev": {
         "php": ">=7.3",
