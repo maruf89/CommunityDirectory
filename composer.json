@@ -3,7 +3,7 @@
     "type": "wpackagist-plugin",
     "license": "GPL-2.0-only",
     "description": "Wordpress plugin for an in-person community directory.",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "homepage": "https://github.com/maruf89/CommunityDirectory",
     "authors": [
         {
