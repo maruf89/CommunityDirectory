@@ -3,7 +3,6 @@
     "type": "wpackagist-plugin",
     "license": "GPL-2.0-only",
     "description": "Wordpress plugin for an in-person community directory.",
-    "version": "1.0.4",
     "homepage": "https://github.com/maruf89/CommunityDirectory",
     "authors": [
         {
@@ -19,7 +18,7 @@
     "config": {
         "bin-dir": "vendor/bin",
         "platform": {
-            "php": "7.4.21"
+            "php": "7.4"
         },
         "optimize-autoloader": true,
         "allow-plugins": {
@@ -30,8 +29,8 @@
     },
     "repositories": [
         {
-            "type": "vcs",
-            "url": "https://github.com/wordpress/wordpress-develop"
+            "type": "composer",
+            "url": "https://wpackagist.org"
         }
     ],
     "scripts": {
@@ -40,12 +39,11 @@
     "require": {
         "php": ">=7.3",
         "composer/installers": "^2.3",
-        "phpstan/phpstan": "*",
-        "roots/wordpress": ">=6.7",
+        "phpstan/phpstan": "^2.0",
+        "roots/wordpress": "^6.7",
         "getbrevo/brevo-php": "^2.0"
     },
     "require-dev": {
-        "php": ">=7.3",
         "squizlabs/php_codesniffer": "^3.3",
         "wp-coding-standards/wpcs": "^2.2",
         "phpcompatibility/php-compatibility": "^9.0",
