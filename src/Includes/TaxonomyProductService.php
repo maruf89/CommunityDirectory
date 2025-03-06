@@ -17,8 +17,8 @@ class TaxonomyProductService extends Taxonomy {
     private static TaxonomyProductService $instance;
     public static string $term_type = ProductServiceTerm::class;
     public static string $name = 'product-service-type';
-    public static string $taxonomy;
-    public static string $slug;
+    public static string $taxonomy = 'tax-product-service';
+    public static string $slug = 'tax-product-service';
 
     private bool $_replacing_checkboxes = false;
 
