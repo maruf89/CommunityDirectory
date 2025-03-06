@@ -2,7 +2,7 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-use Maruf89\CommunityDirectory\Includes\ClassEntity;
+use Maruf89\CommunityDirectory\Includes\{ClassEntity, ClassOffersNeeds};
 use Maruf89\CommunityDirectory\Includes\instances\Entity;
 
 /**
@@ -35,6 +35,52 @@ class ClassAdminPostDisplay {
     public function entity_post_table_content( $column_name, $post_id ) {
         $Entity = new Entity( $post_id );
         echo $Entity->location_name;
+    }
+
+    public function reorder_metaboxes( $order ) {
+        return array(
+            'normal'   => join( ",", array(
+                'postexcerpt',
+                'formatdiv',
+                'trackbacksdiv',
+                'tagsdiv-post_tag',
+                'categorydiv',
+                'postimagediv',
+                'postcustom',
+                'commentstatusdiv',
+                'slugdiv',
+                'authordiv',
+                'submitdiv',
+            ) ),
+            'side'     => '',
+            'advanced' => '',
+        );
+    }
+
+    public function force_single_col( $result, $option, $user ) {
+        return '1';
+    }
+
+    public function hide_publishing_actions() {
+        global $post;
+        if ( $post->post_type == ClassEntity::$post_type || $post->post_type == ClassOffersNeeds::$post_type ) {
+            echo '<style type="text/css">
+                #misc-publishing-actions,
+                #minor-publishing-actions{
+                    display:none;
+                }
+                #publishing-action {
+                    width: 100%;
+                    text-align: center;
+                }
+                #publish {
+                    width: 80%;
+                }
+                #delete-action {
+                    display: none;
+                }
+                </style>';
+        }
     }
     
 }

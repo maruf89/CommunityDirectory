@@ -2,10 +2,7 @@
 
 namespace Maruf89\CommunityDirectory\Admin;
 
-use Stylus\Stylus;
-use Maruf89\CommunityDirectory\Includes\instances\Entity;
-use Maruf89\CommunityDirectory\Includes\instances\Location;
-use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
+use Maruf89\CommunityDirectory\Includes\{ClassEntity, ClassLocation, ClassOffersNeeds, ClassRestEndPoints, ClassACF, TaxonomyProductService, TaxonomyLocation};
 
 /**
  * The admin-specific functionality of the plugin.
@@ -39,17 +36,19 @@ class ClassAdmin {
      */
     public function enqueue_styles( $hook_suffix ) {
 
-        if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-            $stylus = new Stylus();
-            $stylus->setReadDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css/styl' );
-            $stylus->setWriteDir( COMMUNITY_DIRECTORY_ADMIN_PATH . 'assets/css' );
-            $stylus->assign( 'base-font-size', '14px' );
-            $stylus->parseFiles(true);
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+
+        wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_style(
+                'leaflet_css',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet.css', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
         }
-
-        wp_enqueue_style( 'community-directory_admin_css', COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/css/community-directory-admin.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
-
-        
 
     }
 
@@ -59,13 +58,22 @@ class ClassAdmin {
      * @since    1.0.0
      * @param $hook_suffix
      */
-    public function enqueue_scripts($hook_suffix) {
+    public function enqueue_scripts( $hook_suffix ) {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';// '.min';
+        
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_script(
+                'leaflet_js',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.js', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
+        }
 
         wp_enqueue_script(
             'community_directory_admin_js',
-            COMMUNITY_DIRECTORY_PLUGIN_URL . 'src/Admin/assets/js/community-directory-admin' . $suffix . '.js', array(),
+            COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory-admin' . $suffix . '.js', array(),
             WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
             'all'
         );
@@ -74,12 +82,26 @@ class ClassAdmin {
             array(
                 'ajax_url' => admin_url( 'admin-ajax.php' ),
                 'translations' => array(
-                    'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' )
+                    'deleteLocation' => __( 'Are you sure you want to delete this row?', 'community-directory' ),
+                    'setCenter' => __( 'Set Center', 'community-directory' ),
+                    'viewOnMap' => __( 'View on Map', 'community-directory' ),
                 ),
-                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base, //  '/wp-json/wp/v2/',
+                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base,
                 'postType' => array(
-                    'entity' => Entity::$post_type,
-                    'location' => Location::$type,
+                    'entity' => ClassEntity::$post_type,
+                    'location' => ClassLocation::$post_type,
+                    'offersNeeds' => ClassOffersNeeds::$post_type
+                ),
+                'pages' => array(
+                    'offersNeeds' => array()
+                ),
+                'taxonomyType' => array(
+                    'productService' => TaxonomyProductService::$taxonomy,
+                    'location' => TaxonomyLocation::$taxonomy,
+                ),
+                'map' => array(
+                    'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
+                    'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),
                 ),
                 'wp_nonce' => wp_create_nonce( 'wp_rest' ),
                 'edit_others_entities' => current_user_can( 'edit_others_entities' ),

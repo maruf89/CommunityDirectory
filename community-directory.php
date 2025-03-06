@@ -3,7 +3,7 @@
    Plugin Name: Community Directory
    Plugin URI: http://www.priemuses.lt
    description: A plugin to connect communities.
-   Version: 2020.11
+   Version: 2021.02
    Author: Marius V. Miliunas
    Author URI: http://www.maruf-hops-maps.com
    Text Domain: community-directory
@@ -17,14 +17,18 @@
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION' ) ) {
-    define( 'COMMUNITY_DIRECTORY_VERSION', '0.0.1' );
+    define( 'COMMUNITY_DIRECTORY_VERSION', '0.6.5' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM' ) ) {
-    define( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM', '0' );
+    define( 'COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM', '1' );
+  }
+
+  if ( ! defined( 'COMMUNITY_DIRECTORY_REST_VERSION' ) ) {
+    define( 'COMMUNITY_DIRECTORY_REST_VERSION', '1' );
   }
   if ( ! defined( 'COMMUNITY_DIRECTORY_DB_VERSION' ) ) {
-    define( 'COMMUNITY_DIRECTORY_DB_VERSION', '0.0.1' );
+    define( 'COMMUNITY_DIRECTORY_DB_VERSION', '0.0.3' );
   }
 
   if ( ! defined( 'COMMUNITY_DIRECTORY_PATH' ) ) {
@@ -54,10 +58,6 @@
   // include the Composer autoload file
   require 'vendor/autoload.php';
   use Maruf89\CommunityDirectory\Includes\ClassCommunityDirectory;
-
-  // if ( ! class_exists( 'CommunityDirectory' ) ) {
-  //   include_once dirname( __FILE__ ) . '/includes/class-community-directory.php';
-  // }
 
   function run_community_directory() {
     global $communitydirectory;

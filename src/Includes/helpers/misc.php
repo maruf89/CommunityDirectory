@@ -1,11 +1,13 @@
 <?php
 
+use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
+
 /**
  * Converts the first and last variables to display name
  */
 function community_directory_generate_display_name_from_user_name( $first, $last ) {
-    $first = ucfirst( $first );
-    $l = ucfirst( substr( $last, 0, 1 ) ) . '.';
+    $first = mb_convert_case( $first, MB_CASE_TITLE, 'UTF-8');
+    $l = mb_convert_case( substr( $last, 0, 1 ), MB_CASE_TITLE, 'UTF-8') . '.';
     return "$first $l";
 }
 
@@ -43,13 +45,11 @@ function community_directory_help_tip( $tip, $allow_html = false ) {
  * @return string|array
  */
 function community_directory_clean( $var ) {
-
     if ( is_array( $var ) ) {
         return array_map( 'community_directory_clean', $var );
     } else {
         return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
     }
-
 }
 
 /**
@@ -72,14 +72,6 @@ function communit_directory_sanitize_tooltip( $var ) {
         'ol'     => array(),
         'p'      => array(),
     ) ) );
-}
-
-/**
- * Converts characters to their latin safe variant
- */
-function community_directory_transliterate_string( $txt ) {
-    $transliterationTable = array('á' => 'a', 'Á' => 'A', 'à' => 'a', 'À' => 'A', 'ă' => 'a', 'Ă' => 'A', 'â' => 'a', 'Â' => 'A', 'å' => 'a', 'Å' => 'A', 'ã' => 'a', 'Ã' => 'A', 'ą' => 'a', 'Ą' => 'A', 'ā' => 'a', 'Ā' => 'A', 'ä' => 'ae', 'Ä' => 'AE', 'æ' => 'ae', 'Æ' => 'AE', 'ḃ' => 'b', 'Ḃ' => 'B', 'ć' => 'c', 'Ć' => 'C', 'ĉ' => 'c', 'Ĉ' => 'C', 'č' => 'c', 'Č' => 'C', 'ċ' => 'c', 'Ċ' => 'C', 'ç' => 'c', 'Ç' => 'C', 'ď' => 'd', 'Ď' => 'D', 'ḋ' => 'd', 'Ḋ' => 'D', 'đ' => 'd', 'Đ' => 'D', 'ð' => 'dh', 'Ð' => 'Dh', 'é' => 'e', 'É' => 'E', 'è' => 'e', 'È' => 'E', 'ĕ' => 'e', 'Ĕ' => 'E', 'ê' => 'e', 'Ê' => 'E', 'ě' => 'e', 'Ě' => 'E', 'ë' => 'e', 'Ë' => 'E', 'ė' => 'e', 'Ė' => 'E', 'ę' => 'e', 'Ę' => 'E', 'ē' => 'e', 'Ē' => 'E', 'ḟ' => 'f', 'Ḟ' => 'F', 'ƒ' => 'f', 'Ƒ' => 'F', 'ğ' => 'g', 'Ğ' => 'G', 'ĝ' => 'g', 'Ĝ' => 'G', 'ġ' => 'g', 'Ġ' => 'G', 'ģ' => 'g', 'Ģ' => 'G', 'ĥ' => 'h', 'Ĥ' => 'H', 'ħ' => 'h', 'Ħ' => 'H', 'í' => 'i', 'Í' => 'I', 'ì' => 'i', 'Ì' => 'I', 'î' => 'i', 'Î' => 'I', 'ï' => 'i', 'Ï' => 'I', 'ĩ' => 'i', 'Ĩ' => 'I', 'į' => 'i', 'Į' => 'I', 'ī' => 'i', 'Ī' => 'I', 'ĵ' => 'j', 'Ĵ' => 'J', 'ķ' => 'k', 'Ķ' => 'K', 'ĺ' => 'l', 'Ĺ' => 'L', 'ľ' => 'l', 'Ľ' => 'L', 'ļ' => 'l', 'Ļ' => 'L', 'ł' => 'l', 'Ł' => 'L', 'ṁ' => 'm', 'Ṁ' => 'M', 'ń' => 'n', 'Ń' => 'N', 'ň' => 'n', 'Ň' => 'N', 'ñ' => 'n', 'Ñ' => 'N', 'ņ' => 'n', 'Ņ' => 'N', 'ó' => 'o', 'Ó' => 'O', 'ò' => 'o', 'Ò' => 'O', 'ô' => 'o', 'Ô' => 'O', 'ő' => 'o', 'Ő' => 'O', 'õ' => 'o', 'Õ' => 'O', 'ø' => 'oe', 'Ø' => 'OE', 'ō' => 'o', 'Ō' => 'O', 'ơ' => 'o', 'Ơ' => 'O', 'ö' => 'oe', 'Ö' => 'OE', 'ṗ' => 'p', 'Ṗ' => 'P', 'ŕ' => 'r', 'Ŕ' => 'R', 'ř' => 'r', 'Ř' => 'R', 'ŗ' => 'r', 'Ŗ' => 'R', 'ś' => 's', 'Ś' => 'S', 'ŝ' => 's', 'Ŝ' => 'S', 'š' => 's', 'Š' => 'S', 'ṡ' => 's', 'Ṡ' => 'S', 'ş' => 's', 'Ş' => 'S', 'ș' => 's', 'Ș' => 'S', 'ß' => 'SS', 'ť' => 't', 'Ť' => 'T', 'ṫ' => 't', 'Ṫ' => 'T', 'ţ' => 't', 'Ţ' => 'T', 'ț' => 't', 'Ț' => 'T', 'ŧ' => 't', 'Ŧ' => 'T', 'ú' => 'u', 'Ú' => 'U', 'ù' => 'u', 'Ù' => 'U', 'ŭ' => 'u', 'Ŭ' => 'U', 'û' => 'u', 'Û' => 'U', 'ů' => 'u', 'Ů' => 'U', 'ű' => 'u', 'Ű' => 'U', 'ũ' => 'u', 'Ũ' => 'U', 'ų' => 'u', 'Ų' => 'U', 'ū' => 'u', 'Ū' => 'U', 'ư' => 'u', 'Ư' => 'U', 'ü' => 'ue', 'Ü' => 'UE', 'ẃ' => 'w', 'Ẃ' => 'W', 'ẁ' => 'w', 'Ẁ' => 'W', 'ŵ' => 'w', 'Ŵ' => 'W', 'ẅ' => 'w', 'Ẅ' => 'W', 'ý' => 'y', 'Ý' => 'Y', 'ỳ' => 'y', 'Ỳ' => 'Y', 'ŷ' => 'y', 'Ŷ' => 'Y', 'ÿ' => 'y', 'Ÿ' => 'Y', 'ź' => 'z', 'Ź' => 'Z', 'ž' => 'z', 'Ž' => 'Z', 'ż' => 'z', 'Ż' => 'Z', 'þ' => 'th', 'Þ' => 'Th', 'µ' => 'u', 'а' => 'a', 'А' => 'a', 'б' => 'b', 'Б' => 'b', 'в' => 'v', 'В' => 'v', 'г' => 'g', 'Г' => 'g', 'д' => 'd', 'Д' => 'd', 'е' => 'e', 'Е' => 'E', 'ё' => 'e', 'Ё' => 'E', 'ж' => 'zh', 'Ж' => 'zh', 'з' => 'z', 'З' => 'z', 'и' => 'i', 'И' => 'i', 'й' => 'j', 'Й' => 'j', 'к' => 'k', 'К' => 'k', 'л' => 'l', 'Л' => 'l', 'м' => 'm', 'М' => 'm', 'н' => 'n', 'Н' => 'n', 'о' => 'o', 'О' => 'o', 'п' => 'p', 'П' => 'p', 'р' => 'r', 'Р' => 'r', 'с' => 's', 'С' => 's', 'т' => 't', 'Т' => 't', 'у' => 'u', 'У' => 'u', 'ф' => 'f', 'Ф' => 'f', 'х' => 'h', 'Х' => 'h', 'ц' => 'c', 'Ц' => 'c', 'ч' => 'ch', 'Ч' => 'ch', 'ш' => 'sh', 'Ш' => 'sh', 'щ' => 'sch', 'Щ' => 'sch', 'ъ' => '', 'Ъ' => '', 'ы' => 'y', 'Ы' => 'y', 'ь' => '', 'Ь' => '', 'э' => 'e', 'Э' => 'e', 'ю' => 'ju', 'Ю' => 'ju', 'я' => 'ja', 'Я' => 'ja');
-    return str_replace( array_keys( $transliterationTable ), array_values( $transliterationTable ), $txt );
 }
 
 /**
@@ -216,32 +208,73 @@ function community_directory_get_post_types() {
  * Returns a variable from a post based on the passed in args
  * 
  * @param       $var_to_get     string          the field to get
- * @param       $field_key      string          the field key to check
- * @param       $field_value    string          the value to check with
+ * @param       $where_key      string          the field key to check
+ * @param       $where_val      string          the value to check with
  * @return                      any
  */
-function community_directory_get_post_var_by_field( $var_to_get, $field_key, $field_value, $post_type ) {
+function community_directory_get_post_var_by_field( $var_to_get, $where_key, $where_val, $post_type = '' ) {
     global $wpdb;
 
+    $p_type = '';
+    if ( !empty( $post_type ) ) $p_type = "AND post_type = '$post_type'";
+
+    if ( gettype( $where_val ) !== 'integer' ) $where_val = "'$where_val'";
+
     $post = $wpdb->get_var(
-        $wpdb->prepare( "SELECT $var_to_get
-                         FROM $wpdb->posts
-                         WHERE $field_key = %s AND post_type = %s"
-            , $field_value, $post_type
-        )
+        "SELECT $var_to_get
+        FROM $wpdb->posts
+        WHERE $where_key = $where_val $p_type AND post_status != 'auto-draft'"
     );
     
     return $post;
 }
 
-function community_directory_update_post_status( $post_id, $status ) {
-    // Update the post to be published or pending
-    return wp_update_post(
-        array(
-            'ID' => $post_id,
-            'post_status' => community_directory_enum_status_to_post_status( $status ),
-        )
-    );
+/**
+ * Given a a satus active type (true|false|1|2|3|4), the type it's for, and the type of return value, returns the status
+ * 
+ * @param   $action     boolean|int         true = 1 = active, false = 2 = inactive
+ * @param   $what_for   string              (entity|location|entity_child)
+ * @param   $type       string              (enum|post)
+ * @return              string
+ */
+function community_directory_bool_to_status(
+    $action,
+    string $what_for = 'entity',
+    string $type = 'enum'
+):string {
+    if ( gettype( $action ) === 'boolean' ) $action = $action ? 1 : 0;
+
+    switch ( $what_for ) {
+        case 'entity':
+            switch ( $type ) {
+                case 'enum':
+                    return $action ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_INACTIVE;
+                case 'post':
+                    return $action ? 'publish' : 'pending';
+            }
+        case 'location':
+            switch ( $type ) {
+                case 'enum':
+                    return $action ? COMMUNITY_DIRECTORY_ENUM_ACTIVE : COMMUNITY_DIRECTORY_ENUM_PENDING;
+                case 'post':
+                    return $action ? 'publish' : 'pending';
+            }
+        case 'entity_child':
+            switch ( $type ) {
+                case 'enum':
+                    return community_directory_bool_to_status( $action, 'entity' );
+                case 'post':
+                    switch ( $action ) {
+                        case 0:// Deactivated
+                        case 2:// Entity owner is inactive and entity_child is inactive
+                            return 'pending';
+                        case 1:// Active
+                            return 'publish';
+                        case 3:// Entity owner is inactive yet entity_child IS active (not visible)
+                            return 'future';
+                    }
+            }
+    }
 }
 
 /**
@@ -252,13 +285,13 @@ function community_directory_update_post_status( $post_id, $status ) {
  * @return                          string      returns the corresponding wp post status type
  */
 function community_directory_enum_status_to_post_status( $status = '', $display = false ):string {
-    switch ( $status ) {
+    switch ( strtoupper( $status ) ) {
         case COMMUNITY_DIRECTORY_ENUM_PENDING:
             return $display ? __( 'pending', 'community-directory' ) : 'pending';
         case COMMUNITY_DIRECTORY_ENUM_ACTIVE:
             return $display ? __( 'publish', 'community-directory' ) : 'publish';
         default:
-            return $display ? __( 'draft', 'community-directory' ) : 'draft';
+            return $status;
     }
 }
 
@@ -289,19 +322,61 @@ function community_directory_custom_nav_menu_item( $title, $url, $order, $parent
     $item->xfn = '';
     $item->status = '';
     return $item;
-  }
+}
 
-  if ( !function_exists( 'arr_val_or_null' ) ) {
-      function arr_val_or_null( $arr, $prop, $null = null ) {
-          if ( isset( $arr[$prop] ) ) return $arr[$prop];
-          return $null;
-      }
-  }
+function community_directory_function_transliterate_string( $txt ) {
+    $transliterationTable = array('á' => 'a', 'Á' => 'A', 'à' => 'a', 'À' => 'A', 'ă' => 'a', 'Ă' => 'A', 'â' => 'a', 'Â' => 'A', 'å' => 'a', 'Å' => 'A', 'ã' => 'a', 'Ã' => 'A', 'ą' => 'a', 'Ą' => 'A', 'ā' => 'a', 'Ā' => 'A', 'ä' => 'ae', 'Ä' => 'AE', 'æ' => 'ae', 'Æ' => 'AE', 'ḃ' => 'b', 'Ḃ' => 'B', 'ć' => 'c', 'Ć' => 'C', 'ĉ' => 'c', 'Ĉ' => 'C', 'č' => 'c', 'Č' => 'C', 'ċ' => 'c', 'Ċ' => 'C', 'ç' => 'c', 'Ç' => 'C', 'ď' => 'd', 'Ď' => 'D', 'ḋ' => 'd', 'Ḋ' => 'D', 'đ' => 'd', 'Đ' => 'D', 'ð' => 'dh', 'Ð' => 'Dh', 'é' => 'e', 'É' => 'E', 'è' => 'e', 'È' => 'E', 'ĕ' => 'e', 'Ĕ' => 'E', 'ê' => 'e', 'Ê' => 'E', 'ě' => 'e', 'Ě' => 'E', 'ë' => 'e', 'Ë' => 'E', 'ė' => 'e', 'Ė' => 'E', 'ę' => 'e', 'Ę' => 'E', 'ē' => 'e', 'Ē' => 'E', 'ḟ' => 'f', 'Ḟ' => 'F', 'ƒ' => 'f', 'Ƒ' => 'F', 'ğ' => 'g', 'Ğ' => 'G', 'ĝ' => 'g', 'Ĝ' => 'G', 'ġ' => 'g', 'Ġ' => 'G', 'ģ' => 'g', 'Ģ' => 'G', 'ĥ' => 'h', 'Ĥ' => 'H', 'ħ' => 'h', 'Ħ' => 'H', 'í' => 'i', 'Í' => 'I', 'ì' => 'i', 'Ì' => 'I', 'î' => 'i', 'Î' => 'I', 'ï' => 'i', 'Ï' => 'I', 'ĩ' => 'i', 'Ĩ' => 'I', 'į' => 'i', 'Į' => 'I', 'ī' => 'i', 'Ī' => 'I', 'ĵ' => 'j', 'Ĵ' => 'J', 'ķ' => 'k', 'Ķ' => 'K', 'ĺ' => 'l', 'Ĺ' => 'L', 'ľ' => 'l', 'Ľ' => 'L', 'ļ' => 'l', 'Ļ' => 'L', 'ł' => 'l', 'Ł' => 'L', 'ṁ' => 'm', 'Ṁ' => 'M', 'ń' => 'n', 'Ń' => 'N', 'ň' => 'n', 'Ň' => 'N', 'ñ' => 'n', 'Ñ' => 'N', 'ņ' => 'n', 'Ņ' => 'N', 'ó' => 'o', 'Ó' => 'O', 'ò' => 'o', 'Ò' => 'O', 'ô' => 'o', 'Ô' => 'O', 'ő' => 'o', 'Ő' => 'O', 'õ' => 'o', 'Õ' => 'O', 'ø' => 'oe', 'Ø' => 'OE', 'ō' => 'o', 'Ō' => 'O', 'ơ' => 'o', 'Ơ' => 'O', 'ö' => 'oe', 'Ö' => 'OE', 'ṗ' => 'p', 'Ṗ' => 'P', 'ŕ' => 'r', 'Ŕ' => 'R', 'ř' => 'r', 'Ř' => 'R', 'ŗ' => 'r', 'Ŗ' => 'R', 'ś' => 's', 'Ś' => 'S', 'ŝ' => 's', 'Ŝ' => 'S', 'š' => 's', 'Š' => 'S', 'ṡ' => 's', 'Ṡ' => 'S', 'ş' => 's', 'Ş' => 'S', 'ș' => 's', 'Ș' => 'S', 'ß' => 'SS', 'ť' => 't', 'Ť' => 'T', 'ṫ' => 't', 'Ṫ' => 'T', 'ţ' => 't', 'Ţ' => 'T', 'ț' => 't', 'Ț' => 'T', 'ŧ' => 't', 'Ŧ' => 'T', 'ú' => 'u', 'Ú' => 'U', 'ù' => 'u', 'Ù' => 'U', 'ŭ' => 'u', 'Ŭ' => 'U', 'û' => 'u', 'Û' => 'U', 'ů' => 'u', 'Ů' => 'U', 'ű' => 'u', 'Ű' => 'U', 'ũ' => 'u', 'Ũ' => 'U', 'ų' => 'u', 'Ų' => 'U', 'ū' => 'u', 'Ū' => 'U', 'ư' => 'u', 'Ư' => 'U', 'ü' => 'ue', 'Ü' => 'UE', 'ẃ' => 'w', 'Ẃ' => 'W', 'ẁ' => 'w', 'Ẁ' => 'W', 'ŵ' => 'w', 'Ŵ' => 'W', 'ẅ' => 'w', 'Ẅ' => 'W', 'ý' => 'y', 'Ý' => 'Y', 'ỳ' => 'y', 'Ỳ' => 'Y', 'ŷ' => 'y', 'Ŷ' => 'Y', 'ÿ' => 'y', 'Ÿ' => 'Y', 'ź' => 'z', 'Ź' => 'Z', 'ž' => 'z', 'Ž' => 'Z', 'ż' => 'z', 'Ż' => 'Z', 'þ' => 'th', 'Þ' => 'Th', 'µ' => 'u', 'а' => 'a', 'А' => 'a', 'б' => 'b', 'Б' => 'b', 'в' => 'v', 'В' => 'v', 'г' => 'g', 'Г' => 'g', 'д' => 'd', 'Д' => 'd', 'е' => 'e', 'Е' => 'E', 'ё' => 'e', 'Ё' => 'E', 'ж' => 'zh', 'Ж' => 'zh', 'з' => 'z', 'З' => 'z', 'и' => 'i', 'И' => 'i', 'й' => 'j', 'Й' => 'j', 'к' => 'k', 'К' => 'k', 'л' => 'l', 'Л' => 'l', 'м' => 'm', 'М' => 'm', 'н' => 'n', 'Н' => 'n', 'о' => 'o', 'О' => 'o', 'п' => 'p', 'П' => 'p', 'р' => 'r', 'Р' => 'r', 'с' => 's', 'С' => 's', 'т' => 't', 'Т' => 't', 'у' => 'u', 'У' => 'u', 'ф' => 'f', 'Ф' => 'f', 'х' => 'h', 'Х' => 'h', 'ц' => 'c', 'Ц' => 'c', 'ч' => 'ch', 'Ч' => 'ch', 'ш' => 'sh', 'Ш' => 'sh', 'щ' => 'sch', 'Щ' => 'sch', 'ъ' => '', 'Ъ' => '', 'ы' => 'y', 'Ы' => 'y', 'ь' => '', 'Ь' => '', 'э' => 'e', 'Э' => 'e', 'ю' => 'ju', 'Ю' => 'ju', 'я' => 'ja', 'Я' => 'ja');
+    return str_replace(array_keys($transliterationTable), array_values($transliterationTable), $txt);
+}
+
+/**
+ * Prepares a location for slug
+ */
+function community_directory_string_to_slug( $location ) {
+    $formatted = strtolower( community_directory_function_transliterate_string( $location ) );
+    $formatted = sanitize_title_with_dashes( $formatted );
+    return $formatted;
+}
+
+// Capitalizes first letter of location name
+function community_directory_format_uc_first( $location ) {
+    return mb_convert_case( mb_convert_case( $location , MB_CASE_LOWER, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+}
+
+function community_directory_is_valid_location_name( string $loc_name ):bool {
+    $match = preg_match('/^[\p{L}\s]+$/u', $loc_name, $output_array);
+
+    return !!$match;
+}
+
+function community_directory_settings_get( string $key = '', string $default_value = '' ) {
+    $settings = get_option( 'community_directory_settings', array());
+
+    return empty( $key ) ? $settings :
+        ( isset( $settings[ $key ] ) ? $settings[ $key ] : $default_value );
+}
+
+function cd_sort_instances_by_has_photo( $a,  $b ):int {
+    if ( !!$a->get_featured() ) return -1;
+    if ( !!$b->get_featured() ) return 1;
+    return 0;
+}
+
+function cd_filter_instances_by_has_coords( Instance $instance ):bool {
+    return $instance->has_coords();
+}
+
+if ( !function_exists( 'arr_val_or_null' ) ) {
+    function arr_val_or_null( $arr, $prop, $null = null ) {
+        if ( isset( $arr[$prop] ) ) return $arr[$prop];
+        return $null;
+    }
+}
 
 if ( !function_exists( 'arr_equals_val' ) ) {
-        function arr_equals_val( $arr, $prop, $val, $strict = true ):bool {
-            $_val = arr_val_or_null( $arr, $prop );
-            if ( $strict ) return $_val === $val;
-            return $_val == $val;
-      }
+    function arr_equals_val( $arr, $prop, $val, $strict = true ):bool {
+        $_val = arr_val_or_null( $arr, $prop );
+        if ( $strict ) return $_val === $val;
+        return $_val == $val;
+    }
 }

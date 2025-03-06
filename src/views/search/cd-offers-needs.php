@@ -1,0 +1,1 @@
+<h1>Load from template</h1>

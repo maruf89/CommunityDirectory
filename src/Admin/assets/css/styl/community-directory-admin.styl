@@ -1,11 +1,7 @@
-/**
- * Predefined vars
- *
- * base-font-size
- */
+$base-font-size: 15px;
 
 #wpbody-content
-    font-size base-font-size
+    font-size $base-font-size
     line-height 1.5
 
 .hide
@@ -38,3 +34,13 @@
 
     &:hover
         color #0b0
+
+#cd-product-service-type-adder
+    display none
+
+#cd-product-service-type-all
+    max-height 1400px
+
+.acf-field-open-street-map
+    div[data-editor-config]
+        min-height 200px

@@ -84,20 +84,16 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                 );
                 break;
             default:
+                global $community_directory_hide_save_button;
+                $community_directory_hide_save_button = true;
+                $cur = empty( $current_section ) ? 'all' : $current_section;
                 $settings = array(
                     array(
-                        'title' => $title,
-                        'type'  => 'title',
-                        'desc'  => 'Everything dealing with locations',
-                        'desc_tip' => true,
-                    ),
-                    array(
-                        'name'     => __( 'Locations', 'community-directory' ),
-                        'desc'     => __( 'These are the locations currently active and selectable', 'community-directory' ),
-                        'id'       => 'locations',
-                        'type'     => 'location_list',
-                        'status'   => community_directory_status_to_enum( $current_section ),
-                        'desc_tip' => true,
+                        'name'          => __( 'Locations', 'community-directory' ),
+                        'desc'          => __( 'These are the locations currently active and selectable', 'community-directory' ),
+                        'id'            => "${cur}_locations",
+                        'type'          => 'location_list',
+                        'type_display'  => $current_section,
                     ),
                     array( 'type' => 'sectionend' ),
                 );
@@ -115,7 +111,8 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     public function get_sections() {
 
         $sections = array(
-            ''      => __( 'Active Locations', 'community-directory' ),
+            ''      => __( 'All Locations', 'community-directory' ),
+            'active'      => __( 'Active Locations', 'community-directory' ),
             'pending'      => __( 'Pending Locations', 'community-directory' ),
             'edit'      => __( 'Edit Locations', 'community-directory' ),
         );
@@ -140,32 +137,16 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
     }
 
     public function output_location_list( $value ) {
-        $locations = community_directory_get_locations(
-            $value['status'] === COMMUNITY_DIRECTORY_ENUM_ACTIVE, false, false
-        );
+        $wp_list_table = new ClassLocationListTable( $this->id, $value['type_display'] );
+        $wp_list_table->prepare_items();
 
-        ?>
-            <tr>
-                <th><?= __( 'Location', 'community-directory' );?></th>
-                <th><?= __( 'Slug', 'community-directory' );?></th>
-                <th><?= __( 'Active Inhabitants', 'community-directory' );?></th>
-            </tr>
-        <?php
-
-        foreach ( $locations as $location ): ?>
-
-            <tr data-location-id="<?= $location->id ?>">
-                <td><?= $location->display_name ?></td>
-                <td><?= $location->slug ?></td>
-                <td><?= $location->active_inhabitants ?></td>
-            </tr>
-
-        <?php endforeach;
-
+        //Table of elements
+        $wp_list_table->display();
     }
 
     public function output_edit_location_list( $value ) {
-        $locations = community_directory_get_locations();
+        $locations = apply_filters( 'community_directory_get_locations', [], '', null );
+        $locations = apply_filters( 'community_directory_format_locations', $locations, 'instance' );
 
         ?>
                   <tr>
@@ -240,13 +221,6 @@ class ClassSettingsLocation extends AbstractClassSettingsPage {
                       <span class="table-remove dashicons dashicons-remove"></span>
                     </td>
                   </tr>
-            <script type="text/javascript">
-                var onload = document.body.onload;
-                document.body.onload = function () {
-                    if ( onload !== document.body.onload ) onload();
-                    cdData.fn.editLocationTable( jQuery('.edit-locations-table') );
-                }
-            </script>
         <?php
     }
 

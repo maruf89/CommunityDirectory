@@ -1,0 +1,13 @@
+<!-- phpunit.xml -->
+<phpunit
+    backupGlobals="false"
+    colors="true"
+    bootstrap="vendor/autoload.php"
+    verbose="true">
+    <testsuites>
+        <testsuite name="Community Directory Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+        <!-- Add more testsuites if needed -->
+    </testsuites>
+</phpunit>

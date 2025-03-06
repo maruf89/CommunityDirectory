@@ -126,7 +126,8 @@ class ClassTest {
 
         // If we're not generating locations, get the existing ones
         if ( !$generate_locations ) {
-            $db_locations = community_directory_get_locations( true, false, 'display_name', ARRAY_A );
+            $db_locations = apply_filters( 'community_directory_get_locations', [], null, null, ARRAY_A );
+            $db_locations = apply_filters( 'community_directory_format_locations', $db_locations, 'display_name' );
             $locations = array_keys( $db_locations );
         } else
             // Otherwise get from our own test location names
@@ -142,39 +143,16 @@ class ClassTest {
                 $rand_loc = apply_filters( 'community_directory_prepare_location_for_creation', array(
                     'display_name'  => $rand_loc_name,
                     'status'        => $status,
-                ) );
+                ), null );
             else
                 $rand_loc = $db_locations[$rand_loc_name];
-            
-            // Create new loc if doesn't exist
-            $loc_post_id = community_directory_create_location_if_doesnt_exist( $rand_loc );
-            if ( !$loc_post_id ) {
-                // If the loc does exist, get it's post_id
-                $loc_post_id =
-                    community_directory_get_row_var( $rand_loc_name, 'post_id', 'display_name' );
-            }
             
             $wp_user = $this->generate_new_wp_user();
             $user_id = wp_insert_user( $wp_user );
 
-            $data = array(
-                'first_name' => $wp_user['first_name'],
-                'last_name' => $wp_user['last_name'],
-                'username' => $wp_user['user_login'],
-                'email' => $wp_user['user_email'],
-                'password' => $wp_user['user_pass'],
-                'community_directory_location' => $rand_loc_name,
-            );
-
-            apply_filters('uwp_before_extra_fields_save', $data, 'register', $user_id);
-
-            // Whether to activate the user
-            if ( $make_active ) {
-                // Shift the inhabitants to be active, since in the registration it's added as an inactive user
-                community_directory_shift_inhabitants_count( $loc_post_id, 'post_id', true );
-
-                community_directory_activate_deactivate_entity( true, $user_id, 'user_id' );
-            }
+            $loc_data = $wp_user;
+            $loc_data[ 'status' ] = $status;
+            ClassAccount::create_loc_and_entity( $rand_loc_name, $loc_data, $user_id );
 
             $generated_count++;
         }

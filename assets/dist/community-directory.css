@@ -1,0 +1,128 @@
+.retina {
+  display: none;
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 124.8dpi), only screen and (min-resolution: 1.3dppx) {
+  .non-retina,
+  .non-retina-inline-block,
+  .non-retina-inline {
+    display: none !important;
+  }
+  .retina {
+    display: block !important;
+  }
+  .retina-inline-block {
+    display: inline-block !important;
+  }
+  .retina-inline {
+    display: inline !important;
+  }
+}
+body h1 {
+  font-size: 2.5em;
+}
+body h1 {
+  font-size: 2em;
+}
+body h3 {
+  font-size: 1.75em;
+}
+body h4 {
+  font-size: 1.5em;
+}
+body h5 {
+  font-size: 1.25em;
+}
+body h6 {
+  font-size: 1em;
+}
+.col-centered {
+  float: none;
+  margin: 0 auto;
+}
+.carot:checked::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.carot::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.d-icon:before {
+  display: inline-block;
+  font: normal 400 1em/1 dashicons;
+  speak: never;
+  text-decoration: none;
+  text-transform: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: middle;
+  text-align: center;
+  transition: color 0.1s ease-in;
+  padding-right: 0.2em;
+}
+.d-icon.location:before {
+  content: "\F230";
+}
+.d-icon.taxonomy:before,
+.d-icon.product-service:before {
+  content: "\F323";
+}
+.instance-map {
+  width: 100%;
+  min-height: 200px;
+  margin: 0 0 2em;
+}
+.instance-map .marker {
+  display: none;
+}
+.instance-map .img-container {
+  min-width: 170px;
+  min-height: 70px;
+  background-size: cover !important;
+  margin-bottom: 1em;
+}
+.instance-map .text {
+  font-size: 14px;
+}
+.instance-map li {
+  list-style: none;
+}
+.ps-parent {
+  overflow: hidden;
+  max-height: 24px;
+  transition: max-height 250ms ease-in;
+}
+.ps-parent.opened {
+  max-height: 1000px;
+}
+.ps-parent.opened > .selectit::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.ps-parent > .selectit::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.ps-parent > li {
+  max-height: 0;
+}
+@media only screen and (min-width: 992px) {
+  .instance-map {
+    min-height: 300px;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .instance-map {
+    min-height: 400px;
+  }
+}
+

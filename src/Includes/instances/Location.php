@@ -3,99 +3,484 @@
  *
  * Location instance
  *
- * @since      1.0.0
+ * @since      0.6.4
  * @author     Marius Miliunas
  */
 
 namespace Maruf89\CommunityDirectory\Includes\instances;
 
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\{ClassLocation, ClassErrorHandler, TaxonomyLocation};
+use Maruf89\CommunityDirectory\Includes\Abstracts\Instance;
 
-class Location extends ClassLocation {
-    private static ?Location $active_location = null;
-    public static string $type = 'cd-location';
+class Location extends Instance {
 
-    private bool $has_loaded = false;
+    public static string $post_type;
+    public static string $post_slug;
+    protected static string $link_identifier;
+    
+    protected bool $_cd_loaded = false;
+    protected array $_featured = [
+        'sizes' => []
+    ];
 
-    private int $location_id;
-    private string $display_name;
-    private string $slug;
-    private int $post_id;
-    private int $active_inhabitants;
-    private int $inactive_inhabitants;
-    private string $status;
+    protected int $id;
+    protected int $location_id;
+    protected string $display_name;
+    protected string $slug;
+    protected int $active_inhabitants;
+    protected int $inactive_inhabitants;
+    protected string $status;
+    protected int $taxonomy_id;
+    protected $coords;
 
-    private ?\WP_Post $post = null;
-
-    public static function get_active_location( int $location_post_id = null ):?Location {
-        if ( Location::$active_location != null ) return Location::$active_location;
-
-        if ( $location_post_id ) return Location::$active_location = new Location( null, $location_post_id );
-
-        return new Location();
-    }
-
-    public function __construct( $location_id = null, $post_id = null ) {
+    public function __construct(
+        int $location_id = null,
+        int $post_id = null,
+        object $post = null,
+        int $taxonomy_id = null
+    ) {
         if ( $location_id ) $this->location_id = $location_id;
         if ( $post_id ) $this->post_id = $post_id;
+        if ( $post ) $this->from_post_obj( $post );
+        if ( $taxonomy_id ) $this->taxonomy_id = $taxonomy_id;
     }
 
-    public function __get( $property ) {
-        if ( property_exists( $this, $property ) ) {
-            if ( !isset( $this->$property ) && !$this->has_loaded ) $this->load_from_db();
-            if ( isset( $this->$property ) )
-                return $this->$property;
-        }
+    /////////////////////////////////////
+    /////////////    Get     ////////////
+    /////////////////////////////////////
 
-        // check the post obj
-        if ( ( !$this->has_loaded && $this->load_from_db() ) || $this->has_loaded ) {
-            if ( property_exists( $this->post, $property ) )
-                return $this->post->$property;
+    /**
+     * Gets the entities status depending on the desired format
+     */
+    public function get_status( $format = 'bool' ) {
+        if ( $this->load_cd_from_db() ) {
+            switch ( $format ) {
+                case 'raw': return $this->status;
+                case 'bool': return $this->status === COMMUNITY_DIRECTORY_ENUM_ACTIVE;
+                case 'enum': return $this->status;
+                case 'display': return __( ucfirst( strtolower( $this->status ) ), 'community-directory' );
+            }
         }
+        return null;
     }
 
     public function is_valid():bool {
         return $this->load_from_db();
     }
 
-    private function load_from_db():bool {
-        if ( $this->has_loaded ) return true;
-        if ( !isset( $this->location_id ) && !isset( $this->post_id ) ) return false;
-        
-        global $wpdb;
-        $loaded = false;
+    public function get_featured( $size = 'medium' ):string {
+        if ( isset( $this->_featured[ 'sizes' ][ $size ] ) ) return $this->_featured[ 'sizes' ][ $size ];
 
-        if ( !isset( $this->location_id ) || !isset( $this->post_id ) ) {
-            $where_key = isset( $this->post_id ) ? 'post_id' : 'id';
-            $where_val = isset( $this->post_id ) ? $this->post_id : $this->location_id;
-            $row = $wpdb->get_row( 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS .
-                            " WHERE $where_key = $where_val"
-            , ARRAY_A);
+        $id = $this->_featured[ 'id' ] =  isset( $this->_featured[ 'id' ] ) ?
+            $this->_featured[ 'id' ] : get_post_thumbnail_id( $this->post_id );
 
-            if ( $row ) {
-                $this->fill_with_data( $row );
-                $loaded = true;
-            }
-        }
-
-        if ( !isset( $this->post ) ) {
-            $this->post = \WP_Post::get_instance( $this->post_id );
-            if ( $this->post ) {
-                $this->has_loaded = true;
-                $loaded = true;
-            }
-        }
-
-        return $loaded;
+        return $this->_featured[ 'sizes' ][ $size ] =
+            arr_val_or_null( wp_get_attachment_image_src( $id, $size ), 0, '' );
     }
 
-    public function fill_with_data( $data ) {
-        $this->location_id = $data['id'];
-        $this->display_name = $data['display_name'];
-        $this->slug = $data['slug'];
-        $this->active_inhabitants = $data['active_inhabitants'];
-        $this->inactive_inhabitants = $data['inactive_inhabitants'];
-        $this->post_id = $data['post_id'];
+    /////////////////////////////////////
+    /////////////   Create   ////////////
+    /////////////////////////////////////
+
+    /**
+     * Creates a new Location post
+     * 
+     * @param       $data       ARRAY_A         fields:
+     *     (string display_name|?string slug|?string status|?int active_inhabitants|?int inactive_inhabitants|?string coords)
+     * @return                   int|WP_Error    either the returned row id or error
+     */
+    public function insert_into_db( array $data ):bool {
+        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
+            die( 'display_name must be set and cannot be empty' );
+        }
+
+        global $wpdb;
+
+        // If we haven't set the properties on the Location object yet
+        if ( !isset( $this->slug ) )
+            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data, $this );
+
+        // If the loc doesn't have a post_id insert into db
+        if ( !isset( $this->post_id ) || !$this->post_id )
+            $this->create_new_post( isset( $data[ 'user_id' ] ) ? $data[ 'user_id' ] : 0 );
+
+        // Save the location to the location taxonomy
+        $term_ids = TaxonomyLocation::get_instance()->new_location_created( $this );
+        if ( $term_ids instanceof \WP_Error )
+            $term_ids = (array) get_term_by( 'slug', $location->slug, TaxonomyLocation::$taxonomy );
+            
+        $coords = community_directory_coords_to_mysql_point( $this->coords );
+            
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = $wpdb->prepare(
+            "
+                INSERT INTO $table
+                ( display_name, slug, status, post_id, active_inhabitants, inactive_inhabitants, coords, taxonomy_id )
+                VALUES( %s, %s, %s, %d, %d, %d, $coords, %d )
+            ",
+            $this->display_name,
+            $this->slug,
+            $this->status,
+            $this->post_id,
+            $this->active_inhabitants,
+            $this->inactive_inhabitants,
+            $term_ids[ 'term_taxonomy_id' ],
+        );
+
+        $result = $wpdb->query( $sql );
+        
+        $this->load_from_db();
+
+        return !!$result;
+    }
+    
+    /**
+     * Creates a new wp post for the location and set's the post_id to the newly inserted row
+     * 
+     * @param       $data       array       an associative array with 'display_name', and 'slug' required
+     */
+    public function create_new_post( int $optional_user_id = 0 ) {
+        // Create post object
+        $my_post = array(
+            'post_title'    => $this->display_name,
+            'post_status'   => community_directory_enum_status_to_post_status( $this->status ),
+            'post_type'     => self::$post_type,
+            'post_author'   => $optional_user_id,
+        );
+        
+        // Insert the post into the database
+        $this->post_id = wp_insert_post( $my_post );
+
+        // For some reason the post_name doesn't save upon insertion so we update it afterwards
+        $this->update_post( array(
+            'post_name' => $this->slug
+        ) );
+
+        return $this->post_id;
+    }
+
+    /////////////////////////////////////
+    /////////////   Update   ////////////
+    /////////////////////////////////////
+
+    /**
+     * Updates the Community Directory Locations table
+     */
+    public function update_cd_row( array $changes ):bool {
+        if ( !count( $changes ) ) die( 'Location::update_cd_row must be passed an array argument with values' );
+        
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        
+        $update = [];
+
+        foreach ( $changes as $key => $value ) {
+            switch ( $key ) {
+                case 'id':
+                    die( 'Cannot alter the id of an existing location' );
+                case 'active_inhabitants':
+                case 'inactive_inhabitants':
+                case 'taxonomy_id':
+                    $update[] = "$key = $value";
+                    break;
+                case 'status':
+                    $update[] = "$key = '" . community_directory_status_to_enum( $value ) . "'";
+                    break;
+                case 'coords':
+                    $update[] = "$key = " . community_directory_coords_to_mysql_point( $value );
+                    break;
+                default:
+                    $update[] = "$key = '$value'";
+            }
+        }
+
+        $update_clause = implode( ', ', $update );
+
+        if ( isset( $this->location_id ) ) {
+            $which = 'id';
+            $id = $this->location_id;
+        } else {
+            $which = 'post_id';
+            $id = $this->post_id;
+        }
+
+        global $wpdb;
+
+        $sql = "
+            UPDATE $table
+            SET $update_clause
+            WHERE $which = $id
+        ";
+        
+        return !!$wpdb->query( $sql );
+    }
+    
+    /**
+     * Activates/Deactivates a location and it's post
+     */
+    public function activate_deactivate( bool $activate ):bool {
+        $this->load_from_db();
+
+        $cd_status = community_directory_bool_to_status( $activate, 'location' );
+        $cd_updated = $this->update_cd_row( array( 'status' => $cd_status ) );
+
+        $post_status = community_directory_bool_to_status( $activate, 'location', 'post' );
+        $post_updated = $this->update_post( array( 'post_status' => $post_status ) );
+
+        return $cd_updated && $post_updated;
+    }
+
+    /////////////////////////////////////
+    /////////////   Delete   ////////////
+    /////////////////////////////////////
+
+    /**
+     * Delete its own cd row, post, and remove itself from caches
+     */
+    public function delete_self():bool {
+        if ( !$this->load_cd_from_db() ) return false;
+
+        global $wpdb;
+        
+        $cd_delete = $wpdb->delete(
+            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
+            array( 'id' => $this->location_id ),
+            '%d'
+        );
+        
+        $deleted_post = wp_delete_post( $this->post_id, true );
+
+        $deleted_term = wp_delete_term( $this->taxonomy_id, TaxonomyLocation::$taxonomy );
+        
+        $this->_remove_from_cache();
+
+        return !!$cd_delete && !!$deleted_post && !!$deleted_term;
+    }
+
+    //////////////////////////////////
+    //////// Loading from DB /////////
+    //////////////////////////////////
+
+    protected function load_from_db():bool {
+        if ( $this->_has_loaded ) return true;
+        if ( !isset( $this->location_id ) && !isset( $this->post_id ) &&
+             !isset( $this->taxonomy_id ) ) return false;
+
+        return $this->_has_loaded = $this->load_cd_from_db() && $this->load_post_from_db();
+    }
+
+    protected function load_cd_from_db() {
+        if ( $this->_cd_loaded ) return true;
+
+        global $wpdb;
+
+        if ( isset( $this->location_id ) ) {
+            $where_key = 'id';
+            $where_val = $this->location_id;
+        } elseif ( isset( $this->post_id ) ) {
+            $where_key = 'post_id';
+            $where_val = $this->post_id;
+        } elseif ( isset( $this->taxonomy_id ) ) {
+            $where_key = 'taxonomy_id';
+            $where_val = $this->taxonomy_id;
+        } else {
+            ClassErrorHandler::handle_exception(
+                new \WP_Error( 500, 'Trying to load non-existant location from db. How?', $this ) );
+            return false;
+        }
+
+        if ( !$this->_check_cd_fields() ) {
+            $row = $wpdb->get_row( 'SELECT *
+                                    FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
+                                    WHERE $where_key = $where_val"
+            );
+
+            return $row && $this->fill_with_data( $row );
+        }
+        return false;
+    }
+
+    public function fill_with_data( object $data ) {
+        $this->display_name = $data->display_name ?? null;
+        $this->slug = $data->slug ?? null;
+        $this->active_inhabitants = $data->active_inhabitants ?? 0;
+        $this->inactive_inhabitants = $data->inactive_inhabitants ?? 0;
+        $this->status = $data->status ?? null;
+        $this->taxonomy_id = $data->taxonomy_id ?? 0;
+
+        if ( isset( $data->id ) )
+            $this->location_id = $this->id = $data->id;
+        else if ( isset( $data->location_id ) )
+            $this->location_id = $data->location_id;
+            
+        if ( isset( $data->post_id ) )
+            $this->post_id = $data->post_id;
+
+        if ( isset( $data->coords ) && !empty( $data->coords ) ) {
+            if ( gettype( $data->coords ) === 'array' ) $this->coords = $data->coords;
+            else {
+                try {
+                    $this->coords = unpack('x/x/x/x/corder/Ltype/dlat/dlon', $data->coords);
+                } catch (\Exception $ex) {
+                    ClassErrorHandler::handle_exception($ex);
+                }
+            }
+        }
+
+        return $this->_check_cd_fields();
+    }
+
+    /**
+     * Check whether all of the cd db row fields are set
+     */
+    private function _check_cd_fields():bool {
+        $fields = [
+            'location_id' => 'integer',
+            'display_name' => 'string',
+            'slug' => 'string',
+            'status' => 'string',
+            'active_inhabitants' => 'integer',
+            'inactive_inhabitants' => 'integer',
+            'coords' => 'array',
+        ];
+
+        foreach ( $fields as $prop => $type )
+            if ( !isset( $this->{$prop} ) || gettype( $this->{$prop} ) !== $type ) return false;
+
+
+        // If we got this far then, everything is set
+        return $this->_cd_loaded = true;
+    }
+    
+    protected static array $_location_id_cache = [];
+    protected static array $_taxonomy_id_cache = [];
+
+    protected function _save_to_cache() {
+        if ( isset( $this->post_id ) )
+            parent::_save_to_cache();
+        if ( isset( $this->location_id ) )
+            self::$_location_id_cache[ $this->location_id ] = $this;
+        if ( isset( $this->taxonomy_id ) )
+            self::$_taxonomy_id_cache[ $this->taxonomy_id ] = $this;
+    }
+
+    protected function _remove_from_cache() {
+        if ( isset( $this->post_id ) )
+            parent::_remove_from_cache();
+        if ( isset( $this->location_id ) && isset( self::$_location_id_cache[ $this->location_id ] ) )
+            unset( self::$_location_id_cache[ $this->location_id ] );
+        if ( isset( $this->taxonomy_id ) && isset( self::$_taxonomy_id_cache[ $this->taxonomy_id ] ) )
+            unset( self::$_taxonomy_id_cache[ $this->taxonomy_id ] );
+    }
+
+    /////////////////////////////////////
+    /////////////   Static   ////////////
+    /////////////////////////////////////
+
+    /**
+     * If a cached version exists, gets an entity, otherwise creates a new one
+     */
+    public static function get_instance(
+        int $post_id = null,
+        int $location_id = null,
+        object $post = null,
+        int $taxonomy_id = null
+    ):?Location {
+        if ( !$post_id && !$location_id && !$post && !$taxonomy_id ) {
+            ClassErrorHandler( new \WP_Error( 500, 'Trying to load location with no variables' ) );
+            return null;
+        }
+        
+        $instance = parent::_get_instance( $post_id, $post );
+
+        if ( $instance ) return $instance;
+        else if ( $location_id && isset( self::$_location_id_cache[ $location_id ] ) )
+            return self::$_location_id_cache[ $location_id ];
+        else if ( $taxonomy_id && isset( self::$_taxonomy_id_cache[ $taxonomy_id ] ))
+            return self::$_taxonomy_id_cache[ $taxonomy_id ];
+
+        return new Location( $location_id, $post_id, $post, $taxonomy_id );
+    }
+
+    /**
+     * A method to sanitize or fill out any fields for a location before adding it to the DB
+     * 
+     * @param           a_array         $data       must contain ('display_name' => string)
+     * @return                          a_array
+     */
+    public static function prepare_for_creation( array $data, Location $instance = null ):array {
+        if ( !isset( $data[ 'display_name' ] ) ) die( 'Invalid call to Location::prepare_location_for_creation. Argument 1 (array) requires (string) key \'display_name\'' );
+
+        $default_loc = community_directory_settings_get( 'default_location', '0,0' );
+
+        $default_args = array(
+            'display_name'          => community_directory_format_uc_first( $data['display_name'] ),
+            'slug'                  => community_directory_string_to_slug( $data['display_name'] ),
+            'status'                => COMMUNITY_DIRECTORY_ENUM_PENDING,
+            'active_inhabitants'    => 0,
+            'inactive_inhabitants'  => 0,
+            'coords'                => community_directory_coords_to_array( '0,0' ),
+            'taxonomy_id'           => 0
+        );
+
+        $prepared = wp_parse_args( $data, $default_args );
+
+        if ( $instance ) $instance->fill_with_data( (object) $prepared );
+        
+        return $prepared;
+    }
+    
+    /**
+     * Adds to the active/inactive inhabitants count based on the status and count
+     */
+    public static function add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
+        $post_id = $which === 'post_id' ? $loc_or_post_id : null;
+        $location_id = $which === 'id' ? $loc_or_post_id : null;
+
+        global $wpdb;
+
+        $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
+        $changes = array();
+        $changes[ $field ] = "$field + $count";
+        $Location = Location::get_instance( $post_id, $location_id );
+        
+        return $Location->update_cd_row( $changes );
+    }
+
+    /**
+     * Shifts the active/inactive inhabitants count in the location table
+     * 
+     * @param       $loc_id_or_post_id      int     either the location id, or post_id
+     * @param       $which                  string  either 'id' or 'post_id'
+     * @param       $increment              bool    whether to increment active_inhabitants
+     */
+    public static function shift_inhabitants_count( $loc_id_or_post_id, $which, $increment ) {
+        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
+
+        global $wpdb;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $sql = "UPDATE $table SET ";
+        $plus_minus_active = $increment ? '+' : '-';
+        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
+        $plus_minus_inactive = $increment ? '-' : '+';
+        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
+        $where = "WHERE $which = $loc_id_or_post_id";
+        
+        return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
+    }
+
+    /**
+     * To be called upon post type registration long before any instance is required
+     */
+    public static function define_post_type(
+        string $post_type,
+        string $post_slug,
+        string $link_identifier = 'post_name'
+    ) {
+        self::$post_type = $post_type;
+        self::$post_slug = $post_slug;
+        self::$link_identifier = $link_identifier;
     }
 
 }

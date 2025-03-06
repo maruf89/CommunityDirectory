@@ -1,0 +1,103 @@
+/**
+ * Predefined vars
+ *
+ * base-font-size
+ */
+#wpbody-content {
+  font-size: base-font-size;
+  line-height: 1.5;
+}
+.hide {
+  display: none;
+}
+.table-editable {
+  position: relative;
+}
+.table-editable .dashicons {
+  font-size: 1.5em;
+}
+.table-remove {
+  color: #bbb rown;
+  cursor: pointer;
+}
+.table-remove:hover {
+  color: #f00;
+}
+.table-up,
+.table-down {
+  color: #007;
+  cursor: pointer;
+}
+.table-up:hover,
+.table-down:hover {
+  color: #00f;
+}
+.table-add {
+  color: #070;
+  cursor: pointer;
+}
+.table-add:hover {
+  color: #0b0;
+}
+body.post-type-cd-offers-needs .handle-actions,
+body.post-type-cd-entity .handle-actions,
+body.post-type-cd-offers-needs #cd-product-service-type-adder,
+body.post-type-cd-entity #cd-product-service-type-adder,
+body.post-type-cd-offers-needs #cd-product-service-type-tabs,
+body.post-type-cd-entity #cd-product-service-type-tabs,
+body.post-type-cd-offers-needs #edit-slug-box,
+body.post-type-cd-entity #edit-slug-box,
+body.post-type-cd-offers-needs #show-settings-link,
+body.post-type-cd-entity #show-settings-link,
+body.post-type-cd-offers-needs #wpfooter,
+body.post-type-cd-entity #wpfooter {
+  display: none;
+}
+body.post-type-cd-entity .wp-heading-inline + a {
+  display: none;
+}
+#cd-product-service-typediv .postbox-header h2 {
+  display: inline-block;
+}
+#cd-product-service-typediv .postbox-header h2::after {
+  content: '*';
+  color: #f00;
+  margin-left: 0.25em;
+}
+#cd-product-service-type-all {
+  max-height: 1000px;
+}
+.acf-field-open-street-map div[data-editor-config] {
+  min-height: 200px;
+}
+.focusable {
+  border: 4px solid transparent;
+  transition: border 1s ease-out;
+}
+.focusable.focus {
+  border-color: #f00;
+}
+.ps-parent {
+  overflow: hidden;
+  max-height: 24px;
+  transition: max-height 250ms ease-in;
+}
+.ps-parent.opened {
+  max-height: 1000px;
+}
+.ps-parent.opened > .selectit::after {
+  transform: rotate(45deg) translateY(-4px) translateX(2px);
+}
+.ps-parent > .selectit::after {
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  content: '';
+  transition: transform 250ms ease-in;
+  transform: rotate(-45deg);
+}
+.ps-parent > li {
+  max-height: 0;
+}
+

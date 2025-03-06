@@ -30,7 +30,7 @@ class ClassRestEndPoints {
     }
 
     public function __construct() {
-        $this->rest_base = COMMUNITY_DIRECTORY_NAME . '/v' . COMMUNITY_DIRECTORY_VERSION_SINGLE_NUM . '/';
+        $this->rest_base = COMMUNITY_DIRECTORY_NAME . '/v' . COMMUNITY_DIRECTORY_REST_VERSION . '/';
     }
 
     public static function on_init() {
@@ -43,7 +43,7 @@ class ClassRestEndPoints {
         
         foreach ( $routes as $ns => $route ) {
             foreach ( $route as $location => $end_point ) {
-                $base = "$this->rest_base${ns}/";
+                $base = "$this->rest_base${ns}";
                 register_rest_route(
                     $base,
                     $location,

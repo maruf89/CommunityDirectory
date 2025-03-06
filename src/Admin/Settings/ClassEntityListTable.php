@@ -47,7 +47,7 @@ class ClassEntityListTable extends \WP_List_Table {
         $screen = get_current_screen();
 
             /* -- Preparing your query -- */
-        $query = ClassEntity::get_entities( array(), false, false, $this->display_status, true );
+        $query = apply_filters( 'community_directory_get_entities', [], $this->display_status, null, 'sql' );
 
             /* -- Ordering parameters -- */
         list( $orderby, $order ) = $this->get_sort_params();
@@ -108,7 +108,7 @@ class ClassEntityListTable extends \WP_List_Table {
     public function get_columns() {
         $columns = array(
             'cb'=> '<input type="checkbox" />',
-            'title' => __( 'Entity', 'community-directory' ),
+            'title' => __( 'Entities', 'community-directory' ),
             'location' => __( 'Location', 'community-directory' ),
             'status' => __( 'Status', 'community-directory' ),
             'author' => __( 'Author', 'community-directory' ),
@@ -145,6 +145,8 @@ class ClassEntityListTable extends \WP_List_Table {
         $actions = array(
             'activate' => __( 'Activate Entities', 'community-directory' ),
             'deactivate' => __( 'Deactivate Entities', 'community-directory' ),
+            'delete' => __( 'Delete Entities', 'community-directory' ),
+            'delete_entire' => __( 'Delete Entities and User Accounts', 'community-directory' ),
         );
 
         // If we've locked into a status, disable sortable on that col
@@ -166,28 +168,56 @@ class ClassEntityListTable extends \WP_List_Table {
             case 'activate':
                 foreach ( $all_entities as $entity_post_id ) {
                     $entity = new Entity( $entity_post_id );
-                    if ( $entity->activate_deactivate( true ) ) $count++;
+                    if ( $entity->is_valid() && $entity->activate_deactivate( true, false, true ) ) $count++;
                 }
 
                 add_settings_error(
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Activated %d entity', 'Activated %d entities', $count ), $count ),
+                    sprintf( _n( 'Activated %d entity', 'Activated %d entities', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;
             case 'deactivate':
                 foreach ( $all_entities as $entity_post_id ) {
                     $entity = new Entity( $entity_post_id );
-                    if ( $entity->activate_deactivate( false ) ) $count++;
+                    if ( $entity->activate_deactivate( false, false, true ) ) $count++;
                 }
 
                 add_settings_error(
                     'bulk_action',
                     'bulk_action',
                     /* translators: %d: Number of requests. */
-                    sprintf( _n( 'Deactivated %d entity', 'Deactivated %d entities', $count ), $count ),
+                    sprintf( _n( 'Deactivated %d entity', 'Deactivated %d entities', $count, 'community-directory' ), $count ),
+                    'success'
+                );
+                break;
+            case 'delete':
+                foreach ( $all_entities as $entity_post_id ) {
+                    $entity = new Entity( $entity_post_id );
+                    if ( $entity->delete_permanently() ) $count++;
+                }
+
+                add_settings_error(
+                    'bulk_action',
+                    'bulk_action',
+                    /* translators: %d: Number of requests. */
+                    sprintf( _n( 'Deleted %d entity', 'Deleted %d entities', $count, 'community-directory' ), $count ),
+                    'success'
+                );
+                break;
+            case 'delete_entire':
+                foreach ( $all_entities as $entity_post_id ) {
+                    $entity = new Entity( $entity_post_id );
+                    if ( $entity->delete_permanently( true ) ) $count++;
+                }
+
+                add_settings_error(
+                    'bulk_action',
+                    'bulk_action',
+                    /* translators: %d: Number of requests. */
+                    sprintf( _n( 'Deleted %d entity', 'Deleted %d entities', $count, 'community-directory' ), $count ),
                     'success'
                 );
                 break;
@@ -204,7 +234,7 @@ class ClassEntityListTable extends \WP_List_Table {
 
         switch ( $action ) {
             case 'activate':
-                if ( $entity->activate_deactivate( true ) ) {
+                if ( $entity->activate_deactivate( true, false, true ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',
@@ -215,12 +245,34 @@ class ClassEntityListTable extends \WP_List_Table {
                 }
                 break;
             case 'deactivate':
-                if ( $entity->activate_deactivate( false ) ) {
+                if ( $entity->activate_deactivate( false, false, true ) ) {
                     add_settings_error(
                         'single_action',
                         'single_action',
                         /* translators: %d: Number of requests. */
                         __( 'Deactivated Entity', 'community-directory' ),
+                        'success'
+                    );
+                }
+                break;
+            case 'delete':
+                $results = $entity->delete_permanently();
+                if ( $results[ 'success' ] ) {
+                    add_settings_error(
+                        'single_action',
+                        'single_action',
+                        __( 'Deleted Entity', 'community-directory' ),
+                        'success'
+                    );
+                }
+                break;
+            case 'delete_entire':
+                $results = $entity->delete_permanently( true );
+                if ( $results[ 'success' ] ) {
+                    add_settings_error(
+                        'single_action',
+                        'single_action',
+                        __( 'Deleted Entity', 'community-directory' ),
                         'success'
                     );
                 }
@@ -245,15 +297,17 @@ class ClassEntityListTable extends \WP_List_Table {
         $tab = empty( $this->page_tab ) ? '' : "&tab=$this->page_tab";
         $section = empty( $this->section ) ? '' : "&section=$this->section";
         $sort = $this->get_sort_params( true );
-        $url = "<a href='?page=$cd&action=%s&entity=%s${tab}${section}${sort}'>%s</a>";
+        $url = "<a %s href='?page=$cd&action=%s&entity=%s${tab}${section}${sort}'>%s</a>";
         
-        $edit_url = Entity::get_edit_link( $entity->ID );
+        $edit_url = $entity->get_edit_link();
         $edit_link = "<a href='$edit_url' %s>%s</a>";
         
         $actions = array(
-            'activate'      => sprintf( $url, 'activate', $entity->ID, __( 'Activate', 'community-directory' ) ),
-            'deactivate'    => sprintf( $url, 'deactivate', $entity->ID, __( 'Deactivate', 'community-directory' )),
+            'activate'      => sprintf( $url, '', 'activate', $entity->ID, __( 'Activate', 'community-directory' ) ),
+            'deactivate'    => sprintf( $url, '', 'deactivate', $entity->ID, __( 'Deactivate', 'community-directory' )),
             'edit'          => sprintf( $edit_link, 'style="color:red"', __( 'Edit', 'community-directory' ) ),
+            'delete'    => sprintf( $url, 'style="color:maroon"', 'delete', $entity->ID, __( 'Delete Entity', 'community-directory' )),
+            'delete_entire'    => sprintf( $url, 'style="color:maroon;font-weight:bold"', 'delete_entire', $entity->ID, __( 'Delete Entity & User', 'community-directory' )),
         );
 
         $remove_key = $entity->is_status( COMMUNITY_DIRECTORY_ENUM_ACTIVE ) ? 'activate' : 'deactivate';
@@ -295,7 +349,7 @@ class ClassEntityListTable extends \WP_List_Table {
     }
 
     public function column_status( Entity $entity ) {
-        return $entity->display_status();
+        return $entity->get_status( 'display' );
     }
 
     public function column_author( Entity $entity ) {
@@ -359,7 +413,9 @@ class ClassEntityListTable extends \WP_List_Table {
     private function require_location_select( $modal_id = '' ) {
         if ( $this->loc_modal_loaded ) return;
 
-        require_once( COMMUNITY_DIRECTORY_TEMPLATES_PATH . 'modal-location-select.php' );
+        $template_file = apply_filters( 'community_directory_admin_template_modals/location-select.php', '' );
+        load_template( $template_file, false, array( 'modal_id' => $modal_id ) );
+        
         $this->loc_modal_loaded = true;
     }
 }

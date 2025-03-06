@@ -1,0 +1,30 @@
+{
+"compilerOptions": {
+  "module": "es6",
+  "target": "es5",
+  "noImplicitAny": false,
+  "removeComments": true,
+  "preserveConstEnums": true,
+  "outDir": "./assets/dist/",
+  "sourceMap": true,
+  "allowJs": true,
+  "declaration": false,
+  "typeRoots": [
+      "./node_modules/@types",
+      "./src/Scripts/_types",
+    ],
+  "types": [
+      "geojson",
+      "jquery",
+    "leaflet"
+  ],
+  "baseUrl": ".",
+  "paths": {
+  	"ThirdParty/*": ["src/Scripts/ThirdParty/*"],
+    "Admin/*": ["src/Admin/*"],
+    "Assets/*": ["assets/*"],
+  }
+},
+"include": ["src/**/*"],
+"exclude": ["node_modules", "**/*.spec.ts"]
+}

@@ -4,7 +4,7 @@
  *
  * This class defines all code necessary to run during the plugin's activation.
  *
- * @since      1.0.0
+ * @since      0.6.4
  * @author     Marius Miliunas
  */
 
@@ -12,8 +12,9 @@ namespace Maruf89\CommunityDirectory\Includes;
 
 class ClassActivator {
 
-    public static $role_entity = 'entity_subscriber';
-    public static $role_location = 'location_manager';
+    
+    public static string $role_entity = 'entity_subscriber';
+    public static string $role_location = 'location_manager';
 
     /**
      * This method gets fired during plugin activation.
@@ -62,7 +63,7 @@ class ClassActivator {
 
     }
 
-    public static function install(){
+    public static function install() {
         self::add_default_options();
 
         self::add_capabilities();
@@ -74,6 +75,7 @@ class ClassActivator {
 
         // update the version
         update_option('community_directory_db_version', COMMUNITY_DIRECTORY_DB_VERSION);
+        do_action( 'community_directory_register_activated' );
     }
 
     /**
@@ -107,6 +109,8 @@ class ClassActivator {
             'uninstall_erase_data' => 0,
             'load_locations_nav_menu' => 1,
             'load_my_location_nav_menu' => 1,
+            'enable_open_street_map' => 1,
+            'default_location' => '54.95 24.84',
         );
 
         foreach ($options as $option => $value){
@@ -131,20 +135,18 @@ class ClassActivator {
             'publish_entities' => false,
             'upload_files' => true,
             'create_entities' => false,
+            'edit_offer_need' => true, 
+            'read_offer_need' => true, 
+            'delete_offer_need' => true, 
+            'edit_offers_needs' => true, 
+            'edit_others_offers_needs' => false, 
+            'publish_offers_needs' => true,       
+            'read_private_offers_needs' => false, 
+            'create_offers_needs' => true,
+            'delete_offers_needs' => true,
+            'delete_others_offers_needs' => false,
+            'assign_product_service_type' => true,
         ];
-
-        // $location_caps = [
-        //     //* Meta capabilities
-        //     'read' => true,
-        //     'edit_location' => true,
-        //     'read_location' => true,
-        //     'delete_location' => false,
-        //     'edit_locations' => false,
-        //     'edit_others_locations' => false,
-        //     'publish_locations' => false,
-        //     'read_private_locations' => false,
-        //     'create_locations' => false,
-        // ];
 
         add_role(
             self::$role_entity,
@@ -152,11 +154,32 @@ class ClassActivator {
             $entity_caps
         );
 
-        // add_role(
-        //     self::$role_location,
-        //     __( 'Location Manager', 'community-directory' ),
-        //     $location_caps
-        // );
+        $location_caps = array_merge( $entity_caps, [
+            'edit_location' => true, 
+            'read_location' => true, 
+            'delete_location' => false, 
+            'edit_locations' => true, 
+            'edit_others_locations' => true, 
+            'publish_locations' => true,       
+            'read_private_locations' => true, 
+            'edit_locations' => true,
+            'delete_locations' => false,
+            'delete_others_locations' => false,
+            'manage_product_service_type' => true,
+            'edit_product_service_type' => true,
+            'delete_product_service_type' => true,
+        ] );
+
+        add_role(
+            self::$role_location,
+            __( 'Location Manager', 'community-directory' ),
+            $location_caps
+        );
+
+        $admin_role = get_role( 'administrator' );
+        foreach( $location_caps as $cap => $val ) {
+            $admin_role->add_cap( $cap, true );
+        }
     }
 
     public static function deactivate($network_wide = false) {
@@ -224,7 +247,7 @@ class ClassActivator {
             }
 
             // Delete the Custom Fields
-            acf_delete_field_group( ClassACF::$form_group_key );
+            acf_delete_field_group( ClassACF::$entity_form_group_key );
 
             // Delete options
             delete_option( 'community_directory_settings' );
@@ -248,7 +271,7 @@ class ClassActivator {
      * @package     community-directory
      * @return      void
      */
-    public static function automatic_upgrade(){
+    public static function automatic_upgrade() {
         $uwp_db_version = get_option('community_directory_db_version');
 
         if ( $uwp_db_version != COMMUNITY_DIRECTORY_DB_VERSION ) {

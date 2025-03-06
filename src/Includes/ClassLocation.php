@@ -9,10 +9,15 @@
 namespace Maruf89\CommunityDirectory\Includes;
 
 use Maruf89\CommunityDirectory\Includes\Abstracts\Routable;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
+use Maruf89\CommunityDirectory\Includes\Traits\PostTypeMethods;
 
 class ClassLocation extends Routable {
 
+    use PostTypeMethods;
+    
     private static ClassLocation $instance;
+    private static string $instance_class = Location::class;
 
     public static function get_instance() {
         if ( !isset( self::$instance ) ) {
@@ -22,18 +27,18 @@ class ClassLocation extends Routable {
         return self::$instance;
     }
 
-    public static string $post_type = 'cd-location';
+    public static string $name = 'location';
+    public static string $post_type;
     protected string $router_ns = 'location';
 
     public function __construct() {
-        define( 'COMMUNITY_DIRECTORY_DISPLAY_NAME', 'display_name' );
-        define( 'COMMUNITY_DIRECTORY_SLUG', 'slug' );
-        
+        static::$post_type = ClassPublic::get_post_type_prefix() . static::$name;
         parent::__construct( $this );
     }
 
-    public static function register_location_post_type() {
-        $customPostTypeArgs = array(
+    public static function register_post_type() {
+        $slug = strtolower( __( 'Location', 'community-directory' ) );
+        $custom_post_type_args = array(
             'label' => __( 'Locations', 'community-directory' ),
             'labels' =>
                 array(
@@ -74,50 +79,80 @@ class ClassLocation extends Routable {
                 'title',
                 'thumbnail',
                 'custom_fields',
-                'page-attributes'
+                'page-attributes',
+                'editor',
             ),
             'rewrite' => array(
-                'slug' => __( 'location', 'community-directory' ),
+                'slug' => $slug,
                 'with_front' => false,
             )
-            // 'taxonomies' => array('category','post_tag')
         );
+
+
+        Location::define_post_type( static::$post_type, $slug, 'slug' );
          
         // Post type, $args - the Post Type string can be MAX 20 characters
-        register_post_type( self::$post_type, $customPostTypeArgs );
-    }
-
-    public static function add_post_type( $arr ) {
-        $arr[] = self::$post_type;
-        return $arr;
-    }
-
-    function get(
-        bool $status_active = false,
-        bool $with_inhabitants = false,
-        bool $formatted = false,
-        string $output = OBJECT
-    ) {
-        global $wpdb;
-
-        $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-
-        if ( gettype( $status_active ) === 'boolean' ) {
-            if ( $status_active ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
-        } else
-            $sql .= " WHERE status = '$status_active'";
-        
-        if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
-
-        $results = $wpdb->get_results( $sql, $output );
-
-        if ( !$formatted ) return $results;
-        if ( gettype( $formatted ) === 'boolean' ) return self::format_row_locations( $results );
-        // Otherwise $formatted is a string
-        return self::format_row_locations( $results, $formatted );
+        register_post_type( static::$post_type, $custom_post_type_args );
     }
 
     /**
+     * Get's all locations based on passed in vars
+     * 
+     * @param       $results            ?array           an array which to merge with passed in results
+     * @param       $status_type        ?string          optional status value to match against (default: get active locations)
+     *                                                   one of (''|COMMUNITY_DIRECTORY_ENUM_ACTIVE|COMMUNITY_DIRECTORY_ENUM_INACTIVE)
+     * @param       $where_match        ?array           optional array with fields to match against
+     * @param       $output             ?string          one of (sql|OBJECT|ARRAY_A|ARRAY_N)
+     */
+    function get(
+        array $results = null,
+        string $status_type = null,
+        array $where_match = null,
+        string $output = null
+    ) {
+        global $wpdb;
+
+        if ( null === $results ) $results = [];
+        if ( null === $status_type ) $status_type = COMMUNITY_DIRECTORY_ENUM_ACTIVE;
+        if ( null === $where_match ) $where_match = [];
+        if ( null === $output ) $output = OBJECT;
+
+        $where = [];
+        
+        if ( !empty( $status_type ) )
+            $where[] = "status = '$status_type'";
+
+        if ( count( $where_match ) ) {
+            foreach ( $where_match as $key => $match ) {
+                switch ( $key ) {
+                    case 'active_inhabitants':
+                    case 'inactive_inhabitants':
+                        if ( gettype( $match ) === 'boolean' ) {
+                            $operator = $match ? '>' : '<=';
+                            $where[] = "$key $operator 0";
+                        }
+                        else if ( gettype( $match ) === 'string' )
+                            $where[] = "$key $match";
+                        else /** int */ $where[] = "$key > $match";
+                        break;
+                    default:
+                        $where[] = "$key = '$match'";
+                }
+            }
+        }
+                    
+        $where_clauses = count( $where ) ? 'WHERE ' . implode( ' AND ', $where) : '';
+
+        $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS . "
+                $where_clauses";
+        
+        if ( $output === 'sql' ) return $sql;
+        
+        return array_merge( $wpdb->get_results( $sql, $output ), $results );
+    }
+
+    /**
+     * @deprecated
      * Accepts an array of location 'id' values and returns the rows
      * 
      * @param       $field_values   array           array of values to get (could be location ids)
@@ -152,6 +187,22 @@ class ClassLocation extends Routable {
     }
 
     /**
+     * Formats passed in locations based on second argument
+     * 
+     * @param $results          array           the rows to format
+     * @param $format           ?string         an location field to format the key, 'instance' to return Location instances (default: 'id')
+     * @return                  array           formatted rows
+     */
+    public static function format( array $results, string $format = 'id' ) {
+        if ( !count( $results ) ) return $results;
+        
+        if ( $format === 'instance' ) return self::format_to_instances( $results );
+        if ( gettype( $format ) === 'boolean' ) return self::format_row_locations( $results );
+        // Otherwise $format is a string
+        return self::format_row_locations( $results, $format );
+    }
+
+    /**
      * Formats location rows based on the second parameter
      * 
      * @param       $rows       OBJECT|ARRAY        location row data
@@ -170,65 +221,50 @@ class ClassLocation extends Routable {
         return $formatted;
     }
 
-    /**
-     * A method to sanitize or fill out any fields for a location before adding it to the DB
-     * 
-     * @param           a_array         $data       must contain ('display_name' => string)
-     * @return                          a_array
-     */
-    public static function prepare_location_for_creation( $data ) {
-        
-        $data['display_name'] = community_directory_format_display_name( $data['display_name'] );
-        $data['slug'] = community_directory_location_name_to_slug( $data['display_name'] );
-        // If status isn't set, default is PENDING
-        $data['status'] = isset( $data['status'] ) ?
-            community_directory_status_to_enum( $data['status'] ) : COMMUNITY_DIRECTORY_ENUM_PENDING;
-        $data['active_inhabitants'] = isset( $data['active_inhabitants'] ) ? $data['active_inhabitants'] : 0;
-        $data['inactive_inhabitants'] = isset( $data['inactive_inhabitants'] ) ? $data['inactive_inhabitants'] : 0;
-        return $data;
-    }
-
-    /**
-     * Creates a new location in the db
-     * 
-     * @param           $data       ARRAY_A         Must contain 'display_name'
-     * @return                      int             Returns the wp_post id upon create or WP_Error
-     */
-    public static function create_location ( $data ) {
-
-        if ( !isset( $data['display_name'] ) || empty( $data['display_name' ] ) ) {
-            die( 'display_name must be set and cannot be empty' );
+    public static function format_to_instances( $rows ) {
+        foreach ( (object) $rows as $key => $loc_data ) {
+            $rows[ $key ] = new Location();
+            $rows[ $key ]->fill_with_data( $loc_data );
         }
 
-        global $wpdb;
-
-        if ( !isset( $data['slug'] ) )
-            $data = apply_filters( 'community_directory_prepare_location_for_creation', $data );
-
-        $post_id = self::create_new_post( $data );
-        
-        $wpdb->insert( 
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array(
-                'display_name'          => $data['display_name'],
-                'slug'                  => $data['slug'],
-                'status'                => $data['status'],
-                'post_id'               => $post_id,
-                'active_inhabitants'    => $data['active_inhabitants'],
-                'inactive_inhabitants'  => $data['inactive_inhabitants'],
-            ),
-            array(
-                '%s',
-                '%s',
-                '%s',
-                '%d',
-            )
-        );
-
-        return $post_id;
+        return $rows;
     }
 
     /**
+     * Creates a new location if it doesn't already exist in the DB, and returns it
+     */
+    public static function create_if_doesnt_exist( array $data ):Location {
+        if ( !isset( $data[ 'display_name' ] ) )
+            die( 'Cannot call ClassLocation::create_if_doesnt_exist without providing array argument containing (string) display_name' );
+
+        $slug = isset( $data[ 'slug' ] ) ? $data[ 'slug' ] : '';
+        $Location = new Location();
+            
+        if ( $loc_data = self::get_by_name( $data[ 'display_name' ], $slug ) ) {
+            $Location->fill_with_data( $loc_data );
+        } else {
+            $Location->insert_into_db( $data );
+        }
+
+        return $Location;
+    }
+
+    /**
+     * Get's a location row from the DB by its slug or display_name if not set
+     */
+    public static function get_by_name( string $display_name, string $slug = '' ) {
+        global $wpdb;
+
+        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
+        $slug = empty( $slug ) ? community_directory_string_to_slug( $display_name ) : $slug;
+    
+        return $wpdb->get_row( "SELECT * FROM $table WHERE slug = '$slug'" );
+    }
+
+    /**
+     * @deprecated
+     * -> delete after removal from ClassSettingsLocation
+     * 
      * Adds new locations to the locations table
      * 
      * @param       $new_locations  array       a multi-dimensional of new locations
@@ -239,31 +275,21 @@ class ClassLocation extends Routable {
      *          ),
      *          ...
      *      )
-     * @return                      (int|bool)  returns false if no change, or number of created rows
+     * @return                      (int)   number of created rows
      */
-    public static function create_locations( $new_locations ) {
-        if ( !count( $new_locations ) ) return false;
+    public static function create_locations( $new_locations ):int {
+        if ( !count( $new_locations ) ) return 0;
         
         $create_array = array();
-        $posts_array = array();
 
-        foreach ( $new_locations as $row ) {
-            if ( empty( $row['display_name'] ) ) continue;
+        foreach ( $new_locations as $row )
+            $create_array[] = static::create_if_doesnt_exist( $row );
 
-            if ( !isset( $row['slug'] ) )
-                $row = apply_filters( 'community_directory_prepare_location_for_creation', $row );
-
-            $row['post_id'] = self::create_new_post( $row );
-            $create_array[] = $row;
-        }
-
-        if ( !count( $create_array ) ) return false;
-        
-        $result = wp_insert_rows( $create_array, COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS );
-        return $result;
+        return count( $create_array );
     }
 
     /**
+     * @deprecated
      * Updates any number of locations
      * 
      * @param           $update_locations_array     ARRAY_A     A hash array structured like
@@ -277,7 +303,7 @@ class ClassLocation extends Routable {
      * @param           $update_by                  string      if set, the field to update by
      * @return                                      int         Returns number of changed rows 
      */
-    public static function update_locations( $update_locations_array, $update_by = 'id' ) {
+    public static function update_locations( array $update_locations_array, $update_by = 'id' ) {
         if ( !count( $update_locations_array ) ) return 0;
 
         global $wpdb;
@@ -297,10 +323,10 @@ class ClassLocation extends Routable {
             
             // Check if the display_name needs changing
             if ( isset( $row['display_name'] ) ) {
-                $display_name = community_directory_format_display_name( $row['display_name'] );
+                $display_name = community_directory_format_uc_first( $row['display_name'] );
                 if ( community_directory_values_differ( $display_name, $db_row['display_name'] )) {
                     $data['display_name'] = $display_name;
-                    $data['slug'] = community_directory_location_name_to_slug( $display_name );
+                    $data['slug'] = community_directory_string_to_slug( $display_name );
                 }
                 
             }
@@ -352,75 +378,7 @@ class ClassLocation extends Routable {
         return $updated_rows;
     }
 
-    /**
-     * Adds to the active/inactive inhabitants count based on the status and count
-     */
-    public static function add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
-        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
-
-        global $wpdb;
-
-        $field = $status === COMMUNITY_DIRECTORY_ENUM_ACTIVE ? 'active_inhabitants' : 'inactive_inhabitants';
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        
-        return $wpdb->query(
-            "UPDATE $table SET 
-            $field = $field + $count
-            WHERE $which = $loc_or_post_id"
-        );
-    }
-
-    /**
-     * An ACF hook that gets notified when the profile_active field gets changed
-     * Updates the count and updates the post's status to reflect it
-     * 
-     * Do not call directly!
-     */
-    public static function acf_shift_inhabitants_count( $value, $entity_post_id, $field ) {
-        if ( !isset( $_POST['acf'][ClassACF::$field_is_active_key] ) ) return $value;
-        
-        global $post;
-        
-        // get the old (saved) value
-        $was_active = get_field( ClassACF::$field_is_active, $entity_post_id ) === 'true';
-
-        $is_active = $_POST['acf'][ClassACF::$field_is_active_key] === 'true';
-        
-        if ( $was_active == $is_active ) return $value;
-
-        $post_parent = $post->post_parent;
-
-        self::shift_inhabitants_count( $post_parent, 'post_id', $is_active );
-
-        // Update the post's status
-        community_directory_activate_deactivate_entity( $is_active, $entity_post_id, 'post_id', true );
-        
-        return $value;
-    }
-
-    /**
-     * Shifts the active/inactive inhabitants count in the location table
-     * 
-     * @param       $loc_id_or_post_id      int     either the location id, or post_id
-     * @param       $which                  string  either 'id' or 'post_id'
-     * @param       $increment              bool    whether to increment active_inhabitants
-     */
-    public static function shift_inhabitants_count( $loc_id_or_post_id, $which, $increment ) {
-        if ( $which !== 'id' && $which != 'post_id' ) die( 'Invalid which statement passed' );
-
-        global $wpdb;
-
-        $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-        $sql = "UPDATE $table SET ";
-        $plus_minus_active = $increment ? '+' : '-';
-        $active_inhabitants = "active_inhabitants = active_inhabitants $plus_minus_active 1, ";
-        $plus_minus_inactive = $increment ? '-' : '+';
-        $inactive_inhabitants = "inactive_inhabitants = inactive_inhabitants $plus_minus_inactive 1 ";
-        $where = "WHERE $which = $loc_id_or_post_id";
-        
-        return $wpdb->query( $sql . $active_inhabitants . $inactive_inhabitants . $where );
-    }
+    
 
     /**
      * Gathers passed in POST data to delet a location and it's corresponding wp post
@@ -431,7 +389,8 @@ class ClassLocation extends Routable {
         }
 
         $post_id = community_directory_get_row_var( $_POST['location_id'], 'post_id' );
-        self::delete_location_post( $post_id );
+        $Location = Location::get_instance( $post_id );
+        $Location->delete_self();
 
         if ( $deleted_rows = ClassLocation::delete_location( (int) $_POST['location_id'] ) ) {
             die( sprintf( __( 'Successfully deleted %s location(s)', 'community-directory' ), $deleted_rows ) );
@@ -440,46 +399,7 @@ class ClassLocation extends Routable {
         }
     }
 
-    /**
-     * Deletes an individual location from MySQL
-     * 
-     * @param           $location_id        int
-     */
-    public static function delete_location( $location_id ) {
-        global $wpdb;
-
-        return $wpdb->delete(
-            COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS,
-            array( 'id' => $location_id ),
-            '%d'
-        );
-    }
-
-/////////// Wordpress Methods //////////
-
-    /**
-     * Creates a new wp post for the location
-     * 
-     * @param       $data       array       an associative array with 'display_name', and 'slug' required
-     */
-    public static function create_new_post( $data ) {
-        // Create post object
-        $my_post = array(
-            'post_title'    => $data['display_name'],
-            'post_status'   => community_directory_enum_status_to_post_status( $data['status'] ),
-            'post_type'     => self::$post_type,
-            'post_author'   => isset( $data['user_id' ] ) ? $data['user_id'] : 0,
-        );
-        
-        // Insert the post into the database
-        $post_id = wp_insert_post( $my_post );
-
-        // For some reason the post_name doesn't save upon insertion so we update it afterwards
-        global $wpdb;
-        $wpdb->query( $wpdb->prepare( "UPDATE $wpdb->posts SET post_name = %s where ID = $post_id", $data['slug'] ) );
-
-        return $post_id;
-    }
+    
 
     /**
      * Updates the data of a wp post
@@ -507,24 +427,27 @@ class ClassLocation extends Routable {
         return wp_update_post( $update_data );
     }
 
-    /**
-     * Force deletes an individual post
-     */
-    public static function delete_location_post( $post_id ) {
-        return wp_delete_post( $post_id, true );
+    public function update_coords( int $location_id, float $lat, float $lon ):bool {
+        $Location = Location::get_instance( null, $location_id );
+        return $Location->update_cd_row( array( 'coords' => "$lat,$lon" ) );
     }
 
     protected array $route_map = [
-        '/test-loc' => array(// Todo 
-            'callback'  => 'create_location',
-            'args'      => array( 'array' => 'data' )
+        '/update-coords' => array(
+            'callback'  => 'update_coords',
+            'args'      => array(
+                'location_id'   => 'integer',
+                'lat'           => 'float',
+                'lon'           => 'float',
+            )
         ),
         '/get'      => array(
             'callback'  => 'get',
             'args'      => array(
-                'status_active'     => '?bool',
-                'with_inhabitants'  => '?bool',
-                'formatted'         => '?bool',
+                'results'           => '?array',
+                'status_type'       => '?string',
+                'with_inhabitants'  => '?boolean',
+                'formatted'         => '?boolean',
             )
         )
     ];
@@ -538,18 +461,18 @@ class ClassLocation extends Routable {
      */
     public static function get_router_end_points( array $callback ):array {
         return array(
-            '/test-loc' => array(
-                'methods'   => 'PUT',
+            '/update-coords' => array(
+                'methods'   => 'POST',
                 'callback'  => $callback,
-                'permission_callback' => function( $request) {
-                    // This always returns false
-                    return is_user_logged_in();
+                'permission_callback' => function ( $request ):bool {
+                    $params = $request->get_params();
+                    return current_user_can( 'edit_others_entities' ) || ClassEntity::user_can_edit_entity( $params['entity'] );
                 },
             ),
             '/get' => array(
                 'methods'   => \WP_REST_Server::READABLE,
                 'callback'  => $callback,
-                'permission_callback' => '__return_true',
+                'permission_callback' => function ( $request ) { return true; },
             )
         );
     }

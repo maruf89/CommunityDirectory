@@ -12,13 +12,19 @@
 
 namespace Maruf89\CommunityDirectory\Includes;
 
-use Maruf89\CommunityDirectory\Includes\ClassEntity;
-use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\instances\{Entity, OfferNeed};
+use Maruf89\CommunityDirectory\Includes\ClassRestEndPoints;
 
 class ClassPublic {
+    private static string $_post_type_prefix = 'cd-';
+    private static string $_template_hook_prefix = 'community_directory_template_';
+    private static string $_template_hook_admin_prefix = 'community_directory_admin_template_';
+    private static int $_template_hook_prefix_len;
+    private static int $_template_hook_admin_prefix_len;
 
     public function __construct() {
-
+        static::$_template_hook_prefix_len = strlen( static::$_template_hook_prefix );
+        static::$_template_hook_admin_prefix_len = strlen( static::$_template_hook_admin_prefix );
     }
     
     /**
@@ -27,7 +33,12 @@ class ClassPublic {
      * @since      2020.11
      */
     public function enqueue_styles() {
-        wp_enqueue_style( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/css/community-directory.css', array(), WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"), 'all' );
+        wp_enqueue_style(
+            COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory.css',
+            array(),
+             WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
+             'all'
+        );
     }
 
     /**
@@ -39,21 +50,65 @@ class ClassPublic {
 
         $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '';//'.min';
 
-        // Core JS
-        wp_enqueue_script( COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/js/community-directory' . $suffix . '.js', array( 'jquery' ), COMMUNITY_DIRECTORY_VERSION, false );
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_script(
+                'leaflet_js',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.js', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
+        }
 
-        wp_localize_script( 'community_directory_admin_js', 'cdData',
-            array(
-                'restBase' => '/wp-json/wp/v2/',
-                'postType' => array(
-                    'entity' => ClassEntity::$post_type,
-                    'location' => ClassLocation::$post_type,
-                )
-            )
+        // Core JS
+        wp_enqueue_script(
+            COMMUNITY_DIRECTORY_NAME, COMMUNITY_DIRECTORY_PLUGIN_URL . 'assets/dist/community-directory' . $suffix . '.js',
+            array( 'jquery' ),
+            WP_ENV == 'production' ? COMMUNITY_DIRECTORY_VERSION : date("ymd-Gis"),
+            'all'
         );
+
+
+        if ( community_directory_settings_get( 'enable_open_street_map', false ) ) {
+            wp_enqueue_style(
+                'leaflet_css',
+                COMMUNITY_DIRECTORY_PLUGIN_URL . 'lib/leaflet/leaflet' . $suffix . '.css', array(),
+                COMMUNITY_DIRECTORY_VERSION,
+                'all'
+            );
+        }
         
     }
 
+    public function global_js_variables() {?>
+        <script type="text/javascript">
+            window.cdData = <?= json_encode( array(
+                'restBase' => '/wp-json/' . ClassRestEndPoints::get_instance()->rest_base,
+                'postType' => array(
+                    'entity' => ClassEntity::$post_type,
+                    'location' => ClassLocation::$post_type,
+                ),
+                'taxonomyType' => array(
+                    'productService' => TaxonomyProductService::$taxonomy,
+                    'location' => TaxonomyLocation::$taxonomy,
+                ),
+                'map' => array(
+                    'accessToken' => defined( 'MAPBOX_API_KEY' ) ? MAPBOX_API_KEY : '',
+                    'defaultCoords' => explode( ' ', community_directory_settings_get( 'default_location', '54.95 24.84' ) ),
+                ),
+                'events' => array(
+                    'map' => array(
+                        'popupOpen' => 'MapPopupOpen',
+                        'popupClose' => 'MapPopupClose'
+                    )
+                ),
+                'acf' => ClassACF::export_field_names()
+            )); ?>
+        </script><?php
+    }
+
+    /**
+     * Client facing menu for logged in users with entities
+     */
     public function custom_nav_menu( $items, $menu ) {
         $options = get_option( 'community_directory_settings' );
 
@@ -68,23 +123,45 @@ class ClassPublic {
         if ( ( $Entity = Entity::get_active_entity() ) &&
              arr_equals_val( $options, 'load_my_location_nav_menu', 1 )
         ) {
+            // skip if invalid entity
+            if ( !$Entity->is_valid() ) return $items;
+            
             $top = community_directory_custom_nav_menu_item(
                 $Entity->location_name,
-                Entity::get_location_link(),
+                Entity::build_location_link(),
                 100
             );
             $items[] = $top;
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'My Profile', 'community-directory' ),
-                Entity::get_display_link(),
+                Entity::build_entity_link(),
                 101,
                 $top->ID
             );
             $items[] = community_directory_custom_nav_menu_item(
                 __( 'Edit Profile', 'community-directory' ),
-                Entity::get_edit_link(),
+                Entity::build_entity_link( null, true ),
                 102,
                 $top->ID
+            );
+
+            $ON_top = community_directory_custom_nav_menu_item(
+                __( 'Offers & Needs', 'community-directory' ),
+                OfferNeed::get_view_all_link(),
+                200
+            );
+            $items[] = $ON_top;
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'Create New', 'community-directory' ),
+                OfferNeed::get_create_link(),
+                201,
+                $ON_top->ID
+            );
+            $items[] = community_directory_custom_nav_menu_item(
+                __( 'View Mine', 'community-directory' ),
+                OfferNeed::get_view_all_link(),
+                202,
+                $ON_top->ID
             );
         }
 
@@ -92,6 +169,10 @@ class ClassPublic {
         
     }
 
+    /**
+     * Does URL routing magic to turn /location/person from a location cpt
+     * to an entity cpt
+     */
     public static function pre_get_posts( $query ) {
         // check if the user is requesting an admin page 
         // or current query is not the main query
@@ -140,13 +221,19 @@ class ClassPublic {
     
             // The name of custom post type single template
             $template_name = "single-$post_type.php";
-    
-            // A specific single template for my custom post type exists in theme folder? Or it also doesn't exist in my plugin?
-            if ( $template === get_stylesheet_directory() . '/' . $template_name
-                 || !file_exists( $plugin_path . $template_name ) ) {
-    
+
+            $theme_template_name = apply_filters(
+                static::$_template_hook_prefix . 'single-post-type',
+                $template_name,
+                $post_type,
+                \substr( $post_type, strlen( static::$_post_type_prefix ) )
+            );
+
+            if ( \file_exists( $theme_template_name ) ||
+                 !file_exists( $plugin_path . $template_name )
+            ) {
                 //Then return "single.php" or "single-my-custom-post-type.php" from theme directory.
-                return $template;
+                return $theme_template_name;
             }
     
             // If not, return my plugin custom post type template.
@@ -156,6 +243,40 @@ class ClassPublic {
         //This is not my custom post type, do nothing with $template
         return $template;
     }
-    
+
+    public static function get_post_type_prefix():string { return static::$_post_type_prefix; }
+
+    public static function get_template_hook_prefix( string $type = ''):array {
+        switch( $type ) {
+            case 'admin':
+                return [ static::$_template_hook_admin_prefix, static::$_template_hook_admin_prefix_len ];
+            default:
+                return [ static::$_template_hook_prefix, static::$_template_hook_prefix_len ];
+        }
+    }
+
+    /**
+     * Is loaded via a filter call
+     */
+    public function load_template( string $src ):string {
+        // get name of current filter
+        // Will look something like: "community_directory_template_something-list.php"
+        $current = current_filter();
+        $file = substr( $current, static::$_template_hook_prefix_len );
+
+        return COMMUNITY_DIRECTORY_TEMPLATES_PATH . $file;
+    }
+
+    /**
+     * Is loaded via a filter call
+     */
+    public function load_admin_template( string $src ):string {
+        // get name of current filter
+        // Will look something like: "community_directory_template_something-list.php"
+        $current = current_filter();
+        $file = substr( $current, static::$_template_hook_admin_prefix_len );
+
+        return COMMUNITY_DIRECTORY_ADMIN_PATH . 'views/' . $file;
+    }
 
 }

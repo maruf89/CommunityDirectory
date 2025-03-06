@@ -1,6 +1,7 @@
 <?php
 
 use Maruf89\CommunityDirectory\Includes\ClassLocation;
+use Maruf89\CommunityDirectory\Includes\instances\Location;
 
 /**
  * Returns a variable from a table
@@ -20,23 +21,6 @@ function community_directory_get_row_var( $where_val, string $var, string $where
     return $wpdb->get_var( $wpdb->prepare( "SELECT $var FROM $table WHERE $where_var = %s", $where_val ) );
 }
 
-/**
- * Checks whether a location already exists with a given a locations slug
- * 
- * @param       $slug       string      the slug of the location to check against
- * @return                  bool
- */
-function community_directory_location_exists( $slug ) {
-    global $wpdb;
-    
-    $table = COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-    $row = $wpdb->get_row(
-        $wpdb->prepare( "SELECT slug FROM $table WHERE slug = %s", $slug )
-    );
-
-    return !!$row;
-}
-
 function community_directory_locations_exist() {
     global $wpdb;
 
@@ -46,92 +30,11 @@ function community_directory_locations_exist() {
 }
 
 /**
- * Gets all locations based on parameters
- * 
- * @param       $status_active          bool|string     true: returns only activated
- *                                                      false: returns all locations
- *                                                      string: COMMUNITY_DIRECTORY_ENUM_(ACTIVE|PENDING)
- * @param       $with_inhabitants       bool            if true, only returns locatios with active inhabitants
- * @param       $formatted              bool|string     true: returns formatted by id
- *                                                      false: returns unformatted
- *                                                      string: field key to format the rows by 
- * @param       $output                 string          One of OBJECT, ARRAY_A, or ARRAY_N (Default value: OBJECT)
- * @return                              OJBECT|ARRAY
- */
-function community_directory_get_locations(
-        $status_active = false,
-        $with_inhabitants = false,
-        $formatted = false,
-        $output = OBJECT
-) {
-    global $wpdb;
-
-    $sql = 'SELECT * FROM ' . COMMUNITY_DIRECTORY_DB_TABLE_LOCATIONS;
-
-    if ( gettype( $status_active ) === 'boolean' ) {
-        if ( $status_active ) $sql .= " WHERE status = '" . COMMUNITY_DIRECTORY_ENUM_ACTIVE . "'";
-    } else
-        $sql .= " WHERE status = '$status_active'";
-    
-    if ( $with_inhabitants ) $sql .= ' AND active_inhabitants > 0';
-
-    $results = $wpdb->get_results( $sql, $output );
-
-    if ( !$formatted ) return $results;
-    if ( gettype( $formatted ) === 'boolean' ) return community_directory_format_row_locations( $results );
-    // Otherwise $formatted is a string
-    return community_directory_format_row_locations( $results, $formatted );
-}
-
-function community_directory_format_row_locations( $rows, $format_by = 'id' ) {
-    $Location = ClassLocation::get_instance();
-    return $Location::format_row_locations( $rows, $format_by );
-}
-
-/**
- * Creates a new location in the DB if it doesn't exist
- * 
- * @return      false|int|WP_Error      if location exists, returns false, otherwise the wp_post id or error
- */
-function community_directory_create_location_if_doesnt_exist( $data ) {
-    return community_directory_location_exists( $data['slug'] ) ?
-        false : community_directory_create_location( $data );
-
-}
-
-/**
- * Creates a new location in the db
- * 
- * @param           $data       ARRAY_A         Must contain 'display_name'
- * @return                      int             Returns the wp_post id upon create or WP_Error
- */
-function community_directory_create_location( $data ) {
-    $Location = ClassLocation::get_instance();
-    return $Location::create_location( $data );
-}
-
-/**
  * See class field for description
  */
-function community_directory_update_locations( $data, $update_by ) {
+function community_directory_update_locations( $data, $update_by = 'id' ) {
     $Location = ClassLocation::get_instance();
     return $Location::update_locations( $data, $update_by );
-}
-
-/**
- * See class field for description
- */
-function community_directory_add_inhabitant( $loc_or_post_id, $which, $status, $count = 1 ) {
-    $Location = ClassLocation::get_instance();
-    return $Location::add_inhabitant( $loc_or_post_id, $which, $status, $count );
-}
-
-/**
- * See class field for description
- */
-function community_directory_shift_inhabitants_count( $loc_or_post_id, $which, $increment ) {
-    $Location = ClassLocation::get_instance();
-    return $Location::shift_inhabitants_count( $loc_or_post_id, $which, $increment );
 }
 
 function community_directory_status_to_enum( $status = 'active' ) {
@@ -148,15 +51,35 @@ function community_directory_status_to_enum( $status = 'active' ) {
 }
 
 /**
- * Prepares a location for slug
+ * given a coords, returns a mysql function for inserting POINT types
+ * 
+ * @param       $coords         (array|string)      must contain values representing latitude & longitude either
+ *                                                  as a string like '12.42,82.12' or as an array with at least 2 entries
+ * @return                      string              a mysql ready point value
  */
-function community_directory_location_name_to_slug( $location ) {
-    $formatted = strtolower( transliterate_string( $location ) );
-    $formatted = sanitize_title_with_dashes( $formatted );
-    return $formatted;
+function community_directory_coords_to_mysql_point( $coords ):string {
+    switch ( gettype( $coords ) ) {
+        case 'string':
+            $re = '/(\d+\.?\d*),?\s*(\d+\.?\d*)/';
+            if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
+                list( $whole, $lat, $lon ) = $matches;
+                return "ST_PointFromText('POINT($lat[0] $lon[0])')";
+            }
+            return '';
+        case 'array':
+            $lon = end( $coords );
+            $lat = prev( $coords );
+            return "ST_PointFromText('POINT($lat $lon)')";
+    }
+    
+    return '';
 }
 
-// Capitalizes first letter of location name
-function community_directory_format_display_name( $location ) {
-    return ucwords( strtolower( $location ) );
+function community_directory_coords_to_array( string $coords ):array {
+    $re = '/(\d+\.?\d*),?\s*(\d+\.?\d*)/';
+    if ( preg_match( $re, $coords, $matches, PREG_OFFSET_CAPTURE ) ) {
+        list( $whole, $lat, $lon ) = $matches;
+        return [ (int) $lat[0], (int) $lon[0] ];
+    }
+    return [];
 }
